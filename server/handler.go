@@ -13,3 +13,8 @@ type Handler struct {}
 func (h *Handler) Index(c echo.Context) error {
   return c.String(http.StatusOK, "Hello Trunks!!")
 }
+
+// PostAttack handle POST /attack request
+func (h *Handler) PostAttack(c echo.Context) error {
+  return c.String(http.StatusOK, "OK")
+}
