@@ -19,7 +19,11 @@ func (h *Handler) PostAttack(c echo.Context) error {
 	opts := NewAttackOptions()
 
 	if err := c.Bind(opts); err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	if err := opts.Attack(); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
   return c.JSON(http.StatusOK, opts)
