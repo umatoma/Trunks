@@ -1,5 +1,5 @@
-hash: 0f17389e50911ab6b416c72e3398ce877e763850d939017a5565293c5dc73946
-updated: 2017-03-10T22:16:42.473704095+09:00
+hash: 4f6c646d1e6b561532c2df21b3591b129bc5f0413871e285d169f31bfb8e4717
+updated: 2017-03-10T23:23:13.652722049+09:00
 imports:
 - name: github.com/dgrijalva/jwt-go
   version: 2268707a8f0843315e2004ee4f1d021dc08baedf
@@ -18,6 +18,12 @@ imports:
   version: acb9493f2794fd0f820de7a27a217dafbb1b65ea
 - name: github.com/mattn/go-isatty
   version: 9622e0cc9d8f9be434ca605520ff9a16808fee47
+- name: github.com/streadway/quantile
+  version: b0c588724d25ae13f5afb3d90efec0edc636432b
+- name: github.com/tsenart/vegeta
+  version: 6c25889c3b6b6d22aa2a1edcb987b6846e44aa7d
+  subpackages:
+  - lib
 - name: github.com/valyala/bytebufferpool
   version: e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7
 - name: github.com/valyala/fasttemplate
@@ -32,6 +38,10 @@ imports:
   subpackages:
   - context
   - context/ctxhttp
+  - http2
+  - http2/hpack
+  - idna
+  - lex/httplex
 - name: golang.org/x/sys
   version: e48874b42435b4347fc52bdee0424a52abc974d7
   subpackages:

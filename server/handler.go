@@ -4,6 +4,7 @@ import (
   "net/http"
 
   "github.com/labstack/echo"
+	vegeta "github.com/tsenart/vegeta/lib"
 )
 
 // Handler is the HTTP handler
@@ -16,5 +17,14 @@ func (h *Handler) Index(c echo.Context) error {
 
 // PostAttack handle POST /attack request
 func (h *Handler) PostAttack(c echo.Context) error {
-  return c.String(http.StatusOK, "OK")
+	opts := &AttackOptions{
+		Headers: headers{http.Header{}},
+		Laddr: localAddr{&vegeta.DefaultLocalAddr},
+	}
+
+	if err := c.Bind(opts); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+  return c.JSON(http.StatusOK, opts)
 }
