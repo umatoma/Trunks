@@ -2,19 +2,25 @@ package main
 
 import (
 	"log"
-	"net/http"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
 func main() {
-	e := echo.New()
-	e.Use(middleware.Logger())
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello Trunks!!")
-	})
+	// initialize handler
+	h := &Handler{}
 
+	// create echo server instance
+	e := echo.New()
+
+	// middlewares
+	e.Use(middleware.Logger())
+
+	// routes
+	e.GET("/", h.Index)
+
+	// start server
 	if err := e.Start(":3000"); err != nil {
 		log.Fatalln(err)
 	}
