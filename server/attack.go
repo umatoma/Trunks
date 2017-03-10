@@ -4,6 +4,8 @@ import (
 	"time"
 	"net"
 	"net/http"
+
+	vegeta "github.com/tsenart/vegeta/lib"
 )
 
 type csl []string
@@ -31,4 +33,21 @@ type AttackOptions struct {
 	Headers			headers
 	Laddr				localAddr
 	Keepalive		bool
+}
+
+func NewAttackOptions() *AttackOptions {
+	return &AttackOptions{
+		HTTP2: true,
+		Insecure: false,
+		Lazy: false,
+		Duration: 0,
+		Timeout: vegeta.DefaultTimeout,
+		Rate: 50,
+		Workers: vegeta.DefaultWorkers,
+		Connections: vegeta.DefaultConnections,
+		Redirects: vegeta.DefaultRedirects,
+		Headers: headers{http.Header{}},
+		Laddr: localAddr{&vegeta.DefaultLocalAddr},
+		Keepalive: true,
+	}
 }
