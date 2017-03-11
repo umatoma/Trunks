@@ -7,6 +7,7 @@ import (
 	"time"
 	"sync"
 	"errors"
+	"path/filepath"
 
 	vegeta "github.com/tsenart/vegeta/lib"
 )
@@ -27,7 +28,7 @@ type AttackExecuter struct {
 }
 
 // RegisterAttack register vegeta attack job
-func (executer *AttackExecuter) RegisterAttack(filename string) (error) {
+func (executer *AttackExecuter) RegisterAttack(resultsBasePath string) (error) {
 	execFlagLock.Lock()
 	defer execFlagLock.Unlock()
 
@@ -38,7 +39,8 @@ func (executer *AttackExecuter) RegisterAttack(filename string) (error) {
 	// do attack
 	isExecuting = true
 	go func() {
-		if err := executer.attack(filename); err != nil {
+		filePath := resultFilePath(resultsBasePath)
+		if err := attack(executer, filePath); err != nil {
 			log.Println(err)
 		}
 		execFlagLock.Lock()
@@ -49,10 +51,15 @@ func (executer *AttackExecuter) RegisterAttack(filename string) (error) {
 	return nil
 }
 
-func (executer *AttackExecuter) attack(filename string) error {
-	out, err := os.Create(filename)
+func resultFilePath(basePath string) string {
+	filename := fmt.Sprintf("%d.bin", time.Now().UnixNano())
+	return filepath.Join(basePath, filename)
+}
+
+func attack(executer *AttackExecuter, filePath string) error {
+	out, err := os.Create(filePath)
 	if err != nil {
-		return fmt.Errorf("error opening %s: %s", filename, err)
+		return fmt.Errorf("error opening %s: %s", filePath, err)
 	}
 	defer out.Close()
 

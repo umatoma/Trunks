@@ -27,7 +27,7 @@ func (h *Handler) PostAttack(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	if err := executer.RegisterAttack("./tmp/result.bin"); err != nil {
+	if err := executer.RegisterAttack("tmp"); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
