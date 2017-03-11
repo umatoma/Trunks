@@ -50,6 +50,15 @@ type AttackOptions struct {
 	Keepalive		bool
 }
 
+// AttackExecuter aggregates the instances to attack
+type AttackExecuter struct {
+	attacker *vegeta.Attacker
+	targeter vegeta.Targeter
+	rate uint64
+	duration time.Duration
+}
+
+// NewAttackOptions returns a new AttackOptions with default options
 func NewAttackOptions() *AttackOptions {
 	return &AttackOptions{
 		HTTP2: true,
@@ -67,23 +76,24 @@ func NewAttackOptions() *AttackOptions {
 	}
 }
 
-func (opts *AttackOptions) Attack() error {
+// GetAttackExecuter generates AttackExecuter from AttackOptions
+func (opts *AttackOptions) GetAttackExecuter() (*AttackExecuter, error) {
 	if opts.Rate == 0 {
-		return errZeroRate
+		return nil, errZeroRate
 	}
 
 	if opts.Targets == "" {
-		return errEmptyTargets
+		return nil, errEmptyTargets
 	}
 
 	duration, err := time.ParseDuration(opts.Duration)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	timeout, err := time.ParseDuration(opts.Timeout)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var (
@@ -96,18 +106,12 @@ func (opts *AttackOptions) Attack() error {
 	if opts.Lazy {
 		tr = vegeta.NewLazyTargeter(src, body, hdr)
 	} else if tr, err = vegeta.NewEagerTargeter(src, body, hdr); err != nil {
-		return err
+		return nil, err
 	}
-
-	out, err := os.Create("./tmp/result.bin")
-	if err != nil {
-		return fmt.Errorf("error opening %s: %s", "./tmp/result.bin", err)
-	}
-	defer out.Close()
 
 	tlsc, err := tlsConfig(opts.Insecure, opts.Cert, opts.Key, opts.RootCerts)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	atk := vegeta.NewAttacker(
@@ -121,8 +125,26 @@ func (opts *AttackOptions) Attack() error {
 		vegeta.HTTP2(opts.HTTP2),
 	)
 
+	executer := &AttackExecuter{
+		attacker: atk,
+		targeter: tr,
+		rate: opts.Rate,
+		duration: duration,
+	}
+
+	return executer, nil
+}
+
+// Attack execute vegeta attack
+func (executer *AttackExecuter) Attack(filename string) (error) {
+	out, err := os.Create(filename)
+	if err != nil {
+		return fmt.Errorf("error opening %s: %s", filename, err)
+	}
+	defer out.Close()
+
 	enc := vegeta.NewEncoder(out)
-	for r := range atk.Attack(tr, opts.Rate, duration) {
+	for r := range executer.attacker.Attack(executer.targeter, executer.rate, executer.duration) {
 		log.Println(r)
 		if err = enc.Encode(r); err != nil {
 			return err

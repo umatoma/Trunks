@@ -22,8 +22,13 @@ func (h *Handler) PostAttack(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	if err := opts.Attack(); err != nil {
+	executer, err := opts.GetAttackExecuter()
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	if err := executer.Attack("./tmp/result.bin"); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
   return c.JSON(http.StatusOK, opts)
