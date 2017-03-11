@@ -1,9 +1,14 @@
 package main
 
 import (
+	"bytes"
+	"os"
+	"io"
+	"path/filepath"
   "net/http"
 
   "github.com/labstack/echo"
+	vegeta "github.com/tsenart/vegeta/lib"
 )
 
 // Handler is the HTTP handler
@@ -49,4 +54,43 @@ func (h *Handler) StopAttack(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "stop the attack",
 	})
+}
+
+// ShowReport handle GET /api/reports/:filename
+func (h *Handler) ShowReport(c echo.Context) error {
+	filename := c.Param("filename")
+	file, err := os.Open(filepath.Join("tmp", filename))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	defer file.Close()
+
+	decoder := vegeta.NewDecoder(file)
+
+	var reporter vegeta.Reporter
+	var report vegeta.Report
+	var rs vegeta.Results
+	reporter, report = vegeta.NewPlotReporter("Vegeta Plot", &rs), &rs
+
+	for {
+		var r vegeta.Result
+		if err := decoder.Decode(&r); err != nil {
+			if err == io.EOF {
+				break
+			}
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
+		report.Add(&r)
+	}
+
+	if c, ok := report.(vegeta.Closer); ok {
+		c.Close()
+	}
+
+	var buf bytes.Buffer
+	if err := reporter.Report(&buf); err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.HTMLBlob(http.StatusOK, buf.Bytes())
 }

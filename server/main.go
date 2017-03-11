@@ -21,6 +21,7 @@ func main() {
 	e.GET("/", h.Index)
 	e.POST("/api/attack", h.PostAttack)
 	e.DELETE("/api/attack", h.StopAttack)
+	e.GET("/api/reports/:filename", h.ShowReport)
 
 	// start server
 	if err := e.Start(":3000"); err != nil {
