@@ -1,0 +1,19 @@
+{
+  "name": "trunks",
+  "version": "0.0.1",
+  "description": "Trunks is a simple HTTP load testing tool with UI",
+  "main": "client/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/umatoma/trunks.git"
+  },
+  "author": "umatoma <umatomakun@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/umatoma/trunks/issues"
+  },
+  "homepage": "https://github.com/umatoma/trunks#readme"
+}
