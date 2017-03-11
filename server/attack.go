@@ -114,14 +114,7 @@ func (opts *AttackOptions) GetAttackExecuter() (*AttackExecuter, error) {
 		vegeta.HTTP2(opts.HTTP2),
 	)
 
-	executer := &AttackExecuter{
-		attacker: atk,
-		targeter: tr,
-		rate: opts.Rate,
-		duration: duration,
-	}
-
-	return executer, nil
+	return NewAttackExecuter(atk, tr, opts.Rate, duration), nil
 }
 
 // tlsConfig builds a *tls.Config from the given options.

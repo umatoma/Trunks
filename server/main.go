@@ -20,6 +20,7 @@ func main() {
 	// routes
 	e.GET("/", h.Index)
 	e.POST("/attack", h.PostAttack)
+	e.DELETE("/attack", h.StopAttack);
 
 	// start server
 	if err := e.Start(":3000"); err != nil {

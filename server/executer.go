@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	isExecuting = false
+	currentExeuter *AttackExecuter
 	execFlagLock sync.Mutex
 
 	errNowExecuting = errors.New("attacker is executing now")
@@ -25,6 +25,18 @@ type AttackExecuter struct {
 	targeter vegeta.Targeter
 	rate uint64
 	duration time.Duration
+	stop chan bool
+	stopOnce sync.Once
+}
+
+// NewAttackExecuter returns a new AttackExecuter with default options
+func NewAttackExecuter(atk *vegeta.Attacker, tr vegeta.Targeter, rate uint64, duration time.Duration) *AttackExecuter {
+	return &AttackExecuter{
+		attacker: atk,
+		targeter: tr,
+		rate: rate,
+		stop: make(chan bool, 1),
+	}
 }
 
 // RegisterAttack register vegeta attack job
@@ -32,23 +44,46 @@ func (executer *AttackExecuter) RegisterAttack(resultsBasePath string) (error) {
 	execFlagLock.Lock()
 	defer execFlagLock.Unlock()
 
-	if isExecuting {
+	if currentExeuter != nil {
 		return errNowExecuting
 	}
 
 	// do attack
-	isExecuting = true
+	currentExeuter = executer
 	go func() {
 		filePath := resultFilePath(resultsBasePath)
-		if err := attack(executer, filePath); err != nil {
+		if err := executer.attack(filePath); err != nil {
 			log.Println(err)
 		}
-		execFlagLock.Lock()
-		isExecuting = false
-		execFlagLock.Unlock()
+		executer.UnbindExecuter()
 	}()
 
 	return nil
+}
+
+// UnbindExecuter remove current executer binding
+func (executer *AttackExecuter) UnbindExecuter() {
+	execFlagLock.Lock()
+	defer execFlagLock.Unlock()
+	if currentExeuter == executer {
+		currentExeuter = nil
+	}
+}
+
+// StopAttack stop current attack
+func StopAttack() bool {
+	execFlagLock.Lock()
+	defer execFlagLock.Unlock()
+
+	if currentExeuter == nil {
+		return false
+	}
+
+	currentExeuter.stopOnce.Do(func() {
+		currentExeuter.stop <- true
+	})
+
+	return true
 }
 
 func resultFilePath(basePath string) string {
@@ -56,18 +91,23 @@ func resultFilePath(basePath string) string {
 	return filepath.Join(basePath, filename)
 }
 
-func attack(executer *AttackExecuter, filePath string) error {
+func (executer *AttackExecuter) attack(filePath string) error {
 	out, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("error opening %s: %s", filePath, err)
 	}
 	defer out.Close()
 
-	res := executer.attacker.Attack(executer.targeter, executer.rate, executer.duration)
+	atk := executer.attacker
+	res := atk.Attack(executer.targeter, executer.rate, executer.duration)
 	enc := vegeta.NewEncoder(out)
 
 	for {
 		select {
+		case <-executer.stop:
+			atk.Stop()
+			log.Println("stopped attack")
+			return nil
 		case r, ok := <-res:
 			if !ok {
 				return nil

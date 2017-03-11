@@ -38,3 +38,15 @@ func (h *Handler) PostAttack(c echo.Context) error {
 
   return c.JSON(http.StatusOK, opts)
 }
+
+// StopAttack handle DELETE /attack request
+func (h *Handler) StopAttack(c echo.Context) error {
+	if ok := StopAttack(); !ok {
+		return c.JSON(http.StatusOK, map[string]string{
+			"message": "failed to stop the attack",
+		})
+	}
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "stop the attack",
+	})
+}
