@@ -63,7 +63,7 @@ func (h *Handler) ShowReport(c echo.Context) error {
 	}
 	defer file.Close()
 
-	reporter, err := GetPlotReporter(file)
+	reporter, err := GetJSONResultsReporter(file)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
@@ -73,5 +73,5 @@ func (h *Handler) ShowReport(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.HTMLBlob(http.StatusOK, buf.Bytes())
+	return c.JSONBlob(http.StatusOK, buf.Bytes())
 }
