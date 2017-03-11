@@ -3,12 +3,10 @@ package main
 import (
 	"bytes"
 	"os"
-	"io"
 	"path/filepath"
   "net/http"
 
   "github.com/labstack/echo"
-	vegeta "github.com/tsenart/vegeta/lib"
 )
 
 // Handler is the HTTP handler
@@ -65,26 +63,9 @@ func (h *Handler) ShowReport(c echo.Context) error {
 	}
 	defer file.Close()
 
-	decoder := vegeta.NewDecoder(file)
-
-	var reporter vegeta.Reporter
-	var report vegeta.Report
-	var rs vegeta.Results
-	reporter, report = vegeta.NewPlotReporter("Vegeta Plot", &rs), &rs
-
-	for {
-		var r vegeta.Result
-		if err := decoder.Decode(&r); err != nil {
-			if err == io.EOF {
-				break
-			}
-			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-		}
-		report.Add(&r)
-	}
-
-	if c, ok := report.(vegeta.Closer); ok {
-		c.Close()
+	reporter, err := GetPlotReporter(file)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	var buf bytes.Buffer
