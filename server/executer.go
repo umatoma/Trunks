@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"io"
 	"time"
 	"sync"
 	"errors"
@@ -35,6 +36,7 @@ func NewAttackExecuter(atk *vegeta.Attacker, tr vegeta.Targeter, rate uint64, du
 		attacker: atk,
 		targeter: tr,
 		rate: rate,
+		duration: duration,
 		stop: make(chan bool, 1),
 	}
 }
@@ -52,7 +54,7 @@ func (executer *AttackExecuter) RegisterAttack(resultsBasePath string) (error) {
 	currentExeuter = executer
 	go func() {
 		filePath := resultFilePath(resultsBasePath)
-		if err := executer.attack(filePath); err != nil {
+		if err := executer.attack(filePath, os.Stdout); err != nil {
 			log.Println(err)
 		}
 		executer.UnbindExecuter()
@@ -91,7 +93,7 @@ func resultFilePath(basePath string) string {
 	return filepath.Join(basePath, filename)
 }
 
-func (executer *AttackExecuter) attack(filePath string) error {
+func (executer *AttackExecuter) attack(filePath string, reportWriter io.Writer) error {
 	out, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("error opening %s: %s", filePath, err)
@@ -102,20 +104,35 @@ func (executer *AttackExecuter) attack(filePath string) error {
 	res := atk.Attack(executer.targeter, executer.rate, executer.duration)
 	enc := vegeta.NewEncoder(out)
 
+	var m vegeta.Metrics
+	report := &m
+	reporter := vegeta.NewJSONReporter(&m)
+	ticker := time.NewTicker(2 * time.Second)
+
+	attack:
 	for {
 		select {
 		case <-executer.stop:
 			atk.Stop()
 			log.Println("stopped attack")
 			return nil
+		case <-ticker.C:
+			reporter.Report(reportWriter)
 		case r, ok := <-res:
 			if !ok {
-				return nil
+				log.Println("finish attack")
+				break attack
 			}
 			if err = enc.Encode(r); err != nil {
 				return err
 			}
+			// add result to report
+			report.Add(r)
 			log.Println(r)
 		}
 	}
+	// stop time tiker
+	ticker.Stop()
+
+	return nil
 }
