@@ -1,17 +1,14 @@
 package main
 
 import (
-	"log"
 	"crypto/tls"
 	"crypto/x509"
-	"fmt"
 	"errors"
-	"strings"
-	"time"
+	"io/ioutil"
 	"net"
 	"net/http"
-	"os"
-	"io/ioutil"
+	"strings"
+	"time"
 
 	vegeta "github.com/tsenart/vegeta/lib"
 )
@@ -48,14 +45,6 @@ type AttackOptions struct {
 	Headers			headers
 	Laddr				localAddr
 	Keepalive		bool
-}
-
-// AttackExecuter aggregates the instances to attack
-type AttackExecuter struct {
-	attacker *vegeta.Attacker
-	targeter vegeta.Targeter
-	rate uint64
-	duration time.Duration
 }
 
 // NewAttackOptions returns a new AttackOptions with default options
@@ -133,24 +122,6 @@ func (opts *AttackOptions) GetAttackExecuter() (*AttackExecuter, error) {
 	}
 
 	return executer, nil
-}
-
-// Attack execute vegeta attack
-func (executer *AttackExecuter) Attack(filename string) (error) {
-	out, err := os.Create(filename)
-	if err != nil {
-		return fmt.Errorf("error opening %s: %s", filename, err)
-	}
-	defer out.Close()
-
-	enc := vegeta.NewEncoder(out)
-	for r := range executer.attacker.Attack(executer.targeter, executer.rate, executer.duration) {
-		log.Println(r)
-		if err = enc.Encode(r); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 // tlsConfig builds a *tls.Config from the given options.
