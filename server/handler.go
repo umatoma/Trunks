@@ -19,7 +19,7 @@ func (h *Handler) Index(c echo.Context) error {
   return c.HTMLBlob(http.StatusOK, bytes)
 }
 
-// PostAttack handle POST /attack request
+// PostAttack handle POST /api/attack request
 func (h *Handler) PostAttack(c echo.Context) error {
 	opts := NewAttackOptions()
 
@@ -39,7 +39,7 @@ func (h *Handler) PostAttack(c echo.Context) error {
   return c.JSON(http.StatusOK, opts)
 }
 
-// StopAttack handle DELETE /attack request
+// StopAttack handle DELETE /api/attack request
 func (h *Handler) StopAttack(c echo.Context) error {
 	if ok := StopAttack(); !ok {
 		return c.JSON(http.StatusOK, map[string]string{
