@@ -28,8 +28,8 @@ func NewJSONResultsReporter(rs *vegeta.Results) vegeta.Reporter {
 	}
 }
 
-// GetJSONResultsReporter make a vegeta.Repoter from file
-func GetJSONResultsReporter(file *os.File) (vegeta.Reporter, error) {
+// JSONREsultsReporterFactory make a vegeta.Repoter from file
+func JSONREsultsReporterFactory(file *os.File) (vegeta.Reporter, error) {
 	decoder := vegeta.NewDecoder(file)
 
 	var reporter vegeta.Reporter
@@ -55,8 +55,8 @@ func GetJSONResultsReporter(file *os.File) (vegeta.Reporter, error) {
 	return reporter, nil
 }
 
-// GetPlotReporter make a vegeta.Repoter from file
-func GetPlotReporter(file *os.File) (vegeta.Reporter, error) {
+// PlotReporterFactory make a vegeta.Repoter from file
+func PlotReporterFactory(file *os.File) (vegeta.Reporter, error) {
 	decoder := vegeta.NewDecoder(file)
 
 	var reporter vegeta.Reporter

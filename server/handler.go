@@ -63,7 +63,7 @@ func (h *Handler) ShowReport(c echo.Context) error {
 	}
 	defer file.Close()
 
-	reporter, err := GetJSONResultsReporter(file)
+	reporter, err := JSONREsultsReporterFactory(file)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
