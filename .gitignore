@@ -26,3 +26,5 @@ _testmain.go
 /vendor
 /tmp
 /results
+/node_modules
+/assets

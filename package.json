@@ -4,6 +4,7 @@
   "description": "Trunks is a simple HTTP load testing tool with UI",
   "main": "client/index.js",
   "scripts": {
+    "build:dev": "webpack -d --progress",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,18 @@
   "bugs": {
     "url": "https://github.com/umatoma/trunks/issues"
   },
-  "homepage": "https://github.com/umatoma/trunks#readme"
+  "homepage": "https://github.com/umatoma/trunks#readme",
+  "devDependencies": {
+    "babel-core": "^6.23.1",
+    "babel-loader": "^6.4.0",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-react": "^6.23.0",
+    "html-webpack-plugin": "^2.28.0",
+    "path": "^0.12.7",
+    "webpack": "^2.2.1"
+  },
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  }
 }

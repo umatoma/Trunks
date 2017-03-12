@@ -4,3 +4,4 @@ import:
   version: ^3.0.3
 - package: github.com/tsenart/vegeta
   version: ^6.2.0
+- package: github.com/elazarl/go-bindata-assetfs

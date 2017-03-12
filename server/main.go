@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"log"
+	"net/http"
 
+	"github.com/elazarl/go-bindata-assetfs"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
@@ -28,10 +30,21 @@ func main() {
 	e.Use(middleware.Logger())
 
 	// routes
-	e.GET("/", h.Index)
 	e.POST("/api/attack", h.PostAttack)
 	e.DELETE("/api/attack", h.StopAttack)
 	e.GET("/api/reports/:filename", h.ShowReport)
+
+	// serve static files
+	fileServerHandler := http.FileServer(&assetfs.AssetFS{
+		Asset:     Asset,
+		AssetDir:  AssetDir,
+		AssetInfo: AssetInfo,
+		Prefix:    "assets",
+	})
+	e.GET("*", func(c echo.Context) error {
+		fileServerHandler.ServeHTTP(c.Response().Writer, c.Request())
+		return nil
+	})
 
 	// start server
 	if err := e.Start(":3000"); err != nil {

@@ -1,8 +1,10 @@
-hash: 4f6c646d1e6b561532c2df21b3591b129bc5f0413871e285d169f31bfb8e4717
-updated: 2017-03-10T23:23:13.652722049+09:00
+hash: 767ec12555c519f24c20acba2efaf18217f81527caa9cd5534ba9525c64c22ab
+updated: 2017-03-12T21:14:36.739383793+09:00
 imports:
 - name: github.com/dgrijalva/jwt-go
   version: 2268707a8f0843315e2004ee4f1d021dc08baedf
+- name: github.com/elazarl/go-bindata-assetfs
+  version: 30f82fa23fd844bd5bb1e5f216db87fd77b5eb43
 - name: github.com/labstack/echo
   version: 948d607539e92f3974d8f24951c8975d7342e24a
   subpackages:
