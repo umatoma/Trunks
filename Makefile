@@ -5,7 +5,9 @@ depends:
 	go get github.com/elazarl/go-bindata-assetfs/...
 	npm install
 asset:
-	./node_modules/.bin/webpack -d --progress
+	./node_modules/.bin/webpack -p --progress
 	go-bindata-assetfs -o server/bindata_assetfs.go assets/*
 start:
 	go run server/*.go
+lint:
+	./node_modules/.bin/eslint --ext .js --ext .jsx ./
