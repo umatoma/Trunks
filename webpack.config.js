@@ -8,7 +8,7 @@ module.exports = {
   entry: './client/index.jsx',
   output: {
     path: path.resolve('assets'),
-    filename: 'js/bundle.js',
+    filename: 'bundle.js',
     publicPath: '/'
   },
   resolve: {
@@ -25,11 +25,14 @@ module.exports = {
           use: 'css-loader?minimize!sass-loader'
         })
       },
-      { test: /\.svg$/, loader: 'url-loader?mimetype=image/svg+xml' },
-      { test: /\.woff$/, loader: 'url-loader?mimetype=application/font-woff' },
-      { test: /\.woff2$/, loader: 'url-loader?mimetype=application/font-woff' },
-      { test: /\.eot$/, loader: 'url-loader?mimetype=application/font-woff' },
-      { test: /\.ttf$/, loader: 'url-loader?mimetype=application/font-woff' }
+      {
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'url-loader?limit=10000&mimetype=application/font-woff'
+      },
+      {
+        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'file-loader'
+      }
     ]
   },
   plugins: [
@@ -39,6 +42,6 @@ module.exports = {
       inject: 'body',
       hash: true
     }),
-    new ExtractTextPlugin('css/bundle.css')
+    new ExtractTextPlugin('bundle.css')
   ]
 };
