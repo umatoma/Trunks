@@ -14,9 +14,9 @@ import (
 )
 
 var (
-	errZeroRate = errors.New("rate must be bigger than zero")
+	errZeroRate     = errors.New("rate must be bigger than zero")
 	errEmptyTargets = errors.New("targets is required")
-	errBadCert = errors.New("bad certificate")
+	errBadCert      = errors.New("bad certificate")
 )
 
 type csl []string
@@ -27,41 +27,41 @@ type localAddr struct{ *net.IPAddr }
 
 // AttackOptions aggregates the vegeta attack options
 type AttackOptions struct {
-	Targets			string
+	Targets string
 	// Output			string
-	Body				string
-	Cert				string
-	Key					string
-	RootCerts		csl
-	HTTP2				bool
-	Insecure		bool
-	Lazy				bool
-	Duration		string
-	Timeout			string
-	Rate				uint64
-	Workers			uint64
-	Connections	int
-	Redirects		int
-	Headers			headers
-	Laddr				localAddr
-	Keepalive		bool
+	Body        string
+	Cert        string
+	Key         string
+	RootCerts   csl
+	HTTP2       bool
+	Insecure    bool
+	Lazy        bool
+	Duration    string
+	Timeout     string
+	Rate        uint64
+	Workers     uint64
+	Connections int
+	Redirects   int
+	Headers     headers
+	Laddr       localAddr
+	Keepalive   bool
 }
 
 // NewAttackOptions returns a new AttackOptions with default options
 func NewAttackOptions() *AttackOptions {
 	return &AttackOptions{
-		HTTP2: true,
-		Insecure: false,
-		Lazy: false,
-		Duration: "0",
-		Timeout: vegeta.DefaultTimeout.String(),
-		Rate: 50,
-		Workers: vegeta.DefaultWorkers,
+		HTTP2:       true,
+		Insecure:    false,
+		Lazy:        false,
+		Duration:    "0",
+		Timeout:     vegeta.DefaultTimeout.String(),
+		Rate:        50,
+		Workers:     vegeta.DefaultWorkers,
 		Connections: vegeta.DefaultConnections,
-		Redirects: vegeta.DefaultRedirects,
-		Headers: headers{http.Header{}},
-		Laddr: localAddr{&vegeta.DefaultLocalAddr},
-		Keepalive: true,
+		Redirects:   vegeta.DefaultRedirects,
+		Headers:     headers{http.Header{}},
+		Laddr:       localAddr{&vegeta.DefaultLocalAddr},
+		Keepalive:   true,
 	}
 }
 
@@ -86,10 +86,10 @@ func (opts *AttackOptions) GetAttackExecuter() (*AttackExecuter, error) {
 	}
 
 	var (
-		tr vegeta.Targeter
-		src = strings.NewReader(opts.Targets)
+		tr   vegeta.Targeter
+		src  = strings.NewReader(opts.Targets)
 		body = []byte(opts.Body)
-		hdr = opts.Headers.Header
+		hdr  = opts.Headers.Header
 	)
 
 	if opts.Lazy {

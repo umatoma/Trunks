@@ -1,21 +1,21 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"log"
 	"os"
-	"io"
-	"time"
-	"sync"
-	"errors"
 	"path/filepath"
+	"sync"
+	"time"
 
 	vegeta "github.com/tsenart/vegeta/lib"
 )
 
 var (
 	currentExeuter *AttackExecuter
-	execFlagLock sync.Mutex
+	execFlagLock   sync.Mutex
 
 	errNowExecuting = errors.New("attacker is executing now")
 )
@@ -24,9 +24,9 @@ var (
 type AttackExecuter struct {
 	attacker *vegeta.Attacker
 	targeter vegeta.Targeter
-	rate uint64
+	rate     uint64
 	duration time.Duration
-	stop chan bool
+	stop     chan bool
 	stopOnce sync.Once
 }
 
@@ -35,14 +35,14 @@ func NewAttackExecuter(atk *vegeta.Attacker, tr vegeta.Targeter, rate uint64, du
 	return &AttackExecuter{
 		attacker: atk,
 		targeter: tr,
-		rate: rate,
+		rate:     rate,
 		duration: duration,
-		stop: make(chan bool, 1),
+		stop:     make(chan bool, 1),
 	}
 }
 
 // RegisterAttack register vegeta attack job
-func (executer *AttackExecuter) RegisterAttack(resultsBasePath string) (error) {
+func (executer *AttackExecuter) RegisterAttack(resultsBasePath string) error {
 	execFlagLock.Lock()
 	defer execFlagLock.Unlock()
 
@@ -109,7 +109,7 @@ func (executer *AttackExecuter) attack(filePath string, reportWriter io.Writer) 
 	reporter := vegeta.NewJSONReporter(&m)
 	ticker := time.NewTicker(2 * time.Second)
 
-	attack:
+attack:
 	for {
 		select {
 		case <-executer.stop:

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"os"
-	"io"
 	"encoding/json"
+	"io"
+	"os"
 
 	vegeta "github.com/tsenart/vegeta/lib"
 )
@@ -14,13 +14,13 @@ func NewJSONResultsReporter(rs *vegeta.Results) vegeta.Reporter {
 		results := make([]map[string]interface{}, rs.Len())
 		for i, r := range *rs {
 			results[i] = map[string]interface{}{
-				"Code": r.Code,
-				"Timestamp": r.Timestamp,
-				"Latency": r.Latency,
-				"BytesOut": r.BytesOut,
-				"BytesIn": r.BytesIn,
-				"Error": r.Error,
-				"ElapsedTime": r.Timestamp.Sub((*rs)[0].Timestamp).Seconds(),
+				"Code":            r.Code,
+				"Timestamp":       r.Timestamp,
+				"Latency":         r.Latency,
+				"BytesOut":        r.BytesOut,
+				"BytesIn":         r.BytesIn,
+				"Error":           r.Error,
+				"ElapsedTime":     r.Timestamp.Sub((*rs)[0].Timestamp).Seconds(),
 				"LatencyMilliSec": r.Latency.Seconds() * 1000,
 			}
 		}

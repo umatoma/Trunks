@@ -1,13 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"bytes"
+	"fmt"
+	"net/http"
 	"os"
 	"path/filepath"
-  "net/http"
 
-  "github.com/labstack/echo"
+	"github.com/labstack/echo"
 )
 
 // Handler is the HTTP handler
@@ -35,7 +35,7 @@ func (h *Handler) Index(c echo.Context) error {
 		echo.NewHTTPError(http.StatusNotFound, err.Error())
 	}
 
-  return c.HTMLBlob(http.StatusOK, bytes)
+	return c.HTMLBlob(http.StatusOK, bytes)
 }
 
 // PostAttack handle POST /api/attack request
@@ -55,7 +55,7 @@ func (h *Handler) PostAttack(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-  return c.JSON(http.StatusOK, opts)
+	return c.JSON(http.StatusOK, opts)
 }
 
 // StopAttack handle DELETE /api/attack request
