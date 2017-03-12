@@ -30,7 +30,7 @@ func (h *Handler) ValidateOptions() error {
 
 // Index handle GET / request
 func (h *Handler) Index(c echo.Context) error {
-	bytes, err := Asset("assets/index.html")
+	bytes, err := Asset("views/index.html")
 	if err != nil {
 		echo.NewHTTPError(http.StatusNotFound, err.Error())
 	}
