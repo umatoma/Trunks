@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"bytes"
 	"os"
 	"path/filepath"
@@ -10,7 +11,22 @@ import (
 )
 
 // Handler is the HTTP handler
-type Handler struct {}
+type Handler struct {
+	ResultsDir string
+}
+
+// ValidateOptions check if options is valid
+func (h *Handler) ValidateOptions() error {
+	if h.ResultsDir == "" {
+		return fmt.Errorf("results dir should not be empty")
+	}
+
+	if err := os.MkdirAll(h.ResultsDir, 0777); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 // Index handle GET / request
 func (h *Handler) Index(c echo.Context) error {
@@ -35,7 +51,7 @@ func (h *Handler) PostAttack(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	if err := executer.RegisterAttack("tmp"); err != nil {
+	if err := executer.RegisterAttack(h.ResultsDir); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
@@ -57,7 +73,7 @@ func (h *Handler) StopAttack(c echo.Context) error {
 // ShowReport handle GET /api/reports/:filename
 func (h *Handler) ShowReport(c echo.Context) error {
 	filename := c.Param("filename")
-	file, err := os.Open(filepath.Join("tmp", filename))
+	file, err := os.Open(filepath.Join(h.ResultsDir, filename))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
