@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from './Header';
+import FromPostAttack from './FormPostAttack';
 
 export default () => (
   <div>
@@ -14,6 +15,7 @@ export default () => (
             <h2 className="subtitle">
               Trunks is a simple HTTP load testing tool with UI
             </h2>
+            <FromPostAttack />
           </div>
         </div>
       </section>
