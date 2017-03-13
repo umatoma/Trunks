@@ -65,8 +65,8 @@ func NewAttackOptions() *AttackOptions {
 	}
 }
 
-// GetAttackExecuter generates AttackExecuter from AttackOptions
-func (opts *AttackOptions) GetAttackExecuter() (*AttackExecuter, error) {
+// GetAttackWorker generates AttackWorker from AttackOptions
+func (opts *AttackOptions) GetAttackWorker() (*AttackWorker, error) {
 	if opts.Rate == 0 {
 		return nil, errZeroRate
 	}
@@ -114,7 +114,7 @@ func (opts *AttackOptions) GetAttackExecuter() (*AttackExecuter, error) {
 		vegeta.HTTP2(opts.HTTP2),
 	)
 
-	return NewAttackExecuter(atk, tr, opts.Rate, duration), nil
+	return NewAttackWorker(atk, tr, opts.Rate, duration), nil
 }
 
 // tlsConfig builds a *tls.Config from the given options.
