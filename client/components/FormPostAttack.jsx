@@ -35,13 +35,13 @@ class FormPostAttack extends React.Component {
           <p className="control">
             <textarea
               className="textarea"
-              placeholder="targets"
+              placeholder="GET https://127.0.0.1:8000/path/to/api?q=trunks"
               value={this.state.Targets}
               onChange={this.handleChangeTargets}
             />
           </p>
           <p className="control">
-            <button className="button is-primary" type="submit">Submit</button>
+            <button className="button is-primary" type="submit">Attack!!</button>
           </p>
         </form>
       </div>
