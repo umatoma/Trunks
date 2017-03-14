@@ -8,10 +8,17 @@ const style = idx => ({
   zIndex: 99999,
 });
 
+const className = (notify) => {
+  if (notify.type) {
+    return `notification is-${notify.type}`;
+  }
+  return 'notification is-primary';
+};
+
 const Notifications = ({ notifications, onClose }) => (
   <div>
     {notifications.map((n, i) => (
-      <div key={n.key} style={style(i)} className="notification is-primary">
+      <div key={n.key} style={style(i)} className={className(n)}>
         <button className="delete" onClick={() => { onClose(n.key); }} />
         {n.message}
       </div>

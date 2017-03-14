@@ -7,9 +7,7 @@ depends:
 	npm install
 asset:
 	./node_modules/.bin/webpack -p --progress
-	go-bindata-assetfs -o server/bindata_assetfs.go assets/*
-assetdev:
-	./node_modules/.bin/webpack -d --progress
+build:
 	go-bindata-assetfs -o server/bindata_assetfs.go assets/*
 start:
 	go run server/*.go
