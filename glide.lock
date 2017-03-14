@@ -1,10 +1,12 @@
-hash: 767ec12555c519f24c20acba2efaf18217f81527caa9cd5534ba9525c64c22ab
-updated: 2017-03-12T21:14:36.739383793+09:00
+hash: cf81b320676af222ce4803db14c31298cfb68e07c240f608694b7a553326e097
+updated: 2017-03-14T23:01:44.309806775+09:00
 imports:
 - name: github.com/dgrijalva/jwt-go
   version: 2268707a8f0843315e2004ee4f1d021dc08baedf
 - name: github.com/elazarl/go-bindata-assetfs
   version: 30f82fa23fd844bd5bb1e5f216db87fd77b5eb43
+- name: github.com/gorilla/websocket
+  version: 3ab3a8b8831546bd18fd182c20687ca853b2bb13
 - name: github.com/labstack/echo
   version: 948d607539e92f3974d8f24951c8975d7342e24a
   subpackages:

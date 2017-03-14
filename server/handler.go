@@ -46,12 +46,12 @@ func (h *Handler) PostAttack(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	Worker, err := opts.GetAttackWorker()
+	worker, err := opts.GetAttackWorker()
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	if err := Worker.Run(h.ResultsDir); err != nil {
+	if err := worker.Run(h.ResultsDir); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -70,7 +69,7 @@ func (worker *AttackWorker) Run(resultsBasePath string) error {
 	currentWorker = worker
 	go func() {
 		filePath := resultFilePath(resultsBasePath)
-		if err := worker.attack(filePath, os.Stdout); err != nil {
+		if err := worker.attack(filePath); err != nil {
 			log.Println(err)
 		}
 		worker.UnbindWorker()
@@ -88,7 +87,7 @@ func (worker *AttackWorker) UnbindWorker() {
 	}
 }
 
-func (worker *AttackWorker) attack(filePath string, reportWriter io.Writer) error {
+func (worker *AttackWorker) attack(filePath string) error {
 	out, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("error opening %s: %s", filePath, err)
@@ -101,7 +100,7 @@ func (worker *AttackWorker) attack(filePath string, reportWriter io.Writer) erro
 
 	var m vegeta.Metrics
 	report := &m
-	reporter := vegeta.NewJSONReporter(&m)
+	// reporter := vegeta.NewJSONReporter(&m)
 	ticker := time.NewTicker(2 * time.Second)
 
 attack:
@@ -112,7 +111,7 @@ attack:
 			log.Println("stopped attack")
 			return nil
 		case <-ticker.C:
-			reporter.Report(reportWriter)
+			webSocketHub.Broadcast("attackReport", report)
 		case r, ok := <-res:
 			if !ok {
 				log.Println("finish attack")

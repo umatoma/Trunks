@@ -10,6 +10,8 @@ import (
 	"github.com/labstack/echo/middleware"
 )
 
+var webSocketHub = NewWebSocketHub()
+
 func main() {
 	// initialize handler
 	h := &Handler{}
@@ -23,6 +25,9 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	// start websocket server
+	go webSocketHub.Run()
+
 	// create echo server instance
 	e := echo.New()
 
@@ -33,6 +38,12 @@ func main() {
 	e.POST("/api/attack", h.PostAttack)
 	e.DELETE("/api/attack", h.StopAttack)
 	e.GET("/api/reports/:filename", h.ShowReport)
+
+	// for websocket
+	e.GET("/ws", func(c echo.Context) error {
+		serveWebSocket(webSocketHub, c.Response().Writer, c.Request())
+		return nil
+	})
 
 	// serve static files
 	fileServerHandler := http.FileServer(&assetfs.AssetFS{

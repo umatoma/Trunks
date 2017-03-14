@@ -2,6 +2,8 @@
   "extends": "airbnb",
   "globals": {
     "document": true,
-    "fetch": true
+    "fetch": true,
+    "window": true,
+    "WebSocket": true
   }
 }

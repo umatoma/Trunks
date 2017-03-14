@@ -7,7 +7,19 @@ import Notifications from './Notifications';
 class App extends React.Component {
   constructor() {
     super();
+
+    // create websocket connection
+    const conn = new WebSocket(`ws://${document.location.host}/ws`);
+    conn.onclose = () => {
+      this.addNotify('WebSocket connection closed');
+    };
+    conn.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log(message.event, message.data);
+    };
+
     this.state = {
+      webSocketConn: conn,
       notifications: OrderedSet(),
     };
     this.addNotify = this.addNotify.bind(this);
