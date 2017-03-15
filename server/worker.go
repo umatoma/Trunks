@@ -69,7 +69,7 @@ func (worker *AttackWorker) Run(resultsBasePath string) error {
 	currentWorker = worker
 	go func() {
 		filePath := resultFilePath(resultsBasePath)
-		if err := worker.attack(filePath); err != nil {
+		if err := worker.attack(filePath, webSocketHub); err != nil {
 			log.Println(err)
 		}
 		worker.UnbindWorker()
@@ -87,7 +87,7 @@ func (worker *AttackWorker) UnbindWorker() {
 	}
 }
 
-func (worker *AttackWorker) attack(filePath string) error {
+func (worker *AttackWorker) attack(filePath string, broadcaster BroadCaster) error {
 	out, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("error opening %s: %s", filePath, err)
@@ -111,7 +111,7 @@ attack:
 			log.Println("stopped attack")
 			return nil
 		case <-ticker.C:
-			webSocketHub.Broadcast("attackReport", report)
+			broadcaster.Broadcast("attackReport", report)
 		case r, ok := <-res:
 			if !ok {
 				log.Println("finish attack")

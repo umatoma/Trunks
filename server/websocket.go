@@ -32,6 +32,10 @@ var (
 	}
 )
 
+type BroadCaster interface {
+	Broadcast(event string, data interface{}) error
+}
+
 type message struct {
 	Event string `json:"event"`
 	Data  interface{} `json:"data"`
