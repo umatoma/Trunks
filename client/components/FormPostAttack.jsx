@@ -7,7 +7,7 @@ class FormPostAttack extends React.Component {
     this.state = {
       form: {
         Targets: '',
-        Duration: '5s',
+        Duration: '10s',
         Rate: 1,
       },
     };

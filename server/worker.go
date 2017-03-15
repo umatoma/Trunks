@@ -111,7 +111,7 @@ attack:
 			log.Println("stopped attack")
 			return nil
 		case <-ticker.C:
-			broadcaster.Broadcast("attackReport", metrics)
+			broadcaster.Broadcast("attackMetrics", metrics)
 		case r, ok := <-res:
 			if !ok {
 				log.Println("finish attack")
@@ -122,6 +122,7 @@ attack:
 			}
 			// add result to report
 			metrics.Add(r)
+			metrics.Close()
 			log.Println(r)
 		}
 	}

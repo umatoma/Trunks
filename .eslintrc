@@ -1,9 +1,0 @@
-{
-  "extends": "airbnb",
-  "globals": {
-    "document": true,
-    "fetch": true,
-    "window": true,
-    "WebSocket": true
-  }
-}
