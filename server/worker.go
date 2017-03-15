@@ -87,7 +87,7 @@ func (worker *AttackWorker) UnbindWorker() {
 	}
 }
 
-func (worker *AttackWorker) attack(filePath string, broadcaster BroadCaster) error {
+func (worker *AttackWorker) attack(filePath string, broadcaster Broadcaster) error {
 	out, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("error opening %s: %s", filePath, err)
@@ -98,10 +98,10 @@ func (worker *AttackWorker) attack(filePath string, broadcaster BroadCaster) err
 	res := atk.Attack(worker.targeter, worker.rate, worker.duration)
 	enc := vegeta.NewEncoder(out)
 
-	var m vegeta.Metrics
-	report := &m
-	// reporter := vegeta.NewJSONReporter(&m)
+	metrics := &vegeta.Metrics{}
+	defer metrics.Close()
 	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
 
 attack:
 	for {
@@ -111,7 +111,7 @@ attack:
 			log.Println("stopped attack")
 			return nil
 		case <-ticker.C:
-			broadcaster.Broadcast("attackReport", report)
+			broadcaster.Broadcast("attackReport", metrics)
 		case r, ok := <-res:
 			if !ok {
 				log.Println("finish attack")
@@ -121,12 +121,10 @@ attack:
 				return err
 			}
 			// add result to report
-			report.Add(r)
+			metrics.Add(r)
 			log.Println(r)
 		}
 	}
-	// stop time tiker
-	ticker.Stop()
 
 	return nil
 }

@@ -32,7 +32,7 @@ var (
 	}
 )
 
-type BroadCaster interface {
+type Broadcaster interface {
 	Broadcast(event string, data interface{}) error
 }
 
