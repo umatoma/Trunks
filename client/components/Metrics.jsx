@@ -12,7 +12,7 @@ class Metrics extends React.Component { // eslint-disable-line
   render() {
     const { worker, metrics } = this.props;
 
-    if (!worker.get('is_active')) {
+    if (!worker.get('is_active') && !metrics.is_active) {
       return null;
     }
 

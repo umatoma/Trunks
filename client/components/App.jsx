@@ -55,6 +55,11 @@ class App extends React.Component {
           worker: this.state.worker.merge(Object.assign({ is_active: true }, data)),
         });
         break;
+      case 'attackFinish':
+        this.setState({
+          worker: this.state.worker.merge(Object.assign({ is_active: false }, data)),
+        });
+        break;
       case 'attackMetrics':
         this.setState({
           metrics: new MetricsModel(Object.assign({ is_active: true }, data)),
@@ -92,7 +97,7 @@ class App extends React.Component {
                 <h2 className="subtitle">
                   Trunks is a simple HTTP load testing tool with UI
                 </h2>
-                <FromPostAttack addNotify={this.addNotify} />
+                <FromPostAttack addNotify={this.addNotify} isAttacking={worker.get('is_active')} />
               </div>
             </div>
           </section>

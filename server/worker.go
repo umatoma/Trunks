@@ -118,7 +118,6 @@ attack:
 			broadcaster.Broadcast("attackMetrics", metrics)
 		case r, ok := <-res:
 			if !ok {
-				log.Println("finish attack")
 				broadcaster.Broadcast("attackMetrics", metrics)
 				break attack
 			}
@@ -131,6 +130,9 @@ attack:
 			log.Println(r)
 		}
 	}
+
+	log.Println("finish attack")
+	broadcaster.Broadcast("attackFinish", nil)
 
 	return nil
 }

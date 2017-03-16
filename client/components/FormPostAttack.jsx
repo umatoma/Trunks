@@ -38,6 +38,19 @@ class FormPostAttack extends React.Component {
     };
   }
 
+  submitOrCancelButton() {
+    if (this.props.isAttacking) {
+      return (
+        <button className="button is-danger is-fullwidth is-loading" type="button" />
+      );
+    }
+    return (
+      <button className="button is-primary is-fullwidth" type="submit">
+        Attack!!
+      </button>
+    );
+  }
+
   render() {
     return (
       <div className="form-post-attack">
@@ -104,7 +117,7 @@ class FormPostAttack extends React.Component {
             {/* end of column */}
           </div>
           <p className="control">
-            <button className="button is-primary is-fullwidth" type="submit">Attack!!</button>
+            {this.submitOrCancelButton()}
           </p>
         </form>
       </div>
@@ -113,6 +126,7 @@ class FormPostAttack extends React.Component {
 }
 
 FormPostAttack.propTypes = {
+  isAttacking: React.PropTypes.bool.isRequired,
   addNotify: React.PropTypes.func.isRequired,
 };
 
