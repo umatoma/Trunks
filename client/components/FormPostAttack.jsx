@@ -6,13 +6,13 @@ class FormPostAttack extends React.Component {
     super();
     this.state = {
       form: {
-        Targets: '',
+        Body: '',
         Duration: '10s',
         Rate: 1,
+        Targets: '',
       },
     };
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleChangeTargets = this.handleChangeTargets.bind(this);
   }
 
   handleSubmit(e) {
@@ -22,26 +22,89 @@ class FormPostAttack extends React.Component {
       .catch(() => this.props.addNotify('failed to post attack', 'danger'));
   }
 
-  handleChangeTargets(e) {
-    this.setState({
-      form: Object.assign({}, this.state.form, { Targets: e.target.value }),
-    });
+  handleChangeTextField(key) {
+    return (e) => {
+      this.setState({
+        form: Object.assign({}, this.state.form, { [key]: e.target.value }),
+      });
+    };
+  }
+
+  handleChangeTextArea(key) {
+    return (e) => {
+      this.setState({
+        form: Object.assign({}, this.state.form, { [key]: e.target.value }),
+      });
+    };
   }
 
   render() {
     return (
-      <div>
+      <div className="form-post-attack">
         <form onSubmit={this.handleSubmit}>
+          <div className="columns">
+            <div className="column is-2">
+              <div className="field">
+                <label className="label" htmlFor="Duration">Duration</label>
+                <p className="control">
+                  <input
+                    className="input"
+                    type="text"
+                    name="Duration"
+                    placeholder="10s"
+                    value={this.state.Duration}
+                    onChange={this.handleChangeTextField('Duration')}
+                  />
+                </p>
+              </div>
+            </div>
+            {/* end of column */}
+            <div className="column is-2">
+              <div className="field">
+                <label className="label" htmlFor="Rate">Rate</label>
+                <p className="control">
+                  <input
+                    className="input"
+                    type="text"
+                    name="Rate"
+                    placeholder="1"
+                    value={this.state.Rate}
+                    onChange={this.handleChangeTextField('Rate')}
+                  />
+                </p>
+              </div>
+            </div>
+            {/* end of column */}
+            <div className="column is-8">
+              <div className="field">
+                <label className="label" htmlFor="Targets">Targets</label>
+                <p className="control">
+                  <textarea
+                    className="textarea"
+                    name="Targets"
+                    placeholder="GET https://127.0.0.1:8000/path/to/api?q=trunks"
+                    value={this.state.Targets}
+                    onChange={this.handleChangeTextArea('Targets')}
+                  />
+                </p>
+              </div>
+              <div className="field">
+                <label className="label" htmlFor="Body">Body</label>
+                <p className="control">
+                  <textarea
+                    className="textarea"
+                    name="Body"
+                    placeholder="Requests body file"
+                    value={this.state.Body}
+                    onChange={this.handleChangeTextArea('Body')}
+                  />
+                </p>
+              </div>
+            </div>
+            {/* end of column */}
+          </div>
           <p className="control">
-            <textarea
-              className="textarea"
-              placeholder="GET https://127.0.0.1:8000/path/to/api?q=trunks"
-              value={this.state.Targets}
-              onChange={this.handleChangeTargets}
-            />
-          </p>
-          <p className="control">
-            <button className="button is-primary" type="submit">Attack!!</button>
+            <button className="button is-primary is-fullwidth" type="submit">Attack!!</button>
           </p>
         </form>
       </div>

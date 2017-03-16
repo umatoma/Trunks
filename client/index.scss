@@ -3,3 +3,12 @@ $fa-font-path: "~font-awesome/fonts/";
 // modules
 @import "~bulma/bulma";
 @import "~font-awesome/scss/font-awesome.scss";
+// custom styles
+.form-post-attack {
+  .field {
+    margin-bottom: 8px;
+  }
+  .textarea {
+    min-height: 90px;
+  }
+}
