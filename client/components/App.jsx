@@ -1,5 +1,5 @@
 import React from 'react';
-import { OrderedSet, Record } from 'immutable';
+import { OrderedSet, Record, Map } from 'immutable';
 import Header from './Header';
 import FromPostAttack from './FormPostAttack';
 import Metrics from './Metrics';
@@ -34,6 +34,7 @@ class App extends React.Component {
     this.state = {
       webSocketConn: conn,
       notifications: OrderedSet(),
+      worker: Map({ is_active: false, duration: 0, rate: 0 }),
       metrics: new MetricsModel(),
     };
 
@@ -49,6 +50,11 @@ class App extends React.Component {
     const { event, data } = JSON.parse(evt.data);
     console.log(event, data);
     switch (event) {
+      case 'attackStart':
+        this.setState({
+          worker: this.state.worker.merge(Object.assign({ is_active: true }, data)),
+        });
+        break;
       case 'attackMetrics':
         this.setState({
           metrics: new MetricsModel(Object.assign({ is_active: true }, data)),
@@ -72,7 +78,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { metrics } = this.state;
+    const { worker, metrics } = this.state;
     return (
       <div>
         <Header />
@@ -90,7 +96,7 @@ class App extends React.Component {
               </div>
             </div>
           </section>
-          {metrics.is_active ? <Metrics metrics={metrics} /> : null}
+          <Metrics worker={worker} metrics={metrics} />
         </div>
         <Notifications
           notifications={this.state.notifications.toArray()}

@@ -97,10 +97,14 @@ func (worker *AttackWorker) attack(filePath string, broadcaster Broadcaster) err
 	atk := worker.attacker
 	res := atk.Attack(worker.targeter, worker.rate, worker.duration)
 	enc := vegeta.NewEncoder(out)
+	broadcaster.Broadcast("attackStart", map[string]interface{}{
+		"rate": worker.rate,
+		"duration": worker.duration,
+	})
 
 	metrics := &vegeta.Metrics{}
 	defer metrics.Close()
-	ticker := time.NewTicker(2 * time.Second)
+	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
 
 attack:
@@ -115,6 +119,7 @@ attack:
 		case r, ok := <-res:
 			if !ok {
 				log.Println("finish attack")
+				broadcaster.Broadcast("attackMetrics", metrics)
 				break attack
 			}
 			if err = enc.Encode(r); err != nil {
