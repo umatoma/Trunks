@@ -39,7 +39,7 @@ class App extends React.Component {
     };
 
     this.addNotify = this.addNotify.bind(this);
-    this.handleCloseNotify = this.handleCloseNotify.bind(this);
+    this.handleDissmissNotify = this.handleDissmissNotify.bind(this);
   }
 
   handleCloseWebSocket() {
@@ -76,9 +76,9 @@ class App extends React.Component {
     });
   }
 
-  handleCloseNotify(key) {
+  handleDissmissNotify(notification) {
     this.setState({
-      notifications: this.state.notifications.filter(n => n.key !== key),
+      notifications: this.state.notifications.delete(notification),
     });
   }
 
@@ -105,7 +105,7 @@ class App extends React.Component {
         </div>
         <Notifications
           notifications={this.state.notifications.toArray()}
-          onClose={this.handleCloseNotify}
+          onDissmiss={this.handleDissmissNotify}
         />
       </div>
     );
