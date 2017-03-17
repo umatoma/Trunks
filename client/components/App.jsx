@@ -1,11 +1,12 @@
 import React from 'react';
-import { OrderedSet, Record } from 'immutable';
+import { OrderedSet, Record, List } from 'immutable';
 import Header from './Header';
 import Footer from './Footer';
 import SideMenu from './SideMenu';
 import FromPostAttack from './FormPostAttack';
 import Metrics from './Metrics';
 import Notifications from './Notifications';
+import { getResultFiles } from '../lib/api-client';
 
 const Worker = Record({
   status: 'ready',
@@ -44,10 +45,21 @@ class App extends React.Component {
       notifications: OrderedSet(),
       worker: new Worker(),
       metrics: new MetricsModel(),
+      resultFiles: List(),
     };
 
     this.addNotify = this.addNotify.bind(this);
     this.handleDissmissNotify = this.handleDissmissNotify.bind(this);
+  }
+
+  componentDidMount() {
+    this.fetchResultFile();
+  }
+
+  fetchResultFile() {
+    return getResultFiles()
+      .then((files) => { this.setState({ resultFiles: List(files) }); })
+      .catch(() => { this.addNotify('failed to fetch result files'); });
   }
 
   handleCloseWebSocket() {
@@ -67,6 +79,7 @@ class App extends React.Component {
         this.setState({
           worker: this.state.worker.set('status', 'done').set('filename', data.filename),
         });
+        this.fetchResultFile();
         break;
       case 'attackMetrics':
         this.setState({
@@ -91,7 +104,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { worker, metrics } = this.state;
+    const { worker, metrics, resultFiles } = this.state;
     return (
       <div>
         <Header />
@@ -109,12 +122,12 @@ class App extends React.Component {
             </div>
           </section>
           <div className="columns">
-            <div className="column is-2">
+            <div className="column is-3">
               <section className="section">
-                <SideMenu />
+                <SideMenu resultFiles={resultFiles} />
               </section>
             </div>
-            <div className="column is-10">
+            <div className="column is-9">
               <section className="section">
                 <FromPostAttack addNotify={this.addNotify} isAttacking={worker.status === 'active'} />
               </section>
