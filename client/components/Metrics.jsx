@@ -9,22 +9,35 @@ const nanoToSec = (nano, n) => floatFormat((nano / (1000 ** 3)), n);
 const statusCodes = codes => Object.keys(codes).map(key => `${key}:${codes[key]}`).join(',');
 
 class Metrics extends React.Component { // eslint-disable-line
+  resultFileLink() {
+    const { worker } = this.props;
+    if (worker.status === 'done' && worker.filename) {
+      return <a className="button is-primary is-outlined is-fullwidth">Display details</a>;
+    }
+    return null;
+  }
+
+  workerProgress() {
+    const { worker, metrics } = this.props;
+    if (worker.status === 'active') {
+      const prog = 100 * (metrics.requests / (worker.rate * (worker.duration / (1000 ** 3))));
+      return (
+        <progress className="progress is-primary is-small" value={prog} max="100">{prog}%</progress>
+      );
+    }
+    return null;
+  }
+
   render() {
     const { worker, metrics } = this.props;
 
-    if (!worker.get('is_active') && !metrics.is_active) {
+    if (worker.status !== 'active' && worker.status !== 'done') {
       return null;
     }
 
-    if (!metrics.is_active) {
-      return <progress className="progress is-primary is-small" value="0" max="100">0%</progress>;
-    }
-
-    const prog = 100 * (metrics.requests / (worker.get('rate') * (worker.get('duration') / (1000 ** 3))));
     const divider = <span style={{ display: 'inline-block', width: 4 }} />;
     return (
       <div>
-        <progress className="progress is-primary is-small" value={prog} max="100">{prog}%</progress>
         <table className="table">
           <tbody>
             <tr>
@@ -96,6 +109,8 @@ class Metrics extends React.Component { // eslint-disable-line
             </tr>
           </tbody>
         </table>
+        {this.workerProgress()}
+        {this.resultFileLink()}
       </div>
     );
   }

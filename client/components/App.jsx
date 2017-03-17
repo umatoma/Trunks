@@ -1,19 +1,25 @@
 import React from 'react';
-import { OrderedSet, Record, Map } from 'immutable';
+import { OrderedSet, Record } from 'immutable';
 import Header from './Header';
 import FromPostAttack from './FormPostAttack';
 import Metrics from './Metrics';
 import Notifications from './Notifications';
 
+const Worker = Record({
+  status: 'ready',
+  duration: 0,
+  rate: 0,
+  filename: '',
+});
+
 const MetricsModel = Record({
-  is_active: false,
-  bytes_in: {},
-  bytes_out: {},
+  bytes_in: { total: 0, mean: 0 },
+  bytes_out: { total: 0, mean: 0 },
   duration: 0,
   earliest: '',
   end: '',
   errors: [],
-  latencies: {},
+  latencies: { mean: 0, max: 0, '50th': 0, '95th': 0, '99th': 0 },
   latest: {},
   rate: 0,
   requests: 0,
@@ -34,7 +40,7 @@ class App extends React.Component {
     this.state = {
       webSocketConn: conn,
       notifications: OrderedSet(),
-      worker: Map({ is_active: false, duration: 0, rate: 0 }),
+      worker: new Worker(),
       metrics: new MetricsModel(),
     };
 
@@ -48,21 +54,21 @@ class App extends React.Component {
 
   handleWebSocketMessage(evt) {
     const { event, data } = JSON.parse(evt.data);
-    console.log(event, data);
     switch (event) {
       case 'attackStart':
         this.setState({
-          worker: this.state.worker.merge(Object.assign({ is_active: true }, data)),
+          worker: new Worker(Object.assign({ status: 'active', filename: '' }, data)),
+          metrics: new MetricsModel(),
         });
         break;
       case 'attackFinish':
         this.setState({
-          worker: this.state.worker.merge({ is_active: false }),
+          worker: this.state.worker.set('status', 'done').set('filename', data.filename),
         });
         break;
       case 'attackMetrics':
         this.setState({
-          metrics: new MetricsModel(Object.assign({ is_active: true }, data)),
+          metrics: new MetricsModel(data),
         });
         break;
       default:
