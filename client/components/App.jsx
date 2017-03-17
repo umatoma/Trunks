@@ -7,6 +7,7 @@ import TitleBanner from './TitleBanner';
 import SideMenu from './SideMenu';
 import Notifications from './Notifications';
 import Attack from './Attack';
+import WebSocketClient from '../lib/websocket-client';
 import { getResultFiles } from '../lib/api-client';
 
 const Worker = Record({
@@ -37,12 +38,14 @@ class App extends React.Component {
     super();
 
     // create websocket connection
-    const conn = new WebSocket(`ws://${document.location.host}/ws`);
-    conn.onclose = () => this.handleCloseWebSocket();
-    conn.onmessage = evt => this.handleWebSocketMessage(evt);
+    const webSocketClient = new WebSocketClient(`ws://${document.location.host}/ws`);
+    webSocketClient.onClose(this.handleCloseWebSocket.bind(this));
+    webSocketClient.onAttackStart(this.handleAttackStart.bind(this));
+    webSocketClient.onAttackFinish(this.handleAttackFinish.bind(this));
+    webSocketClient.onAttackMetrics(this.handleAttackMetrics.bind(this));
 
     this.state = {
-      webSocketConn: conn,
+      webSocketClient,
       notifications: OrderedSet(),
       worker: new Worker(),
       metrics: new MetricsModel(),
@@ -67,29 +70,24 @@ class App extends React.Component {
     this.addNotify('WebSocket connection closed');
   }
 
-  handleWebSocketMessage(evt) {
-    const { event, data } = JSON.parse(evt.data);
-    switch (event) {
-      case 'attackStart':
-        this.setState({
-          worker: new Worker(Object.assign({ status: 'active', filename: '' }, data)),
-          metrics: new MetricsModel(),
-        });
-        break;
-      case 'attackFinish':
-        this.setState({
-          worker: this.state.worker.set('status', 'done').set('filename', data.filename),
-        });
-        this.fetchResultFile();
-        break;
-      case 'attackMetrics':
-        this.setState({
-          metrics: new MetricsModel(data),
-        });
-        break;
-      default:
-        break;
-    }
+  handleAttackStart(data) {
+    this.setState({
+      worker: new Worker(Object.assign({ status: 'active', filename: '' }, data)),
+      metrics: new MetricsModel(),
+    });
+  }
+
+  handleAttackFinish(data) {
+    this.setState({
+      worker: this.state.worker.set('status', 'done').set('filename', data.filename),
+    });
+    this.fetchResultFile();
+  }
+
+  handleAttackMetrics(data) {
+    this.setState({
+      metrics: new MetricsModel(data),
+    });
   }
 
   addNotify(message, type = 'primary') {
