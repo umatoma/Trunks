@@ -108,19 +108,19 @@ class App extends React.Component {
     return (
       <div>
         <Header />
-        <div className="container">
-          <section className="hero">
-            <div className="hero-body">
-              <div className="container">
-                <h1 className="title">
-                  Trunks
-                </h1>
-                <h2 className="subtitle">
-                  Trunks is a simple HTTP load testing tool with UI
-                </h2>
-              </div>
+        <section className="hero is-primary">
+          <div className="hero-body">
+            <div className="container">
+              <h1 className="title">
+                Trunks
+              </h1>
+              <h2 className="subtitle">
+                Trunks is a simple HTTP load testing tool with UI
+              </h2>
             </div>
-          </section>
+          </div>
+        </section>
+        <div className="container">
           <div className="columns">
             <div className="column is-3">
               <section className="section">
