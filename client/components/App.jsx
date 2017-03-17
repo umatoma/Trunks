@@ -1,6 +1,7 @@
 import React from 'react';
 import { OrderedSet, Record } from 'immutable';
 import Header from './Header';
+import Footer from './Footer';
 import FromPostAttack from './FormPostAttack';
 import Metrics from './Metrics';
 import Notifications from './Notifications';
@@ -117,6 +118,7 @@ class App extends React.Component {
           notifications={this.state.notifications.toArray()}
           onDissmiss={this.handleDissmissNotify}
         />
+        <Footer />
       </div>
     );
   }

@@ -1,11 +1,11 @@
 import React from 'react';
 
 const floatFormat = (number, n) => {
-  const p = 10 ** n;
+  const p = Math.pow(10, n); // eslint-disable-line
   return Math.round(number * p) / p;
 };
-const nanoToMilli = (nano, n) => floatFormat((nano / (1000 ** 2)), n);
-const nanoToSec = (nano, n) => floatFormat((nano / (1000 ** 3)), n);
+const nanoToMilli = (nano, n) => floatFormat((nano / Math.pow(1000, 2)), n); // eslint-disable-line
+const nanoToSec = (nano, n) => floatFormat((nano / Math.pow(1000, 3)), n); // eslint-disable-line
 const statusCodes = codes => Object.keys(codes).map(key => `${key}:${codes[key]}`).join(',');
 
 class Metrics extends React.Component { // eslint-disable-line
@@ -20,7 +20,7 @@ class Metrics extends React.Component { // eslint-disable-line
   workerProgress() {
     const { worker, metrics } = this.props;
     if (worker.status === 'active') {
-      const prog = 100 * (metrics.requests / (worker.rate * (worker.duration / (1000 ** 3))));
+      const prog = 100 * (metrics.requests / (worker.rate * (worker.duration / Math.pow(1000, 3)))); // eslint-disable-line
       return (
         <progress className="progress is-primary is-small" value={prog} max="100">{prog}%</progress>
       );
