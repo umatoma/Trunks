@@ -108,7 +108,7 @@ class App extends React.Component {
             </div>
           </section>
           <section className="section">
-            <FromPostAttack addNotify={this.addNotify} isAttacking={worker.get('is_active')} />
+            <FromPostAttack addNotify={this.addNotify} isAttacking={worker.status === 'active'} />
           </section>
           <section className="section">
             <Metrics worker={worker} metrics={metrics} />
