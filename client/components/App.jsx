@@ -1,7 +1,9 @@
 import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { OrderedSet, Record, List } from 'immutable';
 import Header from './Header';
 import Footer from './Footer';
+import TitleBanner from './TitleBanner';
 import SideMenu from './SideMenu';
 import Notifications from './Notifications';
 import Attack from './Attack';
@@ -105,38 +107,27 @@ class App extends React.Component {
   render() {
     const { worker, metrics, resultFiles } = this.state;
     return (
-      <div>
-        <Header />
-        <section className="hero is-primary">
-          <div className="hero-body">
-            <div className="container">
-              <h1 className="title">
-                Trunks
-              </h1>
-              <h2 className="subtitle">
-                Trunks is a simple HTTP load testing tool with UI
-              </h2>
-            </div>
-          </div>
-        </section>
-        <div className="container">
-          <div className="columns">
-            <div className="column is-3">
-              <section className="section">
+      <Router>
+        <div>
+          <Header />
+          <TitleBanner />
+          <div className="container">
+            <div className="columns">
+              <div className="column is-3">
                 <SideMenu resultFiles={resultFiles} />
-              </section>
-            </div>
-            <div className="column is-9">
-              <Attack worker={worker} metrics={metrics} addNotify={this.addNotify} />
+              </div>
+              <div className="column is-9">
+                <Attack worker={worker} metrics={metrics} addNotify={this.addNotify} />
+              </div>
             </div>
           </div>
+          <Notifications
+            notifications={this.state.notifications.toArray()}
+            onDissmiss={this.handleDissmissNotify}
+          />
+          <Footer />
         </div>
-        <Notifications
-          notifications={this.state.notifications.toArray()}
-          onDissmiss={this.handleDissmissNotify}
-        />
-        <Footer />
-      </div>
+      </Router>
     );
   }
 }
