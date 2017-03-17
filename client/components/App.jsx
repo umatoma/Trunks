@@ -103,11 +103,15 @@ class App extends React.Component {
                 <h2 className="subtitle">
                   Trunks is a simple HTTP load testing tool with UI
                 </h2>
-                <FromPostAttack addNotify={this.addNotify} isAttacking={worker.get('is_active')} />
               </div>
             </div>
           </section>
-          <Metrics worker={worker} metrics={metrics} />
+          <section className="section">
+            <FromPostAttack addNotify={this.addNotify} isAttacking={worker.get('is_active')} />
+          </section>
+          <section className="section">
+            <Metrics worker={worker} metrics={metrics} />
+          </section>
         </div>
         <Notifications
           notifications={this.state.notifications.toArray()}
