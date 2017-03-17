@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"io/ioutil"
+	"strings"
 
 	"github.com/labstack/echo"
 )
@@ -68,6 +70,25 @@ func (h *Handler) StopAttack(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "stop the attack",
 	})
+}
+
+func (h *Handler) ShowResultFiles(c echo.Context) error {
+	files, err := ioutil.ReadDir(h.ResultsDir)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	paths := make([]string, 0)
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+		if strings.HasSuffix(file.Name(), ".bin") {
+			paths = append(paths, file.Name())
+		}
+	}
+
+	return c.JSON(http.StatusOK, paths)
 }
 
 // ShowReport handle GET /api/reports/:filename

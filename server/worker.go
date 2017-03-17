@@ -147,6 +147,6 @@ attack:
 }
 
 func resultFilePath(basePath string) string {
-	filename := fmt.Sprintf("%d.bin", time.Now().UnixNano())
+	filename := fmt.Sprintf("%d.bin", time.Now().Unix())
 	return filepath.Join(basePath, filename)
 }

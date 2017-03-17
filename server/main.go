@@ -37,6 +37,7 @@ func main() {
 	// routes
 	e.POST("/api/attack", h.PostAttack)
 	e.DELETE("/api/attack", h.StopAttack)
+	e.GET("/api/results/files", h.ShowResultFiles)
 	e.GET("/api/reports/:filename", h.ShowReport)
 
 	// for websocket
