@@ -2,6 +2,7 @@ import React from 'react';
 import { OrderedSet, Record } from 'immutable';
 import Header from './Header';
 import Footer from './Footer';
+import SideMenu from './SideMenu';
 import FromPostAttack from './FormPostAttack';
 import Metrics from './Metrics';
 import Notifications from './Notifications';
@@ -107,12 +108,21 @@ class App extends React.Component {
               </div>
             </div>
           </section>
-          <section className="section">
-            <FromPostAttack addNotify={this.addNotify} isAttacking={worker.status === 'active'} />
-          </section>
-          <section className="section">
-            <Metrics worker={worker} metrics={metrics} />
-          </section>
+          <div className="columns">
+            <div className="column is-2">
+              <section className="section">
+                <SideMenu />
+              </section>
+            </div>
+            <div className="column is-10">
+              <section className="section">
+                <FromPostAttack addNotify={this.addNotify} isAttacking={worker.status === 'active'} />
+              </section>
+              <section className="section">
+                <Metrics worker={worker} metrics={metrics} />
+              </section>
+            </div>
+          </div>
         </div>
         <Notifications
           notifications={this.state.notifications.toArray()}
