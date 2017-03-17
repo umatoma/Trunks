@@ -57,7 +57,7 @@ class App extends React.Component {
         break;
       case 'attackFinish':
         this.setState({
-          worker: this.state.worker.merge(Object.assign({ is_active: false }, data)),
+          worker: this.state.worker.merge({ is_active: false }),
         });
         break;
       case 'attackMetrics':

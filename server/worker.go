@@ -94,9 +94,16 @@ func (worker *AttackWorker) attack(filePath string, broadcaster Broadcaster) err
 	}
 	defer out.Close()
 
+	stat, err := out.Stat()
+	if err != nil {
+		return err
+	}
+
 	atk := worker.attacker
 	res := atk.Attack(worker.targeter, worker.rate, worker.duration)
 	enc := vegeta.NewEncoder(out)
+
+	log.Println("start attack", stat.Name())
 	broadcaster.Broadcast("attackStart", map[string]interface{}{
 		"rate": worker.rate,
 		"duration": worker.duration,
@@ -112,7 +119,7 @@ attack:
 		select {
 		case <-worker.ctx.Done():
 			atk.Stop()
-			log.Println("stopped attack")
+			log.Println("stopped attack", stat.Name())
 			return nil
 		case <-ticker.C:
 			broadcaster.Broadcast("attackMetrics", metrics)
@@ -131,8 +138,10 @@ attack:
 		}
 	}
 
-	log.Println("finish attack")
-	broadcaster.Broadcast("attackFinish", nil)
+	log.Println("finish attack", stat.Name())
+	broadcaster.Broadcast("attackFinish", map[string]interface{}{
+		"filename": stat.Name(),
+	})
 
 	return nil
 }
