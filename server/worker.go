@@ -68,8 +68,7 @@ func (worker *AttackWorker) Run(resultsBasePath string) error {
 	// do attack
 	currentWorker = worker
 	go func() {
-		filePath := resultFilePath(resultsBasePath)
-		if err := worker.attack(filePath, webSocketHub); err != nil {
+		if err := worker.attack(resultsBasePath, webSocketHub); err != nil {
 			log.Println(err)
 		}
 		worker.UnbindWorker()
@@ -87,10 +86,12 @@ func (worker *AttackWorker) UnbindWorker() {
 	}
 }
 
-func (worker *AttackWorker) attack(filePath string, broadcaster Broadcaster) error {
-	out, err := os.Create(filePath)
+func (worker *AttackWorker) attack(baseFilePath string, broadcaster Broadcaster) error {
+	tmpFilePath := tmpFile(baseFilePath)
+
+	out, err := os.Create(tmpFilePath)
 	if err != nil {
-		return fmt.Errorf("error opening %s: %s", filePath, err)
+		return fmt.Errorf("error opening %s: %s", tmpFilePath, err)
 	}
 	defer out.Close()
 
@@ -138,6 +139,12 @@ attack:
 		}
 	}
 
+	// from 00000.tmp to 00000.bin
+	out.Close()
+	if err := os.Rename(tmpFilePath, resultFile(baseFilePath)); err != nil {
+		return err
+	}
+
 	log.Println("finish attack", stat.Name())
 	broadcaster.Broadcast("attackFinish", map[string]interface{}{
 		"filename": stat.Name(),
@@ -146,7 +153,12 @@ attack:
 	return nil
 }
 
-func resultFilePath(basePath string) string {
+func tmpFile(basePath string) string {
+	filename := fmt.Sprintf("%d.tmp", time.Now().Unix())
+	return filepath.Join(basePath, filename)
+}
+
+func resultFile(basePath string) string {
 	filename := fmt.Sprintf("%d.bin", time.Now().Unix())
 	return filepath.Join(basePath, filename)
 }
