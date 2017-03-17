@@ -3,9 +3,8 @@ import { OrderedSet, Record, List } from 'immutable';
 import Header from './Header';
 import Footer from './Footer';
 import SideMenu from './SideMenu';
-import FromPostAttack from './FormPostAttack';
-import Metrics from './Metrics';
 import Notifications from './Notifications';
+import Attack from './Attack';
 import { getResultFiles } from '../lib/api-client';
 
 const Worker = Record({
@@ -128,12 +127,7 @@ class App extends React.Component {
               </section>
             </div>
             <div className="column is-9">
-              <section className="section">
-                <FromPostAttack addNotify={this.addNotify} isAttacking={worker.status === 'active'} />
-              </section>
-              <section className="section">
-                <Metrics worker={worker} metrics={metrics} />
-              </section>
+              <Attack worker={worker} metrics={metrics} addNotify={this.addNotify} />
             </div>
           </div>
         </div>
