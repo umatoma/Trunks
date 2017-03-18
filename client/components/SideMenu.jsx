@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+const isCurrentAttack = () => location.pathname === '/';
+const isCurrentResult = filename => location.pathname === `/results/${filename}`;
+
 const SideMenu = ({ resultFiles }) => (
   <section className="section">
     <aside className="menu">
@@ -9,7 +12,12 @@ const SideMenu = ({ resultFiles }) => (
       </p>
       <ul className="menu-list">
         <li>
-          <Link to="/">Attack</Link>
+          <Link
+            to="/"
+            className={isCurrentAttack() ? 'is-active' : null}
+          >
+            Attack
+          </Link>
         </li>
       </ul>
       <p className="menu-label">
@@ -18,7 +26,12 @@ const SideMenu = ({ resultFiles }) => (
       <ul className="menu-list">
         {resultFiles.map(file => (
           <li key={file}>
-            <Link to={`/results/${file}`}>{file}</Link>
+            <Link
+              to={`/results/${file}`}
+              className={isCurrentResult(file) ? 'is-active' : null}
+            >
+              {file}
+            </Link>
           </li>
         ))}
       </ul>

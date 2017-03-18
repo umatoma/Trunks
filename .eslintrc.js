@@ -4,7 +4,8 @@ module.exports = {
     document: true,
     fetch: true,
     window: true,
-    WebSocket: true
+    WebSocket: true,
+    location: true,
   },
   rules: {
     'react/forbid-prop-types': 'off'
