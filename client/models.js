@@ -1,4 +1,4 @@
-import { Record } from 'immutable';
+import { Record, List } from 'immutable';
 
 export const ModelWorker = Record({
   status: 'ready',
@@ -27,7 +27,7 @@ export const ModelReport = Record({
   isFetching: true,
   error: null,
   metrics: new ModelMetrics(),
-  results: [],
+  results: List(),
 });
 
 export const ModelFormAttack = Record({

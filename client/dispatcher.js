@@ -81,7 +81,7 @@ class Dispatcher {
       reports: reports.update(filename, (d) => { // eslint-disable-line
         return d.set('isFetching', false)
           .set('metrics', new ModelMetrics(metrics))
-          .set('results', results);
+          .set('results', List(results));
       }),
     });
   }

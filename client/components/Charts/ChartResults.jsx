@@ -3,17 +3,18 @@ import { findDOMNode } from 'react-dom';
 import Chart from 'chart.js';
 
 const resultsToChartData = (results) => {
+  const resultsArray = results.toArray();
   const datasets = [
     {
       label: 'Latency',
-      data: results.map(res => res.LatencyMilliSec),
+      data: resultsArray.map(res => res.LatencyMilliSec),
       fill: true,
       backgroundColor: 'hsla(271, 100%, 71%, .5)',
       borderWidth: 1.5,
       borderColor: 'hsla(271, 100%, 71%, .8)',
     },
   ];
-  const xLabels = results.map(res => res.ElapsedTime);
+  const xLabels = resultsArray.map(res => res.ElapsedTime);
   return {
     type: 'line',
     data: {
@@ -82,7 +83,7 @@ class ChartResults extends React.Component {
 }
 
 ChartResults.propTypes = {
-  results: React.PropTypes.array.isRequired,
+  results: React.PropTypes.object.isRequired,
 };
 
 export default ChartResults;

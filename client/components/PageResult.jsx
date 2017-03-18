@@ -72,7 +72,7 @@ PageResult.propTypes = {
   onMount: React.PropTypes.func.isRequired,
   report: React.PropTypes.shape({
     isFetching: React.PropTypes.bool.isRequired,
-    results: React.PropTypes.array.isRequired,
+    results: React.PropTypes.object.isRequired,
     metrics: React.PropTypes.object.isRequired,
   }),
 };

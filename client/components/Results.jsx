@@ -50,7 +50,7 @@ class Results extends React.Component {
 }
 
 Results.propTypes = {
-  results: React.PropTypes.array.isRequired,
+  results: React.PropTypes.object.isRequired,
 };
 
 export default Results;
