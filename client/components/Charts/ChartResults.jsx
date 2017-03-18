@@ -8,9 +8,9 @@ const resultsToChartData = (results) => {
       label: 'Latency',
       data: results.map(res => res.LatencyMilliSec),
       fill: true,
-      backgroundColor: 'hsla(171, 100%, 41%, .5)',
+      backgroundColor: 'hsla(271, 100%, 71%, .5)',
       borderWidth: 1.5,
-      borderColor: 'hsla(171, 100%, 41%, .8)',
+      borderColor: 'hsla(271, 100%, 71%, .8)',
     },
   ];
   const xLabels = results.map(res => res.ElapsedTime);

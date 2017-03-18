@@ -13,8 +13,8 @@ class PageResult extends React.Component {
     }
   }
 
-  render() {
-    const { filename, report } = this.props;
+  sectionBody() {
+    const { report } = this.props;
 
     if (!report || report.isFetching !== false) {
       return (
@@ -26,30 +26,34 @@ class PageResult extends React.Component {
 
     if (report.error) {
       return (
-        <div>
-          <section className="section">
-            <h1 className="title">{filename}</h1>
-          </section>
-          <section className="section">
-            <article className="message is-danger">
-              <div className="message-body">{report.error.message}</div>
-            </article>
-          </section>
-        </div>
+        <section className="section">
+          <article className="message is-danger">
+            <div className="message-body">{report.error.message}</div>
+          </article>
+        </section>
       );
     }
 
     return (
       <div>
         <section className="section">
-          <h1 className="title">{filename}</h1>
-        </section>
-        <section className="section">
           <ChartResults results={report.results} />
         </section>
         <section className="section">
           <Metrics metrics={report.metrics} />
         </section>
+      </div>
+    );
+  }
+
+  render() {
+    const { filename } = this.props;
+    return (
+      <div>
+        <section className="section">
+          <h1 className="title">{filename}</h1>
+        </section>
+        {this.sectionBody()}
       </div>
     );
   }
