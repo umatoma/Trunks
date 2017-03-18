@@ -36,6 +36,7 @@ const MetricsModel = Record({
 
 const ResultDetail = Record({
   isFetching: true,
+  error: null,
   results: [],
 });
 
@@ -84,7 +85,14 @@ class App extends React.Component {
           }),
         });
       })
-      .catch(() => { this.addNotify('failed to fetch result data'); });
+      .catch((err) => {
+        const { resultDetails } = this.state;
+        this.setState({
+          resultDetails: resultDetails.update(filename, (d) => { // eslint-disable-line
+            return d.set('isFetching', false).set('error', err);
+          }),
+        });
+      });
   }
 
   handleCloseWebSocket() {
