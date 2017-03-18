@@ -5,10 +5,11 @@ const Footer = () => (
     <div className="container">
       <div className="content has-text-centered">
         <p>
-          <strong>Trunks</strong> by <a href="https://github.com/umatoma">umatoma</a>. The source code is licensed <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+          <strong>Trunks</strong> by <a href="https://github.com/umatoma" target="_blank" rel="noopener noreferrer">umatoma</a>.&nbsp;
+          The source code is licensed <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
         </p>
         <p>
-          <a className="icon" href="https://github.com/umatoma/trunks">
+          <a className="icon" href="https://github.com/umatoma/trunks" target="_blank" rel="noopener noreferrer">
             <i className="fa fa-github" />
           </a>
         </p>
