@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { OrderedSet, Record, List, Map } from 'immutable';
+import { OrderedSet, List, Map } from 'immutable';
 import Header from './Header';
 import Footer from './Footer';
 import TitleBanner from './TitleBanner';
@@ -9,37 +9,8 @@ import Notifications from './Notifications';
 import PageAttack from './PageAttack';
 import PageResult from './PageResult';
 import WebSocketClient from '../lib/websocket-client';
+import { ModelWorker, ModelMetrics, ModelReport } from '../models';
 import { getResultFiles, getReport } from '../lib/api-client';
-
-const Worker = Record({
-  status: 'ready',
-  duration: 0,
-  rate: 0,
-  filename: '',
-});
-
-const MetricsModel = Record({
-  bytes_in: { total: 0, mean: 0 },
-  bytes_out: { total: 0, mean: 0 },
-  duration: 0,
-  earliest: '',
-  end: '',
-  errors: null,
-  latencies: { mean: 0, max: 0, '50th': 0, '95th': 0, '99th': 0 },
-  latest: {},
-  rate: 0,
-  requests: 0,
-  status_codes: {},
-  success: 0,
-  wait: 0,
-});
-
-const ResultDetail = Record({
-  isFetching: true,
-  error: null,
-  metrics: new MetricsModel(),
-  results: [],
-});
 
 class App extends React.Component {
   constructor() {
@@ -55,10 +26,10 @@ class App extends React.Component {
     this.state = {
       webSocketClient,
       notifications: OrderedSet(),
-      worker: new Worker(),
-      metrics: new MetricsModel(),
+      worker: new ModelWorker(),
+      metrics: new ModelMetrics(),
       resultFiles: List(),
-      resultDetails: Map(),
+      reports: Map(),
     };
 
     this.addNotify = this.addNotify.bind(this);
@@ -76,22 +47,22 @@ class App extends React.Component {
       .catch(() => { this.addNotify('failed to fetch result files'); });
   }
 
-  fetchResultDetail(filename) {
+  fetchReport(filename) {
     return getReport(filename)
       .then(({ metrics, results }) => {
-        const { resultDetails } = this.state;
+        const { reports } = this.state;
         this.setState({
-          resultDetails: resultDetails.update(filename, (d) => { // eslint-disable-line
+          reports: reports.update(filename, (d) => { // eslint-disable-line
             return d.set('isFetching', false)
-              .set('metrics', new MetricsModel(metrics))
+              .set('metrics', new ModelMetrics(metrics))
               .set('results', results);
           }),
         });
       })
       .catch((err) => {
-        const { resultDetails } = this.state;
+        const { reports } = this.state;
         this.setState({
-          resultDetails: resultDetails.update(filename, (d) => { // eslint-disable-line
+          reports: reports.update(filename, (d) => { // eslint-disable-line
             return d.set('isFetching', false).set('error', err);
           }),
         });
@@ -104,8 +75,8 @@ class App extends React.Component {
 
   handleAttackStart(data) {
     this.setState({
-      worker: new Worker(Object.assign({ status: 'active', filename: '' }, data)),
-      metrics: new MetricsModel(),
+      worker: new ModelWorker(Object.assign({ status: 'active', filename: '' }, data)),
+      metrics: new ModelMetrics(),
     });
   }
 
@@ -118,7 +89,7 @@ class App extends React.Component {
 
   handleAttackMetrics(data) {
     this.setState({
-      metrics: new MetricsModel(data),
+      metrics: new ModelMetrics(data),
     });
   }
 
@@ -136,13 +107,13 @@ class App extends React.Component {
 
   handlePageResultMount(filename) {
     this.setState({
-      resultDetails: this.state.resultDetails.set(filename, new ResultDetail()),
+      reports: this.state.reports.set(filename, new ModelReport()),
     });
-    this.fetchResultDetail(filename);
+    this.fetchReport(filename);
   }
 
   render() {
-    const { worker, metrics, resultFiles, resultDetails } = this.state;
+    const { worker, metrics, resultFiles, reports } = this.state;
     return (
       <Router>
         <div>
@@ -168,7 +139,7 @@ class App extends React.Component {
                   path="/results/:filename" render={({ match }) => (
                     <PageResult
                       filename={match.params.filename}
-                      detail={resultDetails.get(match.params.filename)}
+                      report={reports.get(match.params.filename)}
                       onMount={this.handlePageResultMount}
                     />
                   )}

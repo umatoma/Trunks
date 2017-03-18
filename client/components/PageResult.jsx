@@ -14,9 +14,9 @@ class PageResult extends React.Component {
   }
 
   render() {
-    const { filename, detail } = this.props;
+    const { filename, report } = this.props;
 
-    if (!detail || detail.isFetching !== false) {
+    if (!report || report.isFetching !== false) {
       return (
         <section className="section">
           <div className="tk-load-spinner" />
@@ -24,7 +24,7 @@ class PageResult extends React.Component {
       );
     }
 
-    if (detail.error) {
+    if (report.error) {
       return (
         <div>
           <section className="section">
@@ -32,7 +32,7 @@ class PageResult extends React.Component {
           </section>
           <section className="section">
             <article className="message is-danger">
-              <div className="message-body">{detail.error.message}</div>
+              <div className="message-body">{report.error.message}</div>
             </article>
           </section>
         </div>
@@ -45,10 +45,10 @@ class PageResult extends React.Component {
           <h1 className="title">{filename}</h1>
         </section>
         <section className="section">
-          <ChartResults results={detail.results} />
+          <ChartResults results={report.results} />
         </section>
         <section className="section">
-          <Metrics metrics={detail.metrics} />
+          <Metrics metrics={report.metrics} />
         </section>
       </div>
     );
@@ -56,13 +56,13 @@ class PageResult extends React.Component {
 }
 
 PageResult.defaultProps = {
-  detail: null,
+  report: null,
 };
 
 PageResult.propTypes = {
   filename: React.PropTypes.string.isRequired,
   onMount: React.PropTypes.func.isRequired,
-  detail: React.PropTypes.shape({
+  report: React.PropTypes.shape({
     isFetching: React.PropTypes.bool.isRequired,
     results: React.PropTypes.array.isRequired,
     metrics: React.PropTypes.object.isRequired,
