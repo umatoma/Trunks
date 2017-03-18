@@ -1,14 +1,15 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { OrderedSet, Record, List } from 'immutable';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { OrderedSet, Record, List, Map } from 'immutable';
 import Header from './Header';
 import Footer from './Footer';
 import TitleBanner from './TitleBanner';
 import SideMenu from './SideMenu';
 import Notifications from './Notifications';
-import Attack from './Attack';
+import PageAttack from './PageAttack';
+import PageResult from './PageResult';
 import WebSocketClient from '../lib/websocket-client';
-import { getResultFiles } from '../lib/api-client';
+import { getResultFiles, getReport } from '../lib/api-client';
 
 const Worker = Record({
   status: 'ready',
@@ -33,6 +34,11 @@ const MetricsModel = Record({
   wait: 0,
 });
 
+const ResultDetail = Record({
+  isFetching: true,
+  results: [],
+});
+
 class App extends React.Component {
   constructor() {
     super();
@@ -50,10 +56,12 @@ class App extends React.Component {
       worker: new Worker(),
       metrics: new MetricsModel(),
       resultFiles: List(),
+      resultDetails: Map(),
     };
 
     this.addNotify = this.addNotify.bind(this);
     this.handleDissmissNotify = this.handleDissmissNotify.bind(this);
+    this.handlePageResultMount = this.handlePageResultMount.bind(this);
   }
 
   componentDidMount() {
@@ -64,6 +72,19 @@ class App extends React.Component {
     return getResultFiles()
       .then((files) => { this.setState({ resultFiles: List(files) }); })
       .catch(() => { this.addNotify('failed to fetch result files'); });
+  }
+
+  fetchResultDetail(filename) {
+    return getReport(filename)
+      .then((results) => {
+        const { resultDetails } = this.state;
+        this.setState({
+          resultDetails: resultDetails.update(filename, (d) => { // eslint-disable-line
+            return d.set('isFetching', false).set('results', results);
+          }),
+        });
+      })
+      .catch(() => { this.addNotify('failed to fetch result data'); });
   }
 
   handleCloseWebSocket() {
@@ -102,8 +123,15 @@ class App extends React.Component {
     });
   }
 
+  handlePageResultMount(filename) {
+    this.setState({
+      resultDetails: this.state.resultDetails.set(filename, new ResultDetail()),
+    });
+    this.fetchResultDetail(filename);
+  }
+
   render() {
-    const { worker, metrics, resultFiles } = this.state;
+    const { worker, metrics, resultFiles, resultDetails } = this.state;
     return (
       <Router>
         <div>
@@ -114,11 +142,32 @@ class App extends React.Component {
               <div className="column is-3">
                 <SideMenu resultFiles={resultFiles} />
               </div>
+              {/* End of column */}
               <div className="column is-9">
-                <Attack worker={worker} metrics={metrics} addNotify={this.addNotify} />
+                <Route
+                  exact path="/" render={() => (
+                    <PageAttack
+                      worker={worker}
+                      metrics={metrics}
+                      addNotify={this.addNotify}
+                    />
+                  )}
+                />
+                <Route
+                  path="/results/:filename" render={({ match }) => (
+                    <PageResult
+                      filename={match.params.filename}
+                      detail={resultDetails.get(match.params.filename)}
+                      onMount={this.handlePageResultMount}
+                    />
+                  )}
+                />
               </div>
+              {/* End of column */}
             </div>
+            {/* End of columns */}
           </div>
+          {/* End of container */}
           <Notifications
             notifications={this.state.notifications.toArray()}
             onDissmiss={this.handleDissmissNotify}

@@ -28,3 +28,7 @@ export function postAttack(params) {
 export function getResultFiles() {
   return doGet('/api/results/files');
 }
+
+export function getReport(filename) {
+  return doGet(`/api/reports/${filename}`);
+}

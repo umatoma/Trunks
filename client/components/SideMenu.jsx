@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const SideMenu = ({ resultFiles }) => (
   <section className="section">
@@ -8,7 +9,7 @@ const SideMenu = ({ resultFiles }) => (
       </p>
       <ul className="menu-list">
         <li>
-          <a href="/">Attack</a>
+          <Link to="/">Attack</Link>
         </li>
       </ul>
       <p className="menu-label">
@@ -17,7 +18,7 @@ const SideMenu = ({ resultFiles }) => (
       <ul className="menu-list">
         {resultFiles.map(file => (
           <li key={file}>
-            <a href={`/results/${file}`}>{file}</a>
+            <Link to={`/results/${file}`}>{file}</Link>
           </li>
         ))}
       </ul>

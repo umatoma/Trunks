@@ -35,6 +35,8 @@ func main() {
 	e.Use(middleware.Logger())
 
 	// routes
+	e.GET("/", h.IndexHTML)
+	e.GET("/results/:filename", h.IndexHTML)
 	e.POST("/api/attack", h.PostAttack)
 	e.DELETE("/api/attack", h.StopAttack)
 	e.GET("/api/results/files", h.ShowResultFiles)

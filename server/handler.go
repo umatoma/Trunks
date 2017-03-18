@@ -30,14 +30,13 @@ func (h *Handler) ValidateOptions() error {
 	return nil
 }
 
-// Index handle GET / request
-func (h *Handler) Index(c echo.Context) error {
-	bytes, err := Asset("views/index.html")
+// IndexHTML handle GET / request
+func (h *Handler) IndexHTML(c echo.Context) error {
+	data, err := Asset("assets/index.html")
 	if err != nil {
-		echo.NewHTTPError(http.StatusNotFound, err.Error())
+		return echo.NewHTTPError(http.StatusNotFound, err.Error())
 	}
-
-	return c.HTMLBlob(http.StatusOK, bytes)
+	return c.HTMLBlob(http.StatusOK, data)
 }
 
 // PostAttack handle POST /api/attack request
