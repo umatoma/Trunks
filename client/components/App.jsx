@@ -80,7 +80,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { worker, metrics, resultFiles, reports } = this.state;
+    const { worker, metrics, resultFiles, reports, formAttack } = this.state;
     return (
       <Router>
         <div>
@@ -98,7 +98,9 @@ class App extends React.Component {
                     <PageAttack
                       worker={worker}
                       metrics={metrics}
+                      formAttack={formAttack}
                       addNotify={this.dispatcher.addNotify}
+                      updateFormAttack={this.dispatcher.updateFormAttack}
                     />
                   )}
                 />

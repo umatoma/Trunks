@@ -8,10 +8,15 @@ const isActive = worker => worker.status === 'active';
 const isDone = worker => worker.status === 'done';
 const isActiveOrDone = worker => isActive(worker) || isDone(worker);
 
-const Attack = ({ worker, metrics, addNotify }) => (
+const Attack = ({ worker, metrics, formAttack, addNotify, updateFormAttack }) => (
   <div>
     <section className="section">
-      <FromPostAttack addNotify={addNotify} isAttacking={worker.status === 'active'} />
+      <FromPostAttack
+        form={formAttack}
+        addNotify={addNotify}
+        onUpdate={updateFormAttack}
+        isAttacking={worker.status === 'active'}
+      />
     </section>
     <section className="section">
       {isActiveOrDone(worker, metrics) ? <Metrics metrics={metrics} /> : null}
@@ -28,7 +33,9 @@ const Attack = ({ worker, metrics, addNotify }) => (
 Attack.propTypes = {
   worker: React.PropTypes.object.isRequired,
   metrics: React.PropTypes.object.isRequired,
+  formAttack: React.PropTypes.object.isRequired,
   addNotify: React.PropTypes.func.isRequired,
+  updateFormAttack: React.PropTypes.func.isRequired,
 };
 
 export default Attack;

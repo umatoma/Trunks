@@ -1,5 +1,5 @@
 import { OrderedSet, List, Map } from 'immutable';
-import { ModelWorker, ModelMetrics, ModelReport } from './models';
+import { ModelWorker, ModelMetrics, ModelReport, ModelFormAttack } from './models';
 
 class Dispatcher {
   constructor(setState, getState) {
@@ -15,6 +15,7 @@ class Dispatcher {
     this.initReportData = this.initReportData.bind(this);
     this.setReportData = this.setReportData.bind(this);
     this.setReportDataError = this.setReportDataError.bind(this);
+    this.updateFormAttack = this.updateFormAttack.bind(this);
   }
 
   getInitialState(state) {
@@ -25,6 +26,7 @@ class Dispatcher {
       metrics: new ModelMetrics(),
       resultFiles: List(),
       reports: Map(),
+      formAttack: new ModelFormAttack(),
     }, state);
   }
 
@@ -91,6 +93,13 @@ class Dispatcher {
         return d.set('isFetching', false)
           .set('error', error);
       }),
+    });
+  }
+
+  updateFormAttack(key, value) {
+    const { formAttack } = this.getState();
+    this.setState({
+      formAttack: formAttack.set(key, value),
     });
   }
 }

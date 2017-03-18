@@ -29,3 +29,10 @@ export const ModelReport = Record({
   metrics: new ModelMetrics(),
   results: [],
 });
+
+export const ModelFormAttack = Record({
+  Body: '',
+  Duration: '10s',
+  Rate: 1,
+  Targets: '',
+});

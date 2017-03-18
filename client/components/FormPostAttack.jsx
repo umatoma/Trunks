@@ -2,23 +2,15 @@ import React from 'react';
 import { postAttack } from '../lib/api-client';
 
 class FormPostAttack extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      form: {
-        Body: '',
-        Duration: '10s',
-        Rate: 1,
-        Targets: '',
-      },
-    };
+  constructor(props) {
+    super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    const { form } = this.state;
-    const params = Object.assign({}, form, {
+    const { form } = this.props;
+    const params = Object.assign({}, form.toJS(), {
       Rate: parseInt(form.Rate, 10) },
     );
     postAttack(params)
@@ -28,17 +20,13 @@ class FormPostAttack extends React.Component {
 
   handleChangeTextField(key) {
     return (e) => {
-      this.setState({
-        form: Object.assign({}, this.state.form, { [key]: e.target.value }),
-      });
+      this.props.onUpdate(key, e.target.value);
     };
   }
 
   handleChangeTextArea(key) {
     return (e) => {
-      this.setState({
-        form: Object.assign({}, this.state.form, { [key]: e.target.value }),
-      });
+      this.props.onUpdate(key, e.target.value);
     };
   }
 
@@ -56,6 +44,7 @@ class FormPostAttack extends React.Component {
   }
 
   render() {
+    const { form } = this.props;
     return (
       <div className="form-post-attack">
         <form onSubmit={this.handleSubmit}>
@@ -69,7 +58,7 @@ class FormPostAttack extends React.Component {
                     type="text"
                     name="Duration"
                     placeholder="10s"
-                    value={this.state.Duration}
+                    value={form.Duration}
                     onChange={this.handleChangeTextField('Duration')}
                   />
                 </p>
@@ -85,7 +74,7 @@ class FormPostAttack extends React.Component {
                     type="text"
                     name="Rate"
                     placeholder="1"
-                    value={this.state.Rate}
+                    value={form.Rate}
                     onChange={this.handleChangeTextField('Rate')}
                   />
                 </p>
@@ -100,7 +89,7 @@ class FormPostAttack extends React.Component {
                     className="textarea"
                     name="Targets"
                     placeholder="GET https://127.0.0.1:8000/path/to/api?q=trunks"
-                    value={this.state.Targets}
+                    value={form.Targets}
                     onChange={this.handleChangeTextArea('Targets')}
                   />
                 </p>
@@ -112,7 +101,7 @@ class FormPostAttack extends React.Component {
                     className="textarea"
                     name="Body"
                     placeholder="Requests body file"
-                    value={this.state.Body}
+                    value={form.Body}
                     onChange={this.handleChangeTextArea('Body')}
                   />
                 </p>
@@ -130,8 +119,10 @@ class FormPostAttack extends React.Component {
 }
 
 FormPostAttack.propTypes = {
+  form: React.PropTypes.object.isRequired,
   isAttacking: React.PropTypes.bool.isRequired,
   addNotify: React.PropTypes.func.isRequired,
+  onUpdate: React.PropTypes.func.isRequired,
 };
 
 export default FormPostAttack;
