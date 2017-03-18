@@ -1,23 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 class SideMenu extends React.Component {
   shouldComponentUpdate(nextProps) {
     if (nextProps.resultFiles !== this.props.resultFiles) {
       return true;
     }
-    if (nextProps.path !== this.props.path) {
+    if (nextProps.location !== this.props.location) {
       return true;
     }
     return false;
   }
 
   isCurrentAttack() {
-    return this.props.path === '/';
+    return this.props.location.pathname === '/';
   }
 
   isCurrentResult(filename) {
-    return this.props.path === `/results/${filename}`;
+    return this.props.location.pathname === `/results/${filename}`;
   }
 
   render() {
@@ -30,12 +30,12 @@ class SideMenu extends React.Component {
           </p>
           <ul className="menu-list">
             <li>
-              <Link
+              <NavLink
                 to="/"
                 className={this.isCurrentAttack() ? 'is-active' : null}
               >
                 Attack
-              </Link>
+              </NavLink>
             </li>
           </ul>
           <p className="menu-label">
@@ -44,12 +44,12 @@ class SideMenu extends React.Component {
           <ul className="menu-list">
             {resultFiles.map(file => (
               <li key={file}>
-                <Link
+                <NavLink
                   to={`/results/${file}`}
                   className={this.isCurrentResult(file) ? 'is-active' : null}
                 >
                   {file}
-                </Link>
+                </NavLink>
               </li>
             ))}
           </ul>
@@ -61,7 +61,7 @@ class SideMenu extends React.Component {
 
 SideMenu.propTypes = {
   resultFiles: React.PropTypes.object.isRequired,
-  path: React.PropTypes.string.isRequired,
+  location: React.PropTypes.object.isRequired,
 };
 
 export default SideMenu;

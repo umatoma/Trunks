@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, withRouter } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import TitleBanner from './TitleBanner';
@@ -10,6 +10,8 @@ import PageResult from './PageResult';
 import WebSocketClient from '../lib/websocket-client';
 import Dispatcher from '../dispatcher';
 import { getResultFiles, getReport } from '../lib/api-client';
+
+const SideMenuWithRouter = withRouter(SideMenu);
 
 class App extends React.Component {
   constructor() {
@@ -89,7 +91,7 @@ class App extends React.Component {
           <div className="container">
             <div className="columns">
               <div className="column is-3">
-                <SideMenu resultFiles={resultFiles} path={location.pathname} />
+                <SideMenuWithRouter resultFiles={resultFiles} />
               </div>
               {/* End of column */}
               <div className="column is-9">
