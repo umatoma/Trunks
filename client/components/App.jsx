@@ -37,6 +37,7 @@ const MetricsModel = Record({
 const ResultDetail = Record({
   isFetching: true,
   error: null,
+  metrics: new MetricsModel(),
   results: [],
 });
 
@@ -77,11 +78,13 @@ class App extends React.Component {
 
   fetchResultDetail(filename) {
     return getReport(filename)
-      .then((results) => {
+      .then(({ metrics, results }) => {
         const { resultDetails } = this.state;
         this.setState({
           resultDetails: resultDetails.update(filename, (d) => { // eslint-disable-line
-            return d.set('isFetching', false).set('results', results);
+            return d.set('isFetching', false)
+              .set('metrics', new MetricsModel(metrics))
+              .set('results', results);
           }),
         });
       })

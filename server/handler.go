@@ -99,13 +99,13 @@ func (h *Handler) ShowReport(c echo.Context) error {
 	}
 	defer file.Close()
 
-	reporter, err := JSONREsultsReporterFactory(file)
+	results, err := ParseResultsFromFile(file)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	var buf bytes.Buffer
-	if err := reporter.Report(&buf); err != nil {
+	if err := NewJSONMultiReporter(results).Report(&buf); err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 

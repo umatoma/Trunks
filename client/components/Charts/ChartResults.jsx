@@ -1,7 +1,6 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import Chart from 'chart.js';
-import { floatFormat } from '../../lib/formatter';
 
 const resultsToChartData = (results) => {
   const datasets = [
@@ -14,7 +13,7 @@ const resultsToChartData = (results) => {
       borderColor: 'hsla(171, 100%, 41%, .8)',
     },
   ];
-  const xLabels = results.map(res => floatFormat(res.ElapsedTime, 3));
+  const xLabels = results.map(res => res.ElapsedTime);
   return {
     type: 'line',
     data: {
