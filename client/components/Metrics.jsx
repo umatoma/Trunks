@@ -9,6 +9,24 @@ const nanoToSec = (nano, n) => floatFormat((nano / Math.pow(1000, 3)), n); // es
 const statusCodes = codes => Object.keys(codes).map(key => `${key}:${codes[key]}`).join(',');
 
 const divider = <span style={{ display: 'inline-block', width: 4 }} />;
+const errors = (metrics) => {
+  if (!metrics.errors) {
+    return (
+      <article className="message is-primary">
+        <div className="message-body">No Error</div>
+      </article>
+    );
+  }
+  return (
+    <article className="message is-danger">
+      <div className="message-body">
+        {metrics.errors.map(err => (
+          <div key={err}>{err}</div>
+        ))}
+      </div>
+    </article>
+  );
+};
 
 const Metrics = ({ metrics }) => (
   <table className="table">
@@ -79,6 +97,10 @@ const Metrics = ({ metrics }) => (
         <td>
           <span className="tag">{statusCodes(metrics.status_codes)}</span>
         </td>
+      </tr>
+      <tr>
+        <th>Error Set</th>
+        <td colSpan="2">{errors(metrics)}</td>
       </tr>
     </tbody>
   </table>

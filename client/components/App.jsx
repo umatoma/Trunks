@@ -24,7 +24,7 @@ const MetricsModel = Record({
   duration: 0,
   earliest: '',
   end: '',
-  errors: [],
+  errors: null,
   latencies: { mean: 0, max: 0, '50th': 0, '95th': 0, '99th': 0 },
   latest: {},
   rate: 0,

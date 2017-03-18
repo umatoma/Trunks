@@ -37,7 +37,7 @@ const resultsToChartData = (results) => {
           {
             scaleLabel: {
               display: true,
-              labelString: 'Seconds elapsed [ms]',
+              labelString: 'Seconds elapsed [sec]',
             },
             ticks: {
               beginAtZero: true,
