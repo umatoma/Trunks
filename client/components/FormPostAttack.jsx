@@ -7,6 +7,16 @@ class FormPostAttack extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.form !== this.props.form) {
+      return true;
+    }
+    if (nextProps.isAttacking !== this.props.isAttacking) {
+      return true;
+    }
+    return false;
+  }
+
   handleSubmit(e) {
     e.preventDefault();
     const { form } = this.props;
