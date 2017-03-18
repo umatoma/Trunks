@@ -1,6 +1,7 @@
 import React from 'react';
 import ChartResults from './Charts/ChartResults';
 import Metrics from './Metrics';
+import Results from './Results';
 
 class PageResult extends React.Component {
   componentDidMount() {
@@ -41,6 +42,9 @@ class PageResult extends React.Component {
         </section>
         <section className="section">
           <Metrics metrics={report.metrics} />
+        </section>
+        <section className="section">
+          <Results results={report.results} />
         </section>
       </div>
     );

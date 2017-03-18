@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"io"
-	"os"
 	"math"
+	"os"
 
 	vegeta "github.com/tsenart/vegeta/lib"
 )
@@ -38,8 +38,15 @@ func NewJSONMultiReporter(rs *vegeta.Results) vegeta.Reporter {
 		for i, r := range *rs {
 			metrics.Add(&r)
 			results[i] = map[string]interface{}{
+				"Code":            r.Code,
+				"Timestamp":       r.Timestamp,
+				"Latency":         r.Latency,
+				"BytesOut":        r.BytesOut,
+				"BytesIn":         r.BytesIn,
+				"Error":           r.Error,
+				"TimeShort":       r.Timestamp.Format("15:04:05"),
 				"ElapsedTime":     round(r.Timestamp.Sub((*rs)[0].Timestamp).Seconds(), 2),
-				"LatencyMilliSec": round(r.Latency.Seconds() * 1000, 2),
+				"LatencyMilliSec": round(r.Latency.Seconds()*1000, 2),
 			}
 		}
 		metrics.Close()
@@ -77,7 +84,7 @@ func PlotReporterFactory(file *os.File) (vegeta.Reporter, error) {
 	return reporter, nil
 }
 
-func round(f float64, places int) (float64) {
-    shift := math.Pow(10, float64(places))
-    return math.Floor(f * shift + .5) / shift
+func round(f float64, places int) float64 {
+	shift := math.Pow(10, float64(places))
+	return math.Floor(f*shift+.5) / shift
 }
