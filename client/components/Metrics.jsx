@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const floatFormat = (number, n) => {
   const p = Math.pow(10, n); // eslint-disable-line
@@ -12,7 +13,11 @@ class Metrics extends React.Component { // eslint-disable-line
   resultFileLink() {
     const { worker } = this.props;
     if (worker.status === 'done' && worker.filename) {
-      return <a className="button is-primary is-outlined is-fullwidth">Display details</a>;
+      return (
+        <Link className="button is-primary is-outlined is-fullwidth" to={`/results/${worker.filename}`}>
+          Check details
+        </Link>
+      );
     }
     return null;
   }

@@ -1,11 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default () => (
   <header>
     <nav className="nav has-shadow">
       <div className="container">
         <div className="nav-left">
-          <a className="nav-item">Trunks</a>
+          <Link className="nav-item" to="/">Trunks</Link>
         </div>
 
         <div className="nav-right nav-menu">

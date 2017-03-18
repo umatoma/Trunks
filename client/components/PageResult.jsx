@@ -29,7 +29,7 @@ class PageResult extends React.Component {
         </section>
         <section className="section">
           {detail.results.map(res => (
-            <div>{res.Timestamp} {res.Latency}</div>
+            <div key={res.Timestamp}>{res.Timestamp} {res.Latency}</div>
           ))}
         </section>
       </div>
