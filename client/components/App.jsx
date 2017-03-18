@@ -89,7 +89,7 @@ class App extends React.Component {
           <div className="container">
             <div className="columns">
               <div className="column is-3">
-                <SideMenu resultFiles={resultFiles} />
+                <SideMenu resultFiles={resultFiles} path={location.pathname} />
               </div>
               {/* End of column */}
               <div className="column is-9">
