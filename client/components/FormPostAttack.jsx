@@ -17,7 +17,11 @@ class FormPostAttack extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    postAttack(this.state.form)
+    const { form } = this.state;
+    const params = Object.assign({}, form, {
+      Rate: parseInt(form.Rate, 10) },
+    );
+    postAttack(params)
       .then(() => this.props.addNotify('succeeded to post attack'))
       .catch(() => this.props.addNotify('failed to post attack', 'danger'));
   }

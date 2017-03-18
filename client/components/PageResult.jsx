@@ -1,4 +1,5 @@
 import React from 'react';
+import ChartResults from './Charts/ChartResults';
 
 class PageResult extends React.Component {
   componentDidMount() {
@@ -43,9 +44,7 @@ class PageResult extends React.Component {
           <h1 className="title">{filename}</h1>
         </section>
         <section className="section">
-          {detail.results.map(res => (
-            <div key={res.Timestamp}>{res.Timestamp} {res.Latency}</div>
-          ))}
+          <ChartResults results={detail.results} />
         </section>
       </div>
     );
