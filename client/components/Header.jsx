@@ -10,6 +10,12 @@ export default () => (
         </div>
 
         <div className="nav-right nav-menu">
+          <a className="nav-item" href="https://github.com/tsenart/vegeta" target="_blank" rel="noopener noreferrer">
+            Vegeta
+          </a>
+          <a className="nav-item" href="https://github.com/jgthms/bulma" target="_blank" rel="noopener noreferrer">
+            Bulma
+          </a>
           <a className="nav-item" href="https://github.com/umatoma/trunks" target="_blank" rel="noopener noreferrer">
             <span className="icon">
               <i className="fa fa-github" />

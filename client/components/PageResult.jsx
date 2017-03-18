@@ -22,6 +22,21 @@ class PageResult extends React.Component {
       );
     }
 
+    if (detail.error) {
+      return (
+        <div>
+          <section className="section">
+            <h1 className="title">{filename}</h1>
+          </section>
+          <section className="section">
+            <article className="message is-danger">
+              <div className="message-body">{detail.error.message}</div>
+            </article>
+          </section>
+        </div>
+      );
+    }
+
     return (
       <div>
         <section className="section">
