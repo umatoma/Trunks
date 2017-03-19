@@ -88,7 +88,7 @@ const Metrics = ({ metrics }) => (
         <th>Success</th>
         <td>[ratio]</td>
         <td>
-          <span className="tag">{metrics.success}%</span>
+          <span className="tag">{metrics.success * 100}%</span>
         </td>
       </tr>
       <tr>
