@@ -3,8 +3,8 @@ $fa-font-path: "~font-awesome/fonts/";
 $primary: hsl(271, 100%, 71%) !default
 
 // modules
-@import "~bulma/bulma";
 @import "~font-awesome/scss/font-awesome.scss";
+@import "~bulma/bulma";
 
 // custom styles
 .tk-load-spinner {
@@ -27,6 +27,12 @@ $primary: hsl(271, 100%, 71%) !default
     border-radius: 290486px;
     border-right-color: transparent;
     border-top-color: transparent;
+  }
+}
+
+.tk-side-menu {
+  .menu-list li .icon {
+    margin-right: .5rem;
   }
 }
 

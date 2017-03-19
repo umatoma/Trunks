@@ -24,7 +24,7 @@ class SideMenu extends React.Component {
     const { resultFiles } = this.props;
     return (
       <section className="section">
-        <aside className="menu">
+        <aside className="menu tk-side-menu">
           <p className="menu-label">
             General
           </p>
@@ -34,7 +34,10 @@ class SideMenu extends React.Component {
                 to="/"
                 className={this.isCurrentAttack() ? 'is-active' : null}
               >
-                Attack
+                <span className="icon is-small">
+                  <i className="fa fa-bolt" />
+                </span>
+                <span>Attack</span>
               </NavLink>
             </li>
           </ul>
@@ -48,7 +51,10 @@ class SideMenu extends React.Component {
                   to={`/results/${file}`}
                   className={this.isCurrentResult(file) ? 'is-active' : null}
                 >
-                  {file}
+                  <span className="icon is-small">
+                    <i className="fa fa-file" />
+                  </span>
+                  <span>{file}</span>
                 </NavLink>
               </li>
             ))}

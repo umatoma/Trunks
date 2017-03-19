@@ -48,7 +48,10 @@ class FormPostAttack extends React.Component {
     }
     return (
       <button className="button is-primary is-fullwidth" type="submit">
-        Attack!!
+        <span className="icon is-small">
+          <i className="fa fa-bolt" />
+        </span>
+        <span>Attack!!</span>
       </button>
     );
   }
