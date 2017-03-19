@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"io/ioutil"
 	"strings"
+	"sort"
 
 	"github.com/labstack/echo"
 )
@@ -71,6 +72,7 @@ func (h *Handler) StopAttack(c echo.Context) error {
 	})
 }
 
+// ShowResultFiles handle GET /api/results/files
 func (h *Handler) ShowResultFiles(c echo.Context) error {
 	files, err := ioutil.ReadDir(h.ResultsDir)
 	if err != nil {
@@ -86,6 +88,8 @@ func (h *Handler) ShowResultFiles(c echo.Context) error {
 			paths = append(paths, file.Name())
 		}
 	}
+
+	sort.Sort(sort.Reverse(sort.StringSlice(paths)))
 
 	return c.JSON(http.StatusOK, paths)
 }
