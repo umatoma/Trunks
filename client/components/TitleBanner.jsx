@@ -1,7 +1,7 @@
 import React from 'react';
 
 const TitleBanner = () => (
-  <section className="hero is-primary">
+  <section className="hero is-primary is-bold">
     <div className="hero-body">
       <div className="container">
         <h1 className="title">
