@@ -56,6 +56,7 @@ class ChartResults extends React.Component {
     super(props);
     this.canvas = null;
     this.chart = null;
+    this.handleOnClickDownload = this.handleOnClickDownload.bind(this);
   }
 
   componentDidMount() {
@@ -77,8 +78,31 @@ class ChartResults extends React.Component {
     this.chart.destroy();
   }
 
+  handleOnClickDownload() {
+    const url = this.canvas
+      .toDataURL('image/png')
+      .replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+    const a = document.createElement('a');
+    a.setAttribute('download', 'trunks-plot.png');
+    a.setAttribute('href', url);
+    a.click();
+  }
+
   render() {
-    return <canvas ref={(ref) => { this.canvas = ref; }} />;
+    return (
+      <div>
+        <canvas ref={(ref) => { this.canvas = ref; }} />
+        <button
+          className="button is-primary is-inverted is-pulled-right is-small"
+          onClick={this.handleOnClickDownload}
+        >
+          <span className="icon is-small">
+            <i className="fa fa-download" />
+          </span>
+          <span>Download as PNG</span>
+        </button>
+      </div>
+    );
   }
 }
 
