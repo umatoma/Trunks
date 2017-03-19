@@ -112,6 +112,7 @@ class App extends React.Component {
                       filename={match.params.filename}
                       report={reports.get(match.params.filename)}
                       onMount={this.handlePageResultMount}
+                      onShowResultList={this.dispatcher.showResultList}
                     />
                   )}
                 />

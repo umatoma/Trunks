@@ -25,6 +25,7 @@ export const ModelMetrics = Record({
 
 export const ModelReport = Record({
   isFetching: true,
+  showResultList: false,
   error: null,
   metrics: new ModelMetrics(),
   results: List(),

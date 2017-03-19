@@ -4,6 +4,11 @@ import Metrics from './Metrics';
 import Results from './Results';
 
 class PageResult extends React.Component {
+  constructor() {
+    super();
+    this.handleClickShowResultList = this.handleClickShowResultList.bind(this);
+  }
+
   componentDidMount() {
     this.props.onMount(this.props.filename);
   }
@@ -12,6 +17,28 @@ class PageResult extends React.Component {
     if (nextProps.filename !== this.props.filename) {
       this.props.onMount(nextProps.filename);
     }
+  }
+
+  handleClickShowResultList() {
+    this.props.onShowResultList(this.props.filename);
+  }
+
+  sectionResults() {
+    const { report } = this.props;
+    if (report.showResultList) {
+      return <Results results={report.results} />;
+    }
+    return (
+      <button
+        className="button is-primary is-outlined is-fullwidth"
+        onClick={this.handleClickShowResultList}
+      >
+        <span className="icon is-small">
+          <i className="fa fa-list" />
+        </span>
+        <span>Display the list of result</span>
+      </button>
+    );
   }
 
   sectionBody() {
@@ -44,7 +71,7 @@ class PageResult extends React.Component {
           <Metrics metrics={report.metrics} />
         </section>
         <section className="section">
-          <Results results={report.results} />
+          {this.sectionResults()}
         </section>
       </div>
     );
@@ -70,6 +97,7 @@ PageResult.defaultProps = {
 PageResult.propTypes = {
   filename: React.PropTypes.string.isRequired,
   onMount: React.PropTypes.func.isRequired,
+  onShowResultList: React.PropTypes.func.isRequired,
   report: React.PropTypes.shape({
     isFetching: React.PropTypes.bool.isRequired,
     results: React.PropTypes.object.isRequired,

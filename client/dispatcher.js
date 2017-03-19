@@ -15,6 +15,7 @@ class Dispatcher {
     this.initReportData = this.initReportData.bind(this);
     this.setReportData = this.setReportData.bind(this);
     this.setReportDataError = this.setReportDataError.bind(this);
+    this.showResultList = this.showResultList.bind(this);
     this.updateFormAttack = this.updateFormAttack.bind(this);
   }
 
@@ -92,6 +93,15 @@ class Dispatcher {
       reports: reports.update(filename, (d) => { // eslint-disable-line
         return d.set('isFetching', false)
           .set('error', error);
+      }),
+    });
+  }
+
+  showResultList(filename) {
+    const { reports } = this.getState();
+    this.setState({
+      reports: reports.update(filename, (d) => { // eslint-disable-line
+        return d.set('showResultList', true);
       }),
     });
   }
