@@ -21,6 +21,8 @@ class App extends React.Component {
     webSocketClient.onClose(this.handleCloseWebSocket.bind(this));
     webSocketClient.onAttackStart(this.handleAttackStart.bind(this));
     webSocketClient.onAttackFinish(this.handleAttackFinish.bind(this));
+    webSocketClient.onAttackCancel(this.handleAttackCancel.bind(this));
+    webSocketClient.onAttackFail(this.handleAttackFail.bind(this));
     webSocketClient.onAttackMetrics(this.handleAttackMetrics.bind(this));
 
     const getState = () => this.state;
@@ -66,6 +68,14 @@ class App extends React.Component {
   handleAttackFinish(data) {
     this.dispatcher.finishAttack(data.filename);
     this.fetchResultFile();
+  }
+
+  handleAttackCancel() {
+    this.dispatcher.cancelAttack();
+  }
+
+  handleAttackFail(data) {
+    this.dispatcher.cancelAttack(new Error(data.message));
   }
 
   handleAttackMetrics(data) {

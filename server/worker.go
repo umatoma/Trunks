@@ -28,6 +28,7 @@ type AttackWorker struct {
 	duration time.Duration
 	ctx      context.Context
 	cancel   context.CancelFunc
+	broadcaster Broadcaster
 }
 
 // StopAttack stop current attack
@@ -45,7 +46,7 @@ func StopAttack() bool {
 }
 
 // NewAttackWorker returns a new AttackWorker with default options
-func NewAttackWorker(atk *vegeta.Attacker, tr vegeta.Targeter, rate uint64, duration time.Duration) *AttackWorker {
+func NewAttackWorker(atk *vegeta.Attacker, tr vegeta.Targeter, rate uint64, duration time.Duration, broadcaster Broadcaster) *AttackWorker {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &AttackWorker{
 		attacker: atk,
@@ -54,6 +55,7 @@ func NewAttackWorker(atk *vegeta.Attacker, tr vegeta.Targeter, rate uint64, dura
 		duration: duration,
 		ctx:      ctx,
 		cancel:   cancel,
+		broadcaster: broadcaster,
 	}
 }
 
@@ -69,17 +71,33 @@ func (worker *AttackWorker) Run(resultsBasePath string) error {
 	// do attack
 	currentWorker = worker
 	go func() {
-		if err := worker.attack(resultsBasePath, webSocketHub); err != nil {
-			log.Println(err)
+		defer worker.unbindWorker()
+		// do attack!!
+		log.Println("attack start")
+		worker.broadcastAttackStart()
+		resultFilePath, err := worker.attack(resultsBasePath)
+		// failed attack
+		if err != nil {
+			log.Println("attack failed", err)
+			worker.broadcastAttackFail(err)
 		}
-		worker.UnbindWorker()
+		if resultFilePath == "" {
+			// canceled attack
+			log.Println("attack canceled")
+			worker.broadcastAttackCancel()
+		} else {
+			// success attack
+			log.Println("attack succeeded")
+			paths := strings.Split(resultFilePath, "/")
+			worker.broadcastAttackFinish(paths[len(paths) - 1])
+		}
 	}()
 
 	return nil
 }
 
-// UnbindWorker remove current worker binding
-func (worker *AttackWorker) UnbindWorker() {
+// unbindWorker remove current worker binding
+func (worker *AttackWorker) unbindWorker() {
 	lock.Lock()
 	defer lock.Unlock()
 	if currentWorker == worker {
@@ -87,24 +105,18 @@ func (worker *AttackWorker) UnbindWorker() {
 	}
 }
 
-func (worker *AttackWorker) attack(baseFilePath string, broadcaster Broadcaster) error {
+func (worker *AttackWorker) attack(baseFilePath string) (string, error) {
 	tmpFilePath := tmpFile(baseFilePath)
 
 	out, err := os.Create(tmpFilePath)
 	if err != nil {
-		return fmt.Errorf("error opening %s: %s", tmpFilePath, err)
+		return "", fmt.Errorf("error opening %s: %s", tmpFilePath, err)
 	}
 	defer out.Close()
 
 	atk := worker.attacker
 	res := atk.Attack(worker.targeter, worker.rate, worker.duration)
 	enc := vegeta.NewEncoder(out)
-
-	log.Println("start attack", tmpFilePath)
-	broadcaster.Broadcast("attackStart", map[string]interface{}{
-		"rate":     worker.rate,
-		"duration": worker.duration,
-	})
 
 	metrics := &vegeta.Metrics{}
 	defer metrics.Close()
@@ -116,17 +128,16 @@ attack:
 		select {
 		case <-worker.ctx.Done():
 			atk.Stop()
-			log.Println("stopped attack", tmpFilePath)
-			return nil
+			return "", nil
 		case <-ticker.C:
-			broadcaster.Broadcast("attackMetrics", metrics)
+			worker.broadcastAttackMetrics(metrics)
 		case r, ok := <-res:
 			if !ok {
-				broadcaster.Broadcast("attackMetrics", metrics)
+				worker.broadcastAttackMetrics(metrics)
 				break attack
 			}
 			if err = enc.Encode(r); err != nil {
-				return err
+				return "", err
 			}
 			// add result to report
 			metrics.Add(r)
@@ -139,17 +150,10 @@ attack:
 	out.Close()
 	resultFilePath := resultFile(baseFilePath)
 	if err := os.Rename(tmpFilePath, resultFilePath); err != nil {
-		return err
+		return "", err
 	}
 
-	paths := strings.Split(resultFilePath, "/")
-	broadcaster.Broadcast("attackFinish", map[string]interface{}{
-		"filename": paths[len(paths) - 1],
-	})
-
-	log.Println("finish attack", tmpFilePath)
-
-	return nil
+	return resultFilePath, nil
 }
 
 func tmpFile(basePath string) string {
@@ -160,4 +164,31 @@ func tmpFile(basePath string) string {
 func resultFile(basePath string) string {
 	filename := fmt.Sprintf("%d.bin", time.Now().Unix())
 	return filepath.Join(basePath, filename)
+}
+
+func (worker *AttackWorker) broadcastAttackStart() {
+	worker.broadcaster.Broadcast("attackStart", map[string]interface{}{
+		"rate":     worker.rate,
+		"duration": worker.duration,
+	})
+}
+
+func (worker *AttackWorker) broadcastAttackFinish(filename string) {
+	worker.broadcaster.Broadcast("attackFinish", map[string]string{
+		"filename": filename,
+	})
+}
+
+func (worker *AttackWorker) broadcastAttackCancel() {
+	worker.broadcaster.Broadcast("attackCancel", nil)
+}
+
+func (worker *AttackWorker) broadcastAttackFail(err error) {
+	worker.broadcaster.Broadcast("attackFail", map[string]string{
+		"message": err.Error(),
+	})
+}
+
+func (worker *AttackWorker) broadcastAttackMetrics(metrics *vegeta.Metrics) {
+	worker.broadcaster.Broadcast("attackMetrics", metrics)
 }

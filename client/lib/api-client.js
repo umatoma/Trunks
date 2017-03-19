@@ -21,7 +21,19 @@ const doPost = (url, params) => fetch(url, {
   },
 }).then(responseHandler);
 
-export function postAttack(params) {
+const doDelete = url => fetch(url, {
+  method: 'DELETE',
+}).then(responseHandler);
+
+export function startAttack(params) {
+  return doPost('/api/attack', params);
+}
+
+export function cancelAttack() {
+  return doDelete('/api/attack');
+}
+
+export function deleteAttack(params) {
   return doPost('/api/attack', params);
 }
 

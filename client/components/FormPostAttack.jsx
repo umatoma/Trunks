@@ -1,10 +1,11 @@
 import React from 'react';
-import { postAttack } from '../lib/api-client';
+import { startAttack, cancelAttack } from '../lib/api-client';
 
 class FormPostAttack extends React.Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleClickCancelButton = this.handleClickCancelButton.bind(this);
   }
 
   shouldComponentUpdate(nextProps) {
@@ -23,9 +24,15 @@ class FormPostAttack extends React.Component {
     const params = Object.assign({}, form.toJS(), {
       Rate: parseInt(form.Rate, 10) },
     );
-    postAttack(params)
+    startAttack(params)
       .then(() => this.props.addNotify('succeeded to post attack'))
       .catch(() => this.props.addNotify('failed to post attack', 'danger'));
+  }
+
+  handleClickCancelButton() {
+    cancelAttack()
+      .then(() => this.props.addNotify('succeeded to cancel attack'))
+      .catch(() => this.props.addNotify('failed to cancel attack', 'danger'));
   }
 
   handleChangeTextField(key) {
@@ -43,7 +50,16 @@ class FormPostAttack extends React.Component {
   submitOrCancelButton() {
     if (this.props.isAttacking) {
       return (
-        <button className="button is-danger is-fullwidth is-loading" type="button" />
+        <button
+          className="button is-danger is-fullwidth"
+          type="button"
+          onClick={this.handleClickCancelButton}
+        >
+          <span className="icon is-small">
+            <i className="fa fa-stop" />
+          </span>
+          <span>Cancel attack</span>
+        </button>
       );
     }
     return (

@@ -2,6 +2,7 @@ import { Record, List } from 'immutable';
 
 export const ModelWorker = Record({
   status: 'ready',
+  error: null,
   duration: 0,
   rate: 0,
   filename: '',

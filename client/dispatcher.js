@@ -63,6 +63,20 @@ class Dispatcher {
     });
   }
 
+  cancelAttack() {
+    const { worker } = this.getState();
+    this.setState({
+      worker: worker.set('status', 'canceled'),
+    });
+  }
+
+  failAttack(err) {
+    const { worker } = this.getState();
+    this.setState({
+      worker: worker.set('status', 'error').set('error', err),
+    });
+  }
+
   setAttackMetrics(metricsParams) {
     this.setState({
       metrics: new ModelMetrics(metricsParams),

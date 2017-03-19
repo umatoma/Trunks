@@ -6,7 +6,7 @@ import Metrics from './Metrics';
 
 const isActive = worker => worker.status === 'active';
 const isDone = worker => worker.status === 'done';
-const isActiveOrDone = worker => isActive(worker) || isDone(worker);
+const isNotReady = worker => worker.status !== 'ready';
 
 const Attack = ({ worker, metrics, formAttack, addNotify, updateFormAttack }) => (
   <div>
@@ -19,7 +19,7 @@ const Attack = ({ worker, metrics, formAttack, addNotify, updateFormAttack }) =>
       />
     </section>
     <section className="section">
-      {isActiveOrDone(worker, metrics) ? <Metrics metrics={metrics} /> : null}
+      {isNotReady(worker, metrics) ? <Metrics metrics={metrics} /> : null}
       {isActive(worker) ? <WorkerProgress worker={worker} metrics={metrics} /> : null}
       {isDone(worker) ? (
         <Link className="button is-primary is-outlined is-fullwidth" to={`/results/${worker.filename}`}>

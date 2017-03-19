@@ -10,6 +10,7 @@ class WebSocketClient {
     };
     conn.onmessage = (evt) => {
       const { event, data } = JSON.parse(evt.data);
+      console.log(event, data);
       switch (event) {
         case 'attackStart':
           if (typeof this.handleAttackStart === 'function') {
@@ -19,6 +20,16 @@ class WebSocketClient {
         case 'attackFinish':
           if (typeof this.handleAttackFinish === 'function') {
             this.handleAttackFinish(data);
+          }
+          break;
+        case 'attackCancel':
+          if (typeof this.handleAttackCancel === 'function') {
+            this.handleAttackCancel(data);
+          }
+          break;
+        case 'attackFail':
+          if (typeof this.handleAttackFail === 'function') {
+            this.handleAttackFail(data);
           }
           break;
         case 'attackMetrics':
@@ -43,6 +54,14 @@ class WebSocketClient {
 
   onAttackFinish(callback) {
     this.handleAttackFinish = callback;
+  }
+
+  onAttackCancel(callback) {
+    this.handleAttackCancel = callback;
+  }
+
+  onAttackFail(callback) {
+    this.handleAttackFail = callback;
   }
 
   onAttackMetrics(callback) {

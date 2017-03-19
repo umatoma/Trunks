@@ -48,7 +48,7 @@ func (h *Handler) PostAttack(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	worker, err := opts.GetAttackWorker()
+	worker, err := opts.GetAttackWorker(webSocketHub)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
