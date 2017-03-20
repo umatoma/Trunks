@@ -1,7 +1,7 @@
 import React from 'react';
-import c3 from 'c3';
+import ChartC3 from './ChartC3';
 
-const resultsToLoadData = (results) => {
+const propsToChartConfig = ({ results }) => {
   const resultsArray = results.toArray();
   const successes = ['Success'].concat(
     resultsArray.filter(r => !r.Error).map(r => r.LatencyMilliSec),
@@ -10,70 +10,55 @@ const resultsToLoadData = (results) => {
     resultsArray.filter(r => r.Error).map(r => r.LatencyMilliSec),
   );
   return {
-    columns: [
-      successes,
-      errors,
-    ],
+    data: {
+      columns: [
+        successes,
+        errors,
+      ],
+      types: {
+        Success: 'area',
+        Error: 'area-spline',
+      },
+      colors: {
+        Success: 'hsla(141, 71%, 48%, .9)',
+        Error: 'hsla(348, 100%, 61%, .7)',
+      },
+    },
+    grid: {
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    axis: {
+      x: {
+        label: {
+          text: 'Seconds elapsed [sec]',
+          position: 'outer-bottom',
+        },
+      },
+      y: {
+        label: {
+          text: 'Latency [ms]',
+          position: 'outer-middle',
+        },
+      },
+    },
   };
 };
 
-const chartOptions = {
-  bindto: '#chart_results',
-  data: {
-    columns: [],
-    types: {
-      Success: 'area',
-      Error: 'area-spline',
-    },
-    colors: {
-      Success: 'hsla(141, 71%, 48%, .9)',
-      Error: 'hsla(348, 100%, 61%, .7)',
-    },
-  },
-  grid: {
-    x: {
-      show: true,
-    },
-    y: {
-      show: true,
-    },
-  },
-  axis: {
-    x: {
-      label: {
-        text: 'Seconds elapsed [sec]',
-        position: 'outer-bottom',
-      },
-    },
-    y: {
-      label: {
-        text: 'Latency [ms]',
-        position: 'outer-middle',
-      },
-    },
-  },
-};
-
 class ChartResults extends React.Component {
-  componentDidMount() {
-    this.chart = c3.generate(chartOptions);
-    this.chart.load(resultsToLoadData(this.props.results));
-  }
-
-  componentWillReceiveProps(nextProps) {
+  shouldComponentUpdate(nextProps) {
     if (nextProps.results !== this.props.results) {
-      this.chart.load(resultsToLoadData(this.props.results));
+      return true;
     }
-  }
-
-  componentWillUnmount() {
-    if (this.chart) {
-      this.chart = this.chart.destroy();
-    }
+    return false;
   }
 
   render() {
-    return <div id="chart_results" />;
+    return <ChartC3 config={propsToChartConfig(this.props)} />;
   }
 }
 

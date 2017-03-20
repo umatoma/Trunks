@@ -1,53 +1,38 @@
 import React from 'react';
-import c3 from 'c3';
+import ChartC3 from './ChartC3';
 
-const metricsToLoadData = (metrics) => {
+const propsToChartConfig = ({ metrics }) => {
   const errCount = metrics.errors ? metrics.errors.length : 0;
   const successes = ['Success', metrics.requests - errCount];
   const errors = ['Error', errCount];
   return {
-    columns: [
-      successes,
-      errors,
-    ],
+    data: {
+      type: 'donut',
+      columns: [
+        successes,
+        errors,
+      ],
+      colors: {
+        Success: 'hsla(141, 71%, 48%, .9)',
+        Error: 'hsla(348, 100%, 61%, .7)',
+      },
+    },
+    donut: {
+      title: 'Success ratio',
+    },
   };
 };
 
-const chartOptions = {
-  bindto: '#chart_success',
-  data: {
-    type: 'donut',
-    columns: [],
-    colors: {
-      Success: 'hsla(141, 71%, 48%, .9)',
-      Error: 'hsla(348, 100%, 61%, .7)',
-    },
-  },
-  donut: {
-    title: 'Success ratio',
-  },
-};
-
 class ChartSuccess extends React.Component {
-  componentDidMount() {
-    this.chart = c3.generate(chartOptions);
-    this.chart.load(metricsToLoadData(this.props.metrics));
-  }
-
-  componentWillReceiveProps(nextProps) {
+  shouldComponentUpdate(nextProps) {
     if (nextProps.metrics !== this.props.metrics) {
-      this.chart.load(metricsToLoadData(this.props.metrics));
+      return true;
     }
-  }
-
-  componentWillUnmount() {
-    if (this.chart) {
-      this.chart = this.chart.destroy();
-    }
+    return false;
   }
 
   render() {
-    return <div id="chart_success" />;
+    return <ChartC3 config={propsToChartConfig(this.props)} />;
   }
 }
 
