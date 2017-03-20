@@ -1,10 +1,11 @@
 // variables
 $fa-font-path: "~font-awesome/fonts/";
-$primary: hsl(271, 100%, 71%) !default
+$primary: hsl(271, 100%, 71%) !default;
 
 // modules
-@import "~font-awesome/scss/font-awesome.scss";
 @import "~bulma/bulma";
+@import "~font-awesome/scss/font-awesome.scss";
+@import "~c3/src/scss/main";
 
 // custom styles
 .tk-load-spinner {

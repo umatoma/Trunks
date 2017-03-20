@@ -1,108 +1,75 @@
 import React from 'react';
-import { findDOMNode } from 'react-dom';
-import Chart from 'chart.js';
+import c3 from 'c3';
 
-const resultsToChartData = (results) => {
+const resultsToLoadData = (results) => {
   const resultsArray = results.toArray();
-  const datasets = [
-    {
-      label: 'Latency',
-      data: resultsArray.map(res => res.LatencyMilliSec),
-      fill: true,
-      backgroundColor: 'hsla(271, 100%, 71%, .5)',
-      borderWidth: 1.5,
-      borderColor: 'hsla(271, 100%, 71%, .8)',
-    },
-  ];
-  const xLabels = resultsArray.map(res => res.ElapsedTime);
+  const successes = ['Success'].concat(
+    resultsArray.filter(r => !r.Error).map(r => r.LatencyMilliSec),
+  );
+  const errors = ['Error'].concat(
+    resultsArray.filter(r => r.Error).map(r => r.LatencyMilliSec),
+  );
   return {
-    type: 'line',
-    data: {
-      datasets,
-      xLabels,
-    },
-    options: {
-      legend: {
-        display: false,
-      },
-      scales: {
-        yAxes: [
-          {
-            scaleLabel: {
-              display: true,
-              labelString: 'Latency [ms]',
-            },
-          },
-        ],
-        xAxes: [
-          {
-            scaleLabel: {
-              display: true,
-              labelString: 'Seconds elapsed [sec]',
-            },
-            ticks: {
-              beginAtZero: true,
-              maxTicksLimit: 20,
-            },
-          },
-        ],
-      },
-    },
+    columns: [
+      successes,
+      errors,
+    ],
   };
 };
 
-class ChartResults extends React.Component {
-  constructor(props) {
-    super(props);
-    this.canvas = null;
-    this.chart = null;
-    this.handleOnClickDownload = this.handleOnClickDownload.bind(this);
-  }
+const chartOptions = {
+  bindto: '#chart_results',
+  data: {
+    columns: [],
+    colors: {
+      Success: 'hsla(141, 71%, 48%, .8)',
+      Error: 'hsla(348, 100%, 61%, .8)',
+    },
+  },
+  grid: {
+    x: {
+      show: true,
+    },
+    y: {
+      show: true,
+    },
+  },
+  axis: {
+    x: {
+      label: {
+        text: 'Seconds elapsed [sec]',
+        position: 'outer-bottom',
+      },
+    },
+    y: {
+      label: {
+        text: 'Latency [ms]',
+        position: 'outer-middle',
+      },
+    },
+  },
+};
 
+class ChartResults extends React.Component {
   componentDidMount() {
-    const element = findDOMNode(this.canvas);
-    const ctx = element.getContext('2d');
-    this.chart = new Chart(ctx, resultsToChartData(this.props.results));
+    this.chart = c3.generate(chartOptions);
+    this.chart.load(resultsToLoadData(this.props.results));
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.results !== this.props.results) {
-      const { data } = resultsToChartData(nextProps.results);
-      this.chart.data.labels = data.labels;
-      this.chart.data.datasets = data.datasets;
-      this.chart.update();
+      this.chart.load(resultsToLoadData(this.props.results));
     }
   }
 
   componentWillUnmount() {
-    this.chart.destroy();
-  }
-
-  handleOnClickDownload() {
-    const url = this.canvas
-      .toDataURL('image/png')
-      .replace(/^data:image\/[^;]/, 'data:application/octet-stream');
-    const a = document.createElement('a');
-    a.setAttribute('download', 'trunks-plot.png');
-    a.setAttribute('href', url);
-    a.click();
+    if (this.chart) {
+      this.chart = this.chart.destroy();
+    }
   }
 
   render() {
-    return (
-      <div>
-        <canvas ref={(ref) => { this.canvas = ref; }} />
-        <button
-          className="button is-primary is-inverted is-pulled-right is-small"
-          onClick={this.handleOnClickDownload}
-        >
-          <span className="icon is-small">
-            <i className="fa fa-download" />
-          </span>
-          <span>Download as PNG</span>
-        </button>
-      </div>
-    );
+    return <div id="chart_results" />;
   }
 }
 
