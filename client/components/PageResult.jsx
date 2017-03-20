@@ -48,25 +48,25 @@ class PageResult extends React.Component {
 
     if (!report || report.isFetching !== false) {
       return (
-        <section className="section">
+        <div className="content">
           <div className="tk-load-spinner" />
-        </section>
+        </div>
       );
     }
 
     if (report.error) {
       return (
-        <section className="section">
+        <div className="content">
           <article className="message is-danger">
             <div className="message-body">{report.error.message}</div>
           </article>
-        </section>
+        </div>
       );
     }
 
     return (
       <div>
-        <section className="section">
+        <div className="content">
           <div className="columns">
             <div className="column is-12">
               <ChartResults results={report.results} />
@@ -80,13 +80,13 @@ class PageResult extends React.Component {
               <ChartSuccess metrics={report.metrics} />
             </div>
           </div>
-        </section>
-        <section className="section">
+        </div>
+        <div className="content">
           <Metrics metrics={report.metrics} />
-        </section>
-        <section className="section">
+        </div>
+        <div className="content">
           {this.sectionResults()}
-        </section>
+        </div>
       </div>
     );
   }
@@ -95,9 +95,9 @@ class PageResult extends React.Component {
     const { filename } = this.props;
     return (
       <div>
-        <section className="section">
+        <div className="content">
           <h1 className="title">{filename}</h1>
-        </section>
+        </div>
         {this.sectionBody()}
       </div>
     );

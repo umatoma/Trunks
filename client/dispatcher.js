@@ -1,13 +1,18 @@
 import { OrderedSet, List, Map } from 'immutable';
-import { ModelWorker, ModelMetrics, ModelReport, ModelFormAttack } from './models';
+import {
+  ModelHeader, ModelSideMenu, ModelWorker, ModelMetrics, ModelReport, ModelFormAttack,
+} from './models';
 
 class Dispatcher {
   constructor(setState, getState) {
     this.setState = setState;
     this.getState = getState;
     // bind method context
+    // FIXME: It's lame to bind all methods, so please fix it.
     this.addNotify = this.addNotify.bind(this);
     this.removeNotify = this.removeNotify.bind(this);
+    this.toggleHeaderHamburger = this.toggleHeaderHamburger.bind(this);
+    this.toggleSideMenuModal = this.toggleSideMenuModal.bind(this);
     this.setResultFiles = this.setResultFiles.bind(this);
     this.startAttack = this.startAttack.bind(this);
     this.finishAttack = this.finishAttack.bind(this);
@@ -23,6 +28,8 @@ class Dispatcher {
     return Object.assign({
       webSocketClient: null,
       notifications: OrderedSet(),
+      header: new ModelHeader(),
+      sideMenu: new ModelSideMenu(),
       worker: new ModelWorker(),
       metrics: new ModelMetrics(),
       resultFiles: List(),
@@ -42,6 +49,20 @@ class Dispatcher {
     const { notifications } = this.getState();
     this.setState({
       notifications: notifications.delete(notification),
+    });
+  }
+
+  toggleHeaderHamburger() {
+    const { header } = this.getState();
+    this.setState({
+      header: header.set('isHamburgerActive', !header.isHamburgerActive),
+    });
+  }
+
+  toggleSideMenuModal() {
+    const { sideMenu } = this.getState();
+    this.setState({
+      sideMenu: sideMenu.set('isModalActive', !sideMenu.isModalActive),
     });
   }
 

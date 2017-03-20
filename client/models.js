@@ -1,5 +1,13 @@
 import { Record, List } from 'immutable';
 
+export const ModelHeader = Record({
+  isHamburgerActive: false,
+});
+
+export const ModelSideMenu = Record({
+  isModalActive: false,
+});
+
 export const ModelWorker = Record({
   status: 'ready',
   error: null,

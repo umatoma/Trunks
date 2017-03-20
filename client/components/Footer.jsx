@@ -5,7 +5,9 @@ const Footer = () => (
     <div className="container">
       <div className="content has-text-centered">
         <p>
-          <strong>Trunks</strong> by <a href="https://github.com/umatoma" target="_blank" rel="noopener noreferrer">umatoma</a>.&nbsp;
+          <strong>Trunks</strong> by <a href="https://github.com/umatoma" target="_blank" rel="noopener noreferrer">umatoma</a>
+        </p>
+        <p>
           The source code is licensed <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
         </p>
         <p>

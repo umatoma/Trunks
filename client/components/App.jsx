@@ -92,46 +92,56 @@ class App extends React.Component {
   }
 
   render() {
-    const { worker, metrics, resultFiles, reports, formAttack } = this.state;
+    const { dispatcher } = this;
+    const { header, sideMenu, worker, metrics, resultFiles, reports, formAttack } = this.state;
     return (
       <Router>
         <div>
-          <Header />
+          <Header
+            isHamburgerActive={header.isHamburgerActive}
+            onToggleHamburger={dispatcher.toggleHeaderHamburger}
+          />
           <TitleBanner />
-          <div className="container">
-            <div className="columns">
-              <div className="column is-3">
-                <SideMenuWithRouter resultFiles={resultFiles} />
+          <section className="section">
+            <div className="container">
+              <div className="columns">
+                <div className="column is-3">
+                  <SideMenuWithRouter
+                    resultFiles={resultFiles}
+                    isModalActive={sideMenu.isModalActive}
+                    onToggleModal={dispatcher.toggleSideMenuModal}
+                  />
+                </div>
+                {/* End of column */}
+                <div className="column is-9">
+                  <Route
+                    exact path="/" render={() => (
+                      <PageAttack
+                        worker={worker}
+                        metrics={metrics}
+                        formAttack={formAttack}
+                        addNotify={dispatcher.addNotify}
+                        updateFormAttack={dispatcher.updateFormAttack}
+                      />
+                    )}
+                  />
+                  <Route
+                    path="/results/:filename" render={({ match }) => (
+                      <PageResult
+                        filename={match.params.filename}
+                        report={reports.get(match.params.filename)}
+                        onMount={this.handlePageResultMount}
+                        onShowResultList={dispatcher.showResultList}
+                      />
+                    )}
+                  />
+                </div>
+                {/* End of column */}
               </div>
-              {/* End of column */}
-              <div className="column is-9">
-                <Route
-                  exact path="/" render={() => (
-                    <PageAttack
-                      worker={worker}
-                      metrics={metrics}
-                      formAttack={formAttack}
-                      addNotify={this.dispatcher.addNotify}
-                      updateFormAttack={this.dispatcher.updateFormAttack}
-                    />
-                  )}
-                />
-                <Route
-                  path="/results/:filename" render={({ match }) => (
-                    <PageResult
-                      filename={match.params.filename}
-                      report={reports.get(match.params.filename)}
-                      onMount={this.handlePageResultMount}
-                      onShowResultList={this.dispatcher.showResultList}
-                    />
-                  )}
-                />
-              </div>
-              {/* End of column */}
+              {/* End of columns */}
             </div>
-            {/* End of columns */}
-          </div>
-          {/* End of container */}
+            {/* End of container */}
+          </section>
           <Notifications
             notifications={this.state.notifications.toArray()}
             onDissmiss={this.handleDissmissNotify}

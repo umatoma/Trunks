@@ -10,15 +10,15 @@ const isNotReady = worker => worker.status !== 'ready';
 
 const Attack = ({ worker, metrics, formAttack, addNotify, updateFormAttack }) => (
   <div>
-    <section className="section">
+    <div className="content">
       <FromPostAttack
         form={formAttack}
         addNotify={addNotify}
         onUpdate={updateFormAttack}
         isAttacking={worker.status === 'active'}
       />
-    </section>
-    <section className="section">
+    </div>
+    <div className="content">
       {isNotReady(worker, metrics) ? <Metrics metrics={metrics} /> : null}
       {isActive(worker) ? <WorkerProgress worker={worker} metrics={metrics} /> : null}
       {isDone(worker) ? (
@@ -26,7 +26,7 @@ const Attack = ({ worker, metrics, formAttack, addNotify, updateFormAttack }) =>
           Check details
         </Link>
       ) : null}
-    </section>
+    </div>
   </div>
 );
 

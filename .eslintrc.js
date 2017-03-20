@@ -8,6 +8,7 @@ module.exports = {
     location: true,
   },
   rules: {
-    'react/forbid-prop-types': 'off'
+    'react/forbid-prop-types': 'off',
+    'jsx-a11y/no-static-element-interactions': 'off',
   }
 }
