@@ -1,5 +1,6 @@
 import React from 'react';
 import ChartResults from './Charts/ChartResults';
+import ChartHistgram from './Charts/ChartHistgram';
 import Metrics from './Metrics';
 import Results from './Results';
 
@@ -66,6 +67,13 @@ class PageResult extends React.Component {
       <div>
         <section className="section">
           <ChartResults results={report.results} />
+        </section>
+        <section className="section">
+          <div className="columns">
+            <div className="column is-8">
+              <ChartHistgram histgram={report.histgram} />
+            </div>
+          </div>
         </section>
         <section className="section">
           <Metrics metrics={report.metrics} />

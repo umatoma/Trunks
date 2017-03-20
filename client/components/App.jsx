@@ -49,8 +49,8 @@ class App extends React.Component {
 
   fetchReport(filename) {
     return getReport(filename)
-      .then(({ metrics, results }) => {
-        this.dispatcher.setReportData(filename, metrics, results);
+      .then((report) => {
+        this.dispatcher.setReportData(filename, report);
       })
       .catch((err) => {
         this.dispatcher.setReportDataError(filename, err);

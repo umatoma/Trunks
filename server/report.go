@@ -64,11 +64,9 @@ func NewJSONMultiReporter(rs *vegeta.Results) vegeta.Reporter {
 func reportBuckets() vegeta.Buckets {
 	return vegeta.Buckets{
 		0 * time.Second,
-		10 * time.Millisecond,
 		50 * time.Millisecond,
 		100 * time.Millisecond,
 		500 * time.Millisecond,
-		1000 * time.Millisecond,
 	}
 }
 
@@ -87,7 +85,7 @@ func resultRow(r *vegeta.Result, rs *vegeta.Results) map[string]interface{} {
 }
 
 func histRow(h *vegeta.Histogram, i int, count uint64) map[string]interface{} {
-	ratio := round(float64(count)/float64(h.Total), 2)
+	ratio := round(100 * float64(count) / float64(h.Total), 2)
 	lo, hi := h.Buckets.Nth(i)
 	return map[string]interface{}{
 		"lo":    lo,

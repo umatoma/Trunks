@@ -90,12 +90,13 @@ class Dispatcher {
     });
   }
 
-  setReportData(filename, metrics, results) {
+  setReportData(filename, { metrics, results, histgram }) {
     const { reports } = this.getState();
     this.setState({
       reports: reports.update(filename, (d) => { // eslint-disable-line
         return d.set('isFetching', false)
           .set('metrics', new ModelMetrics(metrics))
+          .set('histgram', List(histgram))
           .set('results', List(results));
       }),
     });

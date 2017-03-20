@@ -29,6 +29,7 @@ export const ModelReport = Record({
   showResultList: false,
   error: null,
   metrics: new ModelMetrics(),
+  histgram: List(),
   results: List(),
 });
 

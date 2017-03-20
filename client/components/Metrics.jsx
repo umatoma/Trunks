@@ -1,14 +1,16 @@
 import React from 'react';
 
+const divider = <span style={{ display: 'inline-block', width: 4 }} />;
 const floatFormat = (number, n) => {
   const p = Math.pow(10, n); // eslint-disable-line
   return Math.round(number * p) / p;
 };
 const nanoToMilli = (nano, n) => floatFormat((nano / Math.pow(1000, 2)), n); // eslint-disable-line
 const nanoToSec = (nano, n) => floatFormat((nano / Math.pow(1000, 3)), n); // eslint-disable-line
-const statusCodes = codes => Object.keys(codes).map(key => `${key}:${codes[key]}`).join(',');
+const statusCodes = codes => Object.keys(codes).map(key => (
+  <span key={key} className="tag">{`${key}:${codes[key]}`}</span>
+));
 
-const divider = <span style={{ display: 'inline-block', width: 4 }} />;
 const errors = (metrics) => {
   if (!metrics.errors) {
     return (
@@ -94,9 +96,7 @@ const Metrics = ({ metrics }) => (
       <tr>
         <th>Status Codes</th>
         <td>[code:count]</td>
-        <td>
-          <span className="tag">{statusCodes(metrics.status_codes)}</span>
-        </td>
+        <td>{statusCodes(metrics.status_codes)}</td>
       </tr>
       <tr>
         <th>Error Set</th>

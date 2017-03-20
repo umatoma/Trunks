@@ -22,8 +22,8 @@ const chartOptions = {
   data: {
     columns: [],
     colors: {
-      Success: 'hsla(141, 71%, 48%, .8)',
-      Error: 'hsla(348, 100%, 61%, .8)',
+      Success: 'hsla(141, 71%, 48%, .9)',
+      Error: 'hsla(348, 100%, 61%, .9)',
     },
   },
   grid: {
