@@ -21,9 +21,13 @@ const chartOptions = {
   bindto: '#chart_results',
   data: {
     columns: [],
+    types: {
+      Success: 'area',
+      Error: 'area-spline',
+    },
     colors: {
       Success: 'hsla(141, 71%, 48%, .9)',
-      Error: 'hsla(348, 100%, 61%, .9)',
+      Error: 'hsla(348, 100%, 61%, .7)',
     },
   },
   grid: {
