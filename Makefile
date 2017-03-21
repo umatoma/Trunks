@@ -1,6 +1,6 @@
 VERSION := $(shell git rev-parse HEAD)
 
-all: glide deps webpack bindata run
+all: glide deps webpack bindata test lint run
 
 glide:
 ifeq ($(shell command -v glide),)
@@ -26,9 +26,12 @@ webpack:
 bindata:
 	go-bindata-assetfs -o server/bindata_assetfs.go assets/*
 
+test:
+	go test -v -cover ./server
+
 lint:
 	golint ./server/...
-	./node_modules/.bin/eslint --ext .js --ext .jsx ./
+	./node_modules/.bin/eslint --ext .js --ext .jsx ./client
 
 run:
 	go run server/*.go
