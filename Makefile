@@ -1,16 +1,36 @@
-develop: depends assetdev start
-depends:
+VERSION := $(shell git rev-parse HEAD)
+
+all: glide deps webpack bindata run
+
+glide:
+ifeq ($(shell command -v glide),)
+	@echo "start installing glide"
+	curl https://glide.sh/get | sh
+else
+	@echo "glide is already installed"
+endif
+
+deps: glide
 	glide install
 	go get -u github.com/jteeuwen/go-bindata/...
 	go get -u github.com/elazarl/go-bindata-assetfs/...
 	go get -u github.com/golang/lint/golint
 	npm install
-asset:
+
+watch:
+	./node_modules/.bin/webpack -d --progress --watch
+
+webpack:
 	./node_modules/.bin/webpack -p --progress
-build:
+
+bindata:
 	go-bindata-assetfs -o server/bindata_assetfs.go assets/*
-start:
-	go run server/*.go
+
 lint:
 	golint ./server/...
 	./node_modules/.bin/eslint --ext .js --ext .jsx ./
+
+run:
+	go run server/*.go
+
+.PHONY: all glide deps watch webpack bindata lint run
