@@ -16,6 +16,7 @@ import (
 // Handler is the HTTP handler
 type Handler struct {
 	ResultsDir string
+	WebSocketHub *WebSocketHub
 }
 
 // ValidateOptions check if options is valid
@@ -48,7 +49,7 @@ func (h *Handler) PostAttack(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	worker, err := opts.GetAttackWorker(webSocketHub)
+	worker, err := opts.GetAttackWorker(h.WebSocketHub)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
