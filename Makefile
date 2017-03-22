@@ -24,7 +24,7 @@ webpack:
 	./node_modules/.bin/webpack -p --progress
 
 bindata:
-	go-bindata-assetfs -o server/bindata_assetfs.go assets/*
+	go-bindata-assetfs -o server/bindata_assetfs.go -pkg server assets/*
 
 test:
 	go test -v -cover ./server
@@ -34,6 +34,6 @@ lint:
 	./node_modules/.bin/eslint --ext .js --ext .jsx ./client
 
 run:
-	go run server/*.go
+	go run main.go
 
 .PHONY: all glide deps watch webpack bindata lint run

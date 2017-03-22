@@ -3,11 +3,13 @@ package main
 import (
 	"flag"
 	"log"
+
+	"github.com/umatoma/trunks/server"
 )
 
 func main() {
 	// initialize handler
-	h := &Handler{WebSocketHub: NewWebSocketHub()}
+	h := server.NewHandler(server.NewWebSocketHub())
 
 	// command options
 	fs := flag.NewFlagSet("trunks", flag.ExitOnError)
@@ -22,7 +24,7 @@ func main() {
 	go h.WebSocketHub.Run()
 
 	// start server
-	if err := StartEchoServer(h, ":3000"); err != nil {
+	if err := server.StartEchoServer(h, ":3000"); err != nil {
 		log.Fatalln(err)
 	}
 }

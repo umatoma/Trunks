@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"bytes"
@@ -13,10 +13,33 @@ import (
 	"github.com/labstack/echo"
 )
 
+type attackWorkerRunner interface {
+	Run(worker *AttackWorker, baseDir string) error
+	Stop() bool
+}
+
+type workerRunner struct {}
+
 // Handler is the HTTP handler
 type Handler struct {
 	ResultsDir string
 	WebSocketHub *WebSocketHub
+	workerRunner attackWorkerRunner
+}
+
+func (r *workerRunner) Run(worker *AttackWorker, baseDir string) error {
+	return worker.Run(baseDir)
+}
+
+func (r *workerRunner) Stop() bool {
+	return StopAttack()
+}
+
+func NewHandler(hub *WebSocketHub) *Handler {
+	return &Handler{
+		WebSocketHub: hub,
+		workerRunner: &workerRunner{},
+	}
 }
 
 // ValidateOptions check if options is valid
@@ -54,7 +77,7 @@ func (h *Handler) PostAttack(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	if err := worker.Run(h.ResultsDir); err != nil {
+	if err := h.workerRunner.Run(worker, h.ResultsDir); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
@@ -63,7 +86,7 @@ func (h *Handler) PostAttack(c echo.Context) error {
 
 // StopAttack handle DELETE /api/attack request
 func (h *Handler) StopAttack(c echo.Context) error {
-	if ok := StopAttack(); !ok {
+	if ok := h.workerRunner.Stop(); !ok {
 		return c.JSON(http.StatusOK, map[string]string{
 			"message": "failed to stop the attack",
 		})

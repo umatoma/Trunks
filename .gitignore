@@ -29,3 +29,4 @@ _testmain.go
 /node_modules
 /assets
 /server/bindata_assetfs.go
+/server/_results
