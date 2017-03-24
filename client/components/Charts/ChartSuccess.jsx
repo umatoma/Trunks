@@ -2,9 +2,8 @@ import React from 'react';
 import ChartC3 from './ChartC3';
 
 const propsToChartConfig = ({ metrics }) => {
-  const errCount = metrics.errors ? metrics.errors.length : 0;
-  const successes = ['Success', metrics.requests - errCount];
-  const errors = ['Error', errCount];
+  const successes = ['Success', metrics.success];
+  const errors = ['Error', 1.0 - metrics.success];
   return {
     data: {
       type: 'donut',
