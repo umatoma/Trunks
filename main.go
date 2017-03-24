@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"flag"
-	"log"
 	"fmt"
+	"log"
 	"os"
+	"os/signal"
 
 	"github.com/umatoma/trunks/server"
 )
@@ -38,9 +40,17 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	// create context
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	// start websocket server
 	webSocketHub := server.NewWebSocketHub()
-	go webSocketHub.Run()
+	go func() {
+		log.Println("start WebSocketHub...")
+		webSocketHub.Run(ctx)
+		log.Println("close WebSocketHub...")
+	}()
 
 	// initialize handler
 	h := server.NewHandler(
@@ -49,8 +59,24 @@ func main() {
 		opts.ResultsDir,
 	)
 
+	// create web server
+	e := server.NewEchoServer(h)
+
 	// start server
-	if err := server.StartEchoServer(h, ":3000"); err != nil {
-		log.Fatalln(err)
+	go func() {
+		log.Println("start web server...")
+		if err := e.Start(":3000"); err != nil {
+			log.Println("close web server...")
+		}
+	}()
+
+	// Wait for interrupt signal to gracefully shutdown the server with
+	// a timeout of 10 seconds.
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
 	}
 }

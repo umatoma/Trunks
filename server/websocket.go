@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"log"
 	"time"
 	"net/http"
@@ -145,9 +146,11 @@ func NewWebSocketHub() *WebSocketHub {
 	}
 }
 
-func (h *WebSocketHub) Run() {
+func (h *WebSocketHub) Run(ctx context.Context) {
 	for {
 		select {
+		case <-ctx.Done():
+			break
 		case client := <-h.register:
 			h.clients[client] = true
 		case client := <-h.unregister:

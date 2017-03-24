@@ -8,8 +8,8 @@ import (
 	"github.com/labstack/echo/middleware"
 )
 
-// StartEchoServer start echo http server
-func StartEchoServer(h *Handler, port string) error {
+// NewEchoServer start echo http server
+func NewEchoServer(h *Handler) *echo.Echo {
 	// create echo server instance
 	e := echo.New()
 
@@ -41,5 +41,5 @@ func StartEchoServer(h *Handler, port string) error {
 		return nil
 	})
 
-	return e.Start(port)
+	return e
 }
