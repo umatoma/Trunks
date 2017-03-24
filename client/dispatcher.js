@@ -16,7 +16,7 @@ class Dispatcher {
     this.setResultFiles = this.setResultFiles.bind(this);
     this.startAttack = this.startAttack.bind(this);
     this.finishAttack = this.finishAttack.bind(this);
-    this.setAttackMetrics = this.setAttackMetrics.bind(this);
+    this.updateAttackMetrics = this.updateAttackMetrics.bind(this);
     this.initReportData = this.initReportData.bind(this);
     this.setReportData = this.setReportData.bind(this);
     this.setReportDataError = this.setReportDataError.bind(this);
@@ -80,7 +80,7 @@ class Dispatcher {
   finishAttack(filename) {
     const { worker } = this.getState();
     this.setState({
-      worker: worker.set('status', 'done').set('filename', filename),
+      worker: worker.merge({ status: 'done', filename }),
     });
   }
 
@@ -91,15 +91,17 @@ class Dispatcher {
     });
   }
 
-  failAttack(err) {
+  failAttack(error) {
     const { worker } = this.getState();
     this.setState({
-      worker: worker.set('status', 'error').set('error', err),
+      worker: worker.merge({ status: 'error', error }),
     });
   }
 
-  setAttackMetrics(metricsParams) {
+  updateAttackMetrics(metricsParams) {
+    const { worker } = this.getState();
     this.setState({
+      worker: worker.set('status', 'active'),
       metrics: new ModelMetrics(metricsParams),
     });
   }
@@ -115,10 +117,12 @@ class Dispatcher {
     const { reports } = this.getState();
     this.setState({
       reports: reports.update(filename, (d) => { // eslint-disable-line
-        return d.set('isFetching', false)
-          .set('metrics', new ModelMetrics(metrics))
-          .set('histgram', List(histgram))
-          .set('results', List(results));
+        return d.merge({
+          isFetching: false,
+          metrics: new ModelMetrics(metrics),
+          histgram: List(histgram),
+          results: List(results),
+        });
       }),
     });
   }
@@ -127,8 +131,7 @@ class Dispatcher {
     const { reports } = this.getState();
     this.setState({
       reports: reports.update(filename, (d) => { // eslint-disable-line
-        return d.set('isFetching', false)
-          .set('error', error);
+        return d.merge({ isFetching: false, error });
       }),
     });
   }

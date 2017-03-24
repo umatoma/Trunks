@@ -79,7 +79,7 @@ class App extends React.Component {
   }
 
   handleAttackMetrics(data) {
-    this.dispatcher.setAttackMetrics(data);
+    this.dispatcher.updateAttackMetrics(data);
   }
 
   handleDissmissNotify(notification) {
