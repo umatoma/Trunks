@@ -26,7 +26,7 @@ func StartEchoServer(h *Handler, port string) error {
 
 	// for websocket
 	e.GET("/ws", func(c echo.Context) error {
-		serveWebSocket(h.WebSocketHub, c.Response().Writer, c.Request())
+		serveWebSocket(h.webSocketHub, c.Response().Writer, c.Request())
 		return nil
 	})
 

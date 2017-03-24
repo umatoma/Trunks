@@ -8,17 +8,12 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"sync"
 	"time"
 
 	vegeta "github.com/tsenart/vegeta/lib"
 )
 
-var (
-	currentWorker   *AttackWorker
-	lock            sync.Mutex
-	errNowExecuting = errors.New("attacker is executing now")
-)
+var errNowExecuting = errors.New("attacker is executing now")
 
 // AttackWorker aggregates the instances to attack
 type AttackWorker struct {
@@ -29,20 +24,6 @@ type AttackWorker struct {
 	ctx      context.Context
 	cancel   context.CancelFunc
 	broadcaster Broadcaster
-}
-
-// StopAttack stop current attack
-func StopAttack() bool {
-	lock.Lock()
-	defer lock.Unlock()
-
-	if currentWorker == nil {
-		return false
-	}
-	// cancel jobs
-	currentWorker.cancel()
-
-	return true
 }
 
 // NewAttackWorker returns a new AttackWorker with default options
@@ -61,48 +42,30 @@ func NewAttackWorker(atk *vegeta.Attacker, tr vegeta.Targeter, rate uint64, dura
 
 // Run register vegeta attack job
 func (worker *AttackWorker) Run(resultsBasePath string) error {
-	lock.Lock()
-	defer lock.Unlock()
+	// do attack!!
+	log.Println("attack start")
+	worker.broadcastAttackStart()
+	resultFilePath, err := worker.attack(resultsBasePath)
 
-	if currentWorker != nil {
-		return errNowExecuting
+	// failed attack
+	if err != nil {
+		log.Println("attack failed", err)
+		worker.broadcastAttackFail(err)
+		return err
 	}
 
-	// do attack
-	currentWorker = worker
-	go func() {
-		defer worker.unbindWorker()
-		// do attack!!
-		log.Println("attack start")
-		worker.broadcastAttackStart()
-		resultFilePath, err := worker.attack(resultsBasePath)
-		// failed attack
-		if err != nil {
-			log.Println("attack failed", err)
-			worker.broadcastAttackFail(err)
-		}
-		if resultFilePath == "" {
-			// canceled attack
-			log.Println("attack canceled")
-			worker.broadcastAttackCancel()
-		} else {
-			// success attack
-			log.Println("attack succeeded")
-			paths := strings.Split(resultFilePath, "/")
-			worker.broadcastAttackFinish(paths[len(paths) - 1])
-		}
-	}()
+	if resultFilePath == "" {
+		// canceled attack
+		log.Println("attack canceled")
+		worker.broadcastAttackCancel()
+	} else {
+		// success attack
+		log.Println("attack succeeded")
+		paths := strings.Split(resultFilePath, "/")
+		worker.broadcastAttackFinish(paths[len(paths) - 1])
+	}
 
 	return nil
-}
-
-// unbindWorker remove current worker binding
-func (worker *AttackWorker) unbindWorker() {
-	lock.Lock()
-	defer lock.Unlock()
-	if currentWorker == worker {
-		currentWorker = nil
-	}
 }
 
 func (worker *AttackWorker) attack(baseFilePath string) (string, error) {

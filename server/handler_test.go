@@ -11,27 +11,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type fakeWorkerRunner struct {}
+type fakeRunner struct {}
 
-type fakeHandler struct {
-	Handler
-}
-
-func (h *fakeWorkerRunner) Run(w *AttackWorker, baseDir string) error {
+func (r *fakeRunner) Run(worker *AttackWorker) error {
 	return nil
 }
 
-func (h *fakeWorkerRunner) Stop() bool {
+func (r *fakeRunner) Stop() bool {
 	return true
-}
-
-func TestValidateOptions(t *testing.T) {
-	h := &Handler{}
-
-	h.ResultsDir = ""
-	assert.Error(t, h.ValidateOptions(), "results dir should not be empty")
-	h.ResultsDir = "_results"
-	assert.Nil(t, h.ValidateOptions())
 }
 
 func TestIndexHTML(t *testing.T) {
@@ -40,7 +27,7 @@ func TestIndexHTML(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetPath("/")
-	h := &Handler{ResultsDir: "_results"}
+	h := &Handler{}
 
 	if assert.NoError(t, h.IndexHTML(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
@@ -59,12 +46,7 @@ func TestPostAttack(t *testing.T) {
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		rec := httptest.NewRecorder()
 		c := e.NewContext(req, rec)
-		h := &fakeHandler{
-			Handler{
-				ResultsDir: "_results",
-				workerRunner: &fakeWorkerRunner{},
-			},
-		}
+		h := &Handler{runner: new(fakeRunner)}
 
 		if assert.NoError(t, h.PostAttack(c)) {
 			assert.Equal(t, http.StatusOK, rec.Code)
@@ -78,12 +60,7 @@ func TestStopAttack(t *testing.T) {
 	if assert.NoError(t, err) {
 		rec := httptest.NewRecorder()
 		c := e.NewContext(req, rec)
-		h := &fakeHandler{
-			Handler{
-				ResultsDir: "_results",
-				workerRunner: &fakeWorkerRunner{},
-			},
-		}
+		h := &Handler{runner: new(fakeRunner)}
 
 		if assert.NoError(t, h.StopAttack(c)) {
 			assert.Equal(t, http.StatusOK, rec.Code)
@@ -98,7 +75,7 @@ func TestShowResultFiles(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetPath("/api/results/files")
-	h := &Handler{ResultsDir: "fixtures"}
+	h := &Handler{resultsDir: "fixtures"}
 
 	if assert.NoError(t, h.ShowResultFiles(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
@@ -114,7 +91,7 @@ func TestShowReport(t *testing.T) {
 	c.SetPath("/api/reports/:filename")
 	c.SetParamNames("filename")
 	c.SetParamValues("1490012362.bin")
-	h := &Handler{ResultsDir: "fixtures"}
+	h := &Handler{resultsDir: "fixtures"}
 
 	if assert.NoError(t, h.ShowReport(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)

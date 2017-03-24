@@ -2,57 +2,30 @@ package server
 
 import (
 	"bytes"
-	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
-	"io/ioutil"
-	"strings"
 	"sort"
+	"strings"
 
 	"github.com/labstack/echo"
 )
 
-type attackWorkerRunner interface {
-	Run(worker *AttackWorker, baseDir string) error
-	Stop() bool
-}
-
-type workerRunner struct {}
-
 // Handler is the HTTP handler
 type Handler struct {
-	ResultsDir string
-	WebSocketHub *WebSocketHub
-	workerRunner attackWorkerRunner
+	webSocketHub *WebSocketHub
+	runner       Runner
+	resultsDir   string
 }
 
-func (r *workerRunner) Run(worker *AttackWorker, baseDir string) error {
-	return worker.Run(baseDir)
-}
-
-func (r *workerRunner) Stop() bool {
-	return StopAttack()
-}
-
-func NewHandler(hub *WebSocketHub) *Handler {
+// NewHandler returns a new Handler with default options
+func NewHandler(hub *WebSocketHub, runner Runner, resultsDir string) *Handler {
 	return &Handler{
-		WebSocketHub: hub,
-		workerRunner: &workerRunner{},
+		webSocketHub: hub,
+		runner:       runner,
+		resultsDir:   resultsDir,
 	}
-}
-
-// ValidateOptions check if options is valid
-func (h *Handler) ValidateOptions() error {
-	if h.ResultsDir == "" {
-		return fmt.Errorf("results dir should not be empty")
-	}
-
-	if err := os.MkdirAll(h.ResultsDir, 0777); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // IndexHTML handle GET / request
@@ -72,12 +45,12 @@ func (h *Handler) PostAttack(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	worker, err := opts.GetAttackWorker(h.WebSocketHub)
+	worker, err := opts.GetAttackWorker(h.webSocketHub)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	if err := h.workerRunner.Run(worker, h.ResultsDir); err != nil {
+	if err := h.runner.Run(worker); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
@@ -86,7 +59,7 @@ func (h *Handler) PostAttack(c echo.Context) error {
 
 // StopAttack handle DELETE /api/attack request
 func (h *Handler) StopAttack(c echo.Context) error {
-	if ok := h.workerRunner.Stop(); !ok {
+	if ok := h.runner.Stop(); !ok {
 		return c.JSON(http.StatusOK, map[string]string{
 			"message": "failed to stop the attack",
 		})
@@ -98,7 +71,7 @@ func (h *Handler) StopAttack(c echo.Context) error {
 
 // ShowResultFiles handle GET /api/results/files
 func (h *Handler) ShowResultFiles(c echo.Context) error {
-	files, err := ioutil.ReadDir(h.ResultsDir)
+	files, err := ioutil.ReadDir(h.resultsDir)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
@@ -121,7 +94,7 @@ func (h *Handler) ShowResultFiles(c echo.Context) error {
 // ShowReport handle GET /api/reports/:filename
 func (h *Handler) ShowReport(c echo.Context) error {
 	filename := c.Param("filename")
-	file, err := os.Open(filepath.Join(h.ResultsDir, filename))
+	file, err := os.Open(filepath.Join(h.resultsDir, filename))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
