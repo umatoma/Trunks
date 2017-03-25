@@ -10,6 +10,7 @@ class Dispatcher {
    * @param {Function} setState - Component.setState
    * @param {Function} getState - Component.getState
    * @param {{ [eventName]: {Function} }} actions - pairs of eventName and listener
+   * @param {Array.<{Function}>} middlewares - middleware functions [optional]
    */
   constructor(setState, getState, actions, middlewares = []) {
     const emitter = new EventEmitter();
@@ -31,12 +32,21 @@ class Dispatcher {
    */
   wrapListener(listener) {
     return (params) => {
-      const newState = this.middlewares.reduce(
-        (state, middleware) => middleware(state),
-        listener(this.getState, params),
-      );
+      const newState = this.applyMiddlewares(listener(this.getState, params));
       this.setState(newState);
     };
+  }
+
+  /**
+   * apply middlewares to state
+   * @param {Object} newState
+   * @param {Object}
+   */
+  applyMiddlewares(newState) {
+    return this.middlewares.reduce(
+      (state, middleware) => middleware(state),
+      newState,
+    );
   }
 
   /**
