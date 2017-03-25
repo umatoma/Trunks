@@ -8,6 +8,11 @@ export const ModelSideMenu = Record({
   isModalActive: false,
 });
 
+export const ModelImportOption = Record({
+  isModalActive: false,
+  text: '',
+});
+
 export const ModelWorker = Record({
   status: 'ready',
   error: null,

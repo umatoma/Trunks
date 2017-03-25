@@ -93,7 +93,17 @@ class App extends React.Component {
 
   render() {
     const { dispatcher } = this;
-    const { header, sideMenu, worker, metrics, resultFiles, reports, formAttack } = this.state;
+    const {
+      header,
+      sideMenu,
+      worker,
+      metrics,
+      resultFiles,
+      reports,
+      formAttack,
+      importOption,
+    } = this.state;
+
     return (
       <Router>
         <div>
@@ -120,8 +130,18 @@ class App extends React.Component {
                         worker={worker}
                         metrics={metrics}
                         formAttack={formAttack}
+                        importOption={importOption}
                         addNotify={dispatcher.addNotify}
                         updateFormAttack={dispatcher.updateFormAttack}
+                        onUpdateFormImport={(params) => {
+                          dispatcher.updateModalImportOption(params);
+                        }}
+                        onOpenImportModal={() => {
+                          dispatcher.updateModalImportOption({ isModalActive: true });
+                        }}
+                        onCloseImportModal={() => {
+                          dispatcher.updateModalImportOption({ isModalActive: false });
+                        }}
                       />
                     )}
                   />

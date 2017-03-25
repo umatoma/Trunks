@@ -8,6 +8,18 @@ $primary: hsl(271, 100%, 71%) !default;
 @import "~c3/src/scss/main";
 
 // custom styles
+.tk-modal-import {
+  pre {
+    border: 1px solid #dbdbdb;
+    border-radius: 3px;
+    padding: 8px;
+    margin-bottom: 1rem;
+  }
+  textarea {
+    min-height: 256px;
+  }
+}
+
 .tk-load-spinner {
   position: relative;
   width: 100%;

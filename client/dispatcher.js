@@ -1,6 +1,12 @@
 import { OrderedSet, List, Map } from 'immutable';
 import {
-  ModelHeader, ModelSideMenu, ModelWorker, ModelMetrics, ModelReport, ModelFormAttack,
+  ModelHeader,
+  ModelSideMenu,
+  ModelImportOption,
+  ModelWorker,
+  ModelMetrics,
+  ModelReport,
+  ModelFormAttack,
 } from './models';
 
 class Dispatcher {
@@ -13,6 +19,7 @@ class Dispatcher {
     this.removeNotify = this.removeNotify.bind(this);
     this.toggleHeaderHamburger = this.toggleHeaderHamburger.bind(this);
     this.toggleSideMenuModal = this.toggleSideMenuModal.bind(this);
+    this.updateModalImportOption = this.updateModalImportOption.bind(this);
     this.setResultFiles = this.setResultFiles.bind(this);
     this.startAttack = this.startAttack.bind(this);
     this.finishAttack = this.finishAttack.bind(this);
@@ -30,6 +37,7 @@ class Dispatcher {
       notifications: OrderedSet(),
       header: new ModelHeader(),
       sideMenu: new ModelSideMenu(),
+      importOption: new ModelImportOption(),
       worker: new ModelWorker(),
       metrics: new ModelMetrics(),
       resultFiles: List(),
@@ -64,6 +72,11 @@ class Dispatcher {
     this.setState({
       sideMenu: sideMenu.set('isModalActive', !sideMenu.isModalActive),
     });
+  }
+
+  updateModalImportOption(params) {
+    const { importOption } = this.getState();
+    this.setState({ importOption: importOption.merge(params) });
   }
 
   setResultFiles(files) {

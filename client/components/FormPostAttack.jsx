@@ -76,16 +76,6 @@ class FormPostAttack extends React.Component {
     const { form } = this.props;
     return (
       <div className="form-post-attack">
-        <div className="message">
-          <div className="message-body">
-            <span className="icon">
-              <i className="fa fa-lightbulb-o" />
-            </span>
-            <span>
-              Refer to <a href="https://github.com/tsenart/vegeta" target="_blank" rel="noopener noreferrer">vegeta</a> for explanation of each parameter.
-            </span>
-          </div>
-        </div>
         <form onSubmit={this.handleSubmit}>
           <div className="columns">
             <div className="column is-2">

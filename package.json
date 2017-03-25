@@ -47,6 +47,7 @@
     "react-dom": "^15.4.2",
     "react-immutable-proptypes": "^2.1.0",
     "react-router-dom": "^4.0.0",
+    "toml": "^2.3.2",
     "whatwg-fetch": "^2.0.3"
   }
 }
