@@ -10,6 +10,7 @@ export const ModelSideMenu = Record({
 
 export const ModelImportOption = Record({
   isModalActive: false,
+  error: null,
   text: '',
 });
 

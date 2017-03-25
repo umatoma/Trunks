@@ -2,7 +2,7 @@ import toml from 'toml';
 
 const tomlToObject = data => toml.parse(data);
 
-export function importOption(data, format = 'toml') { // eslint-disable-line
+export function convertToObject(data, format = 'toml') { // eslint-disable-line
   switch (format) {
     case 'toml':
       return tomlToObject(data);

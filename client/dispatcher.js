@@ -29,6 +29,7 @@ class Dispatcher {
     this.setReportDataError = this.setReportDataError.bind(this);
     this.showResultList = this.showResultList.bind(this);
     this.updateFormAttack = this.updateFormAttack.bind(this);
+    this.setFormAttack = this.setFormAttack.bind(this);
   }
 
   getInitialState(state) {
@@ -162,6 +163,12 @@ class Dispatcher {
     const { formAttack } = this.getState();
     this.setState({
       formAttack: formAttack.set(key, value),
+    });
+  }
+
+  setFormAttack(params) {
+    this.setState({
+      formAttack: new ModelFormAttack(params),
     });
   }
 }

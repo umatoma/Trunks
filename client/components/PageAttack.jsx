@@ -4,7 +4,7 @@ import FromPostAttack from './FormPostAttack';
 import WorkerProgress from './WorkerProgress';
 import Metrics from './Metrics';
 import ModalImportOption from './ModalImportOption';
-// import { importOption } from '../lib/option';
+import { convertToObject } from '../lib/option';
 
 const isActive = worker => worker.status === 'active';
 const isDone = worker => worker.status === 'done';
@@ -17,9 +17,10 @@ const Attack = ({
   importOption,
   addNotify,
   updateFormAttack,
-  onUpdateFormImport,
-  onOpenImportModal,
-  onCloseImportModal,
+  setFormAttack,
+  updateFormImport,
+  openImportModal,
+  closeImportModal,
 }) => (
   <div>
     <div className="content">
@@ -37,7 +38,7 @@ const Attack = ({
         <p className="control">
           <button
             className="button is-small"
-            onClick={onOpenImportModal}
+            onClick={openImportModal}
           >
             <span className="icon is-small">
               <i className="fa fa-upload" />
@@ -64,9 +65,18 @@ const Attack = ({
     </div>
     <ModalImportOption
       isActive={importOption.isModalActive}
-      form={{ text: importOption.text }}
-      onChange={onUpdateFormImport}
-      onClose={onCloseImportModal}
+      form={{ text: importOption.text, error: importOption.error }}
+      onChange={updateFormImport}
+      onClose={closeImportModal}
+      onSubmit={({ text }) => {
+        try {
+          setFormAttack(convertToObject(text));
+          closeImportModal();
+          addNotify('Importing option was successful.');
+        } catch (e) {
+          updateFormImport({ error: e });
+        }
+      }}
     />
   </div>
 );
@@ -78,9 +88,10 @@ Attack.propTypes = {
   importOption: React.PropTypes.object.isRequired,
   addNotify: React.PropTypes.func.isRequired,
   updateFormAttack: React.PropTypes.func.isRequired,
-  onUpdateFormImport: React.PropTypes.func.isRequired,
-  onOpenImportModal: React.PropTypes.func.isRequired,
-  onCloseImportModal: React.PropTypes.func.isRequired,
+  setFormAttack: React.PropTypes.func.isRequired,
+  updateFormImport: React.PropTypes.func.isRequired,
+  openImportModal: React.PropTypes.func.isRequired,
+  closeImportModal: React.PropTypes.func.isRequired,
 };
 
 export default Attack;

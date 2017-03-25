@@ -9,34 +9,43 @@ GET http://example.com/users
 POST http://www.example.com/users
 """`;
 
-const ModalImportOption = ({ isActive, form, onChange, onClose }) => (
+const ModalImportOption = ({ isActive, form, onChange, onClose, onSubmit }) => (
   <div className={isActive ? 'tk-modal-import modal is-active' : 'tk-modal-import modal'}>
     <div className="modal-background" />
-    <div className="modal-card">
+    <form
+      className="modal-card"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(form);
+      }}
+    >
       <header className="modal-card-head">
         <p className="modal-card-title">Import option</p>
         <button className="delete" onClick={onClose} />
       </header>
       <section className="modal-card-body">
         <pre>{sampleOption}</pre>
-        <form>
-          <div className="field">
-            <p className="control">
-              <textarea
-                className="textarea"
-                placeholder="Paste here..."
-                value={form.text}
-                onChange={e => onChange({ text: e.target.value })}
-              />
-            </p>
+        {form.error ? (
+          <div className="message is-danger">
+            <div className="message-body">{form.error.message}</div>
           </div>
-        </form>
+        ) : null}
+        <div className="field">
+          <p className="control">
+            <textarea
+              className="textarea"
+              placeholder="Paste here..."
+              value={form.text}
+              onChange={e => onChange({ text: e.target.value })}
+            />
+          </p>
+        </div>
       </section>
       <footer className="modal-card-foot">
-        <a className="button is-primary">Import</a>
-        <a className="button" onClick={onClose}>Cancel</a>
+        <button className="button is-primary" type="submit">Import</button>
+        <button className="button" onClick={onClose}>Cancel</button>
       </footer>
-    </div>
+    </form>
   </div>
 );
 
@@ -45,6 +54,7 @@ ModalImportOption.propTypes = {
   form: React.PropTypes.object.isRequired,
   onChange: React.PropTypes.func.isRequired,
   onClose: React.PropTypes.func.isRequired,
+  onSubmit: React.PropTypes.func.isRequired,
 };
 
 export default ModalImportOption;

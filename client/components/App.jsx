@@ -133,13 +133,14 @@ class App extends React.Component {
                         importOption={importOption}
                         addNotify={dispatcher.addNotify}
                         updateFormAttack={dispatcher.updateFormAttack}
-                        onUpdateFormImport={(params) => {
+                        setFormAttack={dispatcher.setFormAttack}
+                        updateFormImport={(params) => {
                           dispatcher.updateModalImportOption(params);
                         }}
-                        onOpenImportModal={() => {
+                        openImportModal={() => {
                           dispatcher.updateModalImportOption({ isModalActive: true });
                         }}
-                        onCloseImportModal={() => {
+                        closeImportModal={() => {
                           dispatcher.updateModalImportOption({ isModalActive: false });
                         }}
                       />
