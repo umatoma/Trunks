@@ -37,13 +37,13 @@ class FormPostAttack extends React.Component {
 
   handleChangeTextField(key) {
     return (e) => {
-      this.props.onUpdate(key, e.target.value);
+      this.props.onUpdate({ [key]: e.target.value });
     };
   }
 
   handleChangeTextArea(key) {
     return (e) => {
-      this.props.onUpdate(key, e.target.value);
+      this.props.onUpdate({ [key]: e.target.value });
     };
   }
 

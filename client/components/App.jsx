@@ -19,10 +19,6 @@ class App extends React.Component {
   constructor() {
     super();
 
-    const getState = () => this.state;
-    this.dispatcher = new Dispatcher(this.setState.bind(this), getState.bind(this), actions);
-    this.state = getInitialState();
-
     // create websocket connection
     const webSocketClient = new WebSocketClient(`ws://${document.location.host}/ws`);
     webSocketClient.onClose(this.handleCloseWebSocket.bind(this));
@@ -33,6 +29,17 @@ class App extends React.Component {
     webSocketClient.onAttackMetrics(this.handleAttackMetrics.bind(this));
     this.webSocketClient = webSocketClient;
 
+    // set dispatcher
+    this.dispatcher = new Dispatcher(
+      this.setState.bind(this),
+      this.getState.bind(this),
+      actions,
+    );
+
+    // initialize state
+    this.state = getInitialState();
+
+    // bind context
     this.dispatch = this.dispatch.bind(this);
     this.handleDissmissNotify = this.handleDissmissNotify.bind(this);
     this.handlePageResultMount = this.handlePageResultMount.bind(this);
@@ -42,6 +49,19 @@ class App extends React.Component {
     this.fetchResultFile();
   }
 
+  /**
+   * return current state
+   * @return {Object}
+   */
+  getState() {
+    return this.state;
+  }
+
+  /**
+   * call dispatcher.dispatch
+   * @param {String} eventName
+   * @param {Any} params
+   */
   dispatch(eventName, params) {
     this.dispatcher.dispatch(eventName, params);
   }
@@ -49,7 +69,7 @@ class App extends React.Component {
   fetchResultFile() {
     return getResultFiles()
       .then((files) => {
-        this.dispatcher.setResultFiles(files);
+        this.dispatch('setResultFiles', files);
       })
       .catch(() => {
         this.dispatch('addNotify', { message: 'failed to fetch result files' });
@@ -59,10 +79,10 @@ class App extends React.Component {
   fetchReport(filename) {
     return getReport(filename)
       .then((report) => {
-        this.dispatcher.setReportData(filename, report);
+        this.dispatch('setReportData', Object.assign({ filename }, report));
       })
-      .catch((err) => {
-        this.dispatcher.setReportDataError(filename, err);
+      .catch((error) => {
+        this.dispatch('setReportDataError', { filename, error });
       });
   }
 
@@ -71,24 +91,24 @@ class App extends React.Component {
   }
 
   handleAttackStart(data) {
-    this.dispatcher.startAttack(data);
+    this.dispatch('startAttack', data);
   }
 
   handleAttackFinish(data) {
-    this.dispatcher.finishAttack(data.filename);
+    this.dispatch('finishAttack', data.filename);
     this.fetchResultFile();
   }
 
   handleAttackCancel() {
-    this.dispatcher.cancelAttack();
+    this.dispatch('cancelAttack');
   }
 
   handleAttackFail(data) {
-    this.dispatcher.cancelAttack(new Error(data.message));
+    this.dispatch('failAttack', new Error(data.message));
   }
 
   handleAttackMetrics(data) {
-    this.dispatcher.updateAttackMetrics(data);
+    this.dispatch('updateAttackMetrics', data);
   }
 
   handleDissmissNotify(notification) {
@@ -96,12 +116,12 @@ class App extends React.Component {
   }
 
   handlePageResultMount(filename) {
-    this.dispatcher.initReportData(filename);
+    this.dispatch('initReportData', filename);
     this.fetchReport(filename);
   }
 
   render() {
-    const { dispatcher, dispatch } = this;
+    const { dispatch } = this;
     const {
       header,
       sideMenu,
@@ -118,7 +138,7 @@ class App extends React.Component {
         <div>
           <Header
             isHamburgerActive={header.isHamburgerActive}
-            onToggleHamburger={dispatcher.toggleHeaderHamburger}
+            onToggleHamburger={() => dispatch('toggleHeaderHamburger')}
           />
           <TitleBanner />
           <section className="section">
@@ -128,7 +148,7 @@ class App extends React.Component {
                   <SideMenuWithRouter
                     resultFiles={resultFiles}
                     isModalActive={sideMenu.isModalActive}
-                    onToggleModal={dispatcher.toggleSideMenuModal}
+                    onToggleModal={() => dispatch('toggleSideMenuModal')}
                   />
                 </div>
                 {/* End of column */}
@@ -141,16 +161,16 @@ class App extends React.Component {
                         formAttack={formAttack}
                         importOption={importOption}
                         addNotify={(message, type) => dispatch('addNotify', { message, type })}
-                        updateFormAttack={dispatcher.updateFormAttack}
-                        setFormAttack={dispatcher.setFormAttack}
+                        updateFormAttack={params => dispatch('updateFormAttack', params)}
+                        setFormAttack={params => dispatch('setFormAttack', params)}
                         updateFormImport={(params) => {
-                          dispatcher.updateModalImportOption(params);
+                          dispatch('updateModalImportOption', params);
                         }}
                         openImportModal={() => {
-                          dispatcher.updateModalImportOption({ isModalActive: true });
+                          dispatch('updateModalImportOption', { isModalActive: true });
                         }}
                         closeImportModal={() => {
-                          dispatcher.updateModalImportOption({ isModalActive: false });
+                          dispatch('updateModalImportOption', { isModalActive: false });
                         }}
                       />
                     )}
@@ -161,7 +181,7 @@ class App extends React.Component {
                         filename={match.params.filename}
                         report={reports.get(match.params.filename)}
                         onMount={this.handlePageResultMount}
-                        onShowResultList={dispatcher.showResultList}
+                        onShowResultList={filename => dispatch('showResultList', filename)}
                       />
                     )}
                   />
