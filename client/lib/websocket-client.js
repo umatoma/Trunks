@@ -3,14 +3,12 @@ class WebSocketClient {
     // create websocket connection
     const conn = new WebSocket(url);
     conn.onclose = () => {
-      console.log('close websocket connection'); // eslint-disable-line
       if (typeof this.handleClose === 'function') {
         this.handleClose();
       }
     };
     conn.onmessage = (evt) => {
       const { event, data } = JSON.parse(evt.data);
-      console.log(event, data);
       switch (event) {
         case 'attackStart':
           if (typeof this.handleAttackStart === 'function') {

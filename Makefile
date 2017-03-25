@@ -18,7 +18,7 @@ deps: glide
 	npm install
 
 watch:
-	./node_modules/.bin/webpack -d --progress --watch
+	NODE_ENV="development" DEBUG="trunks:*" ./node_modules/.bin/webpack -d --progress --watch
 
 webpack:
 	./node_modules/.bin/webpack -p --progress

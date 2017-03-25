@@ -11,6 +11,7 @@ import WebSocketClient from '../lib/websocket-client';
 import { getResultFiles, getReport } from '../lib/api-client';
 import Dispatcher from '../state/dispatcher';
 import * as actions from '../state/actions';
+import { getMiddlewares } from '../state/middlewares';
 import { getInitialState } from '../state/models';
 
 const SideMenuWithRouter = withRouter(SideMenu);
@@ -34,6 +35,7 @@ class App extends React.Component {
       this.setState.bind(this),
       this.getState.bind(this),
       actions,
+      getMiddlewares(),
     );
 
     // initialize state
