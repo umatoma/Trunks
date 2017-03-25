@@ -1,5 +1,7 @@
 import React from 'react';
 
+const NOTIFY_TIMEOUT = 3000;
+
 const style = i => ({
   float: 'right',
   position: 'fixed',
@@ -12,7 +14,7 @@ const className = (type) => {
   if (type) {
     return `notification is-${type}`;
   }
-  return 'notification is-primary';
+  return 'notification is-info';
 };
 
 class Notification extends React.Component {
@@ -20,7 +22,7 @@ class Notification extends React.Component {
     super(props);
     this.dismissTimeout = setTimeout(() => {
       this.props.onDissmiss(this.props.notification);
-    }, 2000);
+    }, NOTIFY_TIMEOUT);
   }
 
   componentWillUnmount() {
@@ -31,7 +33,7 @@ class Notification extends React.Component {
     const { index, notification, onDissmiss } = this.props;
     return (
       <div style={style(index)} className={className(notification.type)}>
-        <button className="delete" onClick={onDissmiss} />
+        <button className="delete" onClick={() => onDissmiss(notification)} />
         {notification.message}
       </div>
     );

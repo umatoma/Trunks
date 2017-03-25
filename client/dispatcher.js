@@ -47,7 +47,7 @@ class Dispatcher {
     }, state);
   }
 
-  addNotify(message, type = 'primary') {
+  addNotify(message, type = 'info') {
     const { notifications } = this.getState();
     this.setState({
       notifications: notifications.add({ key: Date.now(), message, type }),
