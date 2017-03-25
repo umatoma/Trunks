@@ -21,7 +21,7 @@ const ModalImportOption = ({ isActive, form, onChange, onClose, onSubmit }) => (
     >
       <header className="modal-card-head">
         <p className="modal-card-title">Import option</p>
-        <button className="delete" onClick={onClose} />
+        <button className="delete" type="button" onClick={onClose} />
       </header>
       <section className="modal-card-body">
         <pre>{sampleOption}</pre>
@@ -43,7 +43,7 @@ const ModalImportOption = ({ isActive, form, onChange, onClose, onSubmit }) => (
       </section>
       <footer className="modal-card-foot">
         <button className="button is-primary" type="submit">Import</button>
-        <button className="button" onClick={onClose}>Cancel</button>
+        <button className="button" type="button" onClick={onClose}>Cancel</button>
       </footer>
     </form>
   </div>
