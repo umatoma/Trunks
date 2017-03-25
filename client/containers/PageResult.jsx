@@ -1,9 +1,9 @@
 import React from 'react';
-import ChartResults from './Charts/ChartResults';
-import ChartHistgram from './Charts/ChartHistgram';
-import ChartSuccess from './Charts/ChartSuccess';
-import Metrics from './Metrics';
-import Results from './Results';
+import ChartResults from '../components/Charts/ChartResults';
+import ChartHistgram from '../components/Charts/ChartHistgram';
+import ChartSuccess from '../components/Charts/ChartSuccess';
+import Metrics from '../components/Metrics';
+import Results from '../components/Results';
 
 class PageResult extends React.Component {
   constructor() {
@@ -12,17 +12,22 @@ class PageResult extends React.Component {
   }
 
   componentDidMount() {
-    this.props.onMount(this.props.filename);
+    this.handleMount(this.props.filename);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.filename !== this.props.filename) {
-      this.props.onMount(nextProps.filename);
+      this.handleMount(nextProps.filename);
     }
   }
 
+  handleMount(filename) {
+    this.props.dispatch('initReportData', filename);
+    this.props.fetchReport(filename);
+  }
+
   handleClickShowResultList() {
-    this.props.onShowResultList(this.props.filename);
+    this.props.dispatch('showResultList', this.props.filename);
   }
 
   sectionResults() {
@@ -110,13 +115,13 @@ PageResult.defaultProps = {
 
 PageResult.propTypes = {
   filename: React.PropTypes.string.isRequired,
-  onMount: React.PropTypes.func.isRequired,
-  onShowResultList: React.PropTypes.func.isRequired,
   report: React.PropTypes.shape({
     isFetching: React.PropTypes.bool.isRequired,
     results: React.PropTypes.object.isRequired,
     metrics: React.PropTypes.object.isRequired,
   }),
+  fetchReport: React.PropTypes.func.isRequired,
+  dispatch: React.PropTypes.func.isRequired,
 };
 
 export default PageResult;

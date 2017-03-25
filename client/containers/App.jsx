@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, withRouter } from 'react-router-dom';
-import Header from './Header';
-import Footer from './Footer';
-import TitleBanner from './TitleBanner';
-import SideMenu from './SideMenu';
-import Notifications from './Notifications';
-import PageAttack from './PageAttack';
-import PageResult from './PageResult';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import TitleBanner from '../components/TitleBanner';
+import SideMenu from '../components/SideMenu';
+import Notifications from '../components/Notifications';
+import PageAttack from '../containers/PageAttack';
+import PageResult from '../containers/PageResult';
 import WebSocketClient from '../lib/websocket-client';
 import { getResultFiles, getReport } from '../lib/api-client';
 import Dispatcher from '../state/dispatcher';
@@ -44,7 +44,6 @@ class App extends React.Component {
     // bind context
     this.dispatch = this.dispatch.bind(this);
     this.handleDissmissNotify = this.handleDissmissNotify.bind(this);
-    this.handlePageResultMount = this.handlePageResultMount.bind(this);
   }
 
   componentDidMount() {
@@ -117,11 +116,6 @@ class App extends React.Component {
     this.dispatch('removeNotify', notification);
   }
 
-  handlePageResultMount(filename) {
-    this.dispatch('initReportData', filename);
-    this.fetchReport(filename);
-  }
-
   render() {
     const { dispatch } = this;
     const {
@@ -162,18 +156,7 @@ class App extends React.Component {
                         metrics={metrics}
                         formAttack={formAttack}
                         importOption={importOption}
-                        addNotify={(message, type) => dispatch('addNotify', { message, type })}
-                        updateFormAttack={params => dispatch('updateFormAttack', params)}
-                        setFormAttack={params => dispatch('setFormAttack', params)}
-                        updateFormImport={(params) => {
-                          dispatch('updateModalImportOption', params);
-                        }}
-                        openImportModal={() => {
-                          dispatch('updateModalImportOption', { isModalActive: true });
-                        }}
-                        closeImportModal={() => {
-                          dispatch('updateModalImportOption', { isModalActive: false });
-                        }}
+                        dispatch={this.dispatch}
                       />
                     )}
                   />
@@ -182,8 +165,8 @@ class App extends React.Component {
                       <PageResult
                         filename={match.params.filename}
                         report={reports.get(match.params.filename)}
-                        onMount={this.handlePageResultMount}
-                        onShowResultList={filename => dispatch('showResultList', filename)}
+                        fetchReport={this.fetchReport}
+                        dispatch={this.dispatch}
                       />
                     )}
                   />

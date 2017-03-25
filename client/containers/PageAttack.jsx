@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import FromPostAttack from './FormPostAttack';
-import WorkerProgress from './WorkerProgress';
-import Metrics from './Metrics';
-import ModalImportOption from './ModalImportOption';
+import FromPostAttack from '../components/FormPostAttack';
+import WorkerProgress from '../components/WorkerProgress';
+import Metrics from '../components/Metrics';
+import ModalImportOption from '../components/ModalImportOption';
 import { convertToObject } from '../lib/option';
 
 const isActive = worker => worker.status === 'active';
@@ -15,12 +15,7 @@ const Attack = ({
   metrics,
   formAttack,
   importOption,
-  addNotify,
-  updateFormAttack,
-  setFormAttack,
-  updateFormImport,
-  openImportModal,
-  closeImportModal,
+  dispatch,
 }) => (
   <div>
     <div className="content">
@@ -38,7 +33,7 @@ const Attack = ({
         <p className="control">
           <button
             className="button is-small"
-            onClick={openImportModal}
+            onClick={() => dispatch('updateModalImportOption', { isModalActive: true })}
           >
             <span className="icon is-small">
               <i className="fa fa-upload" />
@@ -49,8 +44,8 @@ const Attack = ({
       </div>
       <FromPostAttack
         form={formAttack}
-        addNotify={addNotify}
-        onUpdate={updateFormAttack}
+        addNotify={(message, type) => dispatch('addNotify', { message, type })}
+        onUpdate={params => dispatch('updateFormAttack', params)}
         isAttacking={worker.status === 'active'}
       />
     </div>
@@ -66,15 +61,15 @@ const Attack = ({
     <ModalImportOption
       isActive={importOption.isModalActive}
       form={{ text: importOption.text, error: importOption.error }}
-      onChange={updateFormImport}
-      onClose={closeImportModal}
+      onChange={params => dispatch('updateModalImportOption', params)}
+      onClose={() => dispatch('updateModalImportOption', { isModalActive: true })}
       onSubmit={({ text }) => {
         try {
-          setFormAttack(convertToObject(text));
-          closeImportModal();
-          addNotify('Importing option was successful.');
+          dispatch('setFormAttack', convertToObject(text));
+          dispatch('updateModalImportOption', { isModalActive: false });
+          dispatch('addNotify', { message: 'Importing option was successful.' });
         } catch (e) {
-          updateFormImport({ error: e });
+          dispatch('updateModalImportOption', { error: e });
         }
       }}
     />
@@ -86,12 +81,7 @@ Attack.propTypes = {
   metrics: React.PropTypes.object.isRequired,
   formAttack: React.PropTypes.object.isRequired,
   importOption: React.PropTypes.object.isRequired,
-  addNotify: React.PropTypes.func.isRequired,
-  updateFormAttack: React.PropTypes.func.isRequired,
-  setFormAttack: React.PropTypes.func.isRequired,
-  updateFormImport: React.PropTypes.func.isRequired,
-  openImportModal: React.PropTypes.func.isRequired,
-  closeImportModal: React.PropTypes.func.isRequired,
+  dispatch: React.PropTypes.func.isRequired,
 };
 
 export default Attack;
