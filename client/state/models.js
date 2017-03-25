@@ -1,4 +1,4 @@
-import { Record, List } from 'immutable';
+import { Record, List, OrderedSet, Map } from 'immutable';
 
 export const ModelHeader = Record({
   isHamburgerActive: false,
@@ -53,3 +53,15 @@ export const ModelFormAttack = Record({
   Rate: 1,
   Targets: '',
 });
+
+export const getInitialState = state => Object.assign({
+  notifications: OrderedSet(),
+  header: new ModelHeader(),
+  sideMenu: new ModelSideMenu(),
+  importOption: new ModelImportOption(),
+  worker: new ModelWorker(),
+  metrics: new ModelMetrics(),
+  resultFiles: List(),
+  reports: Map(),
+  formAttack: new ModelFormAttack(),
+}, state);

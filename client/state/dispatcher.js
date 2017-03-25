@@ -1,8 +1,6 @@
-import { OrderedSet, List, Map } from 'immutable';
+import EventEmitter from 'eventemitter3';
+import { List } from 'immutable';
 import {
-  ModelHeader,
-  ModelSideMenu,
-  ModelImportOption,
   ModelWorker,
   ModelMetrics,
   ModelReport,
@@ -10,13 +8,12 @@ import {
 } from './models';
 
 class Dispatcher {
-  constructor(setState, getState) {
+  constructor(setState, getState, actions) {
     this.setState = setState;
     this.getState = getState;
     // bind method context
     // FIXME: It's lame to bind all methods, so please fix it.
-    this.addNotify = this.addNotify.bind(this);
-    this.removeNotify = this.removeNotify.bind(this);
+    // this.addNotify = this.addNotify.bind(this);
     this.toggleHeaderHamburger = this.toggleHeaderHamburger.bind(this);
     this.toggleSideMenuModal = this.toggleSideMenuModal.bind(this);
     this.updateModalImportOption = this.updateModalImportOption.bind(this);
@@ -30,35 +27,21 @@ class Dispatcher {
     this.showResultList = this.showResultList.bind(this);
     this.updateFormAttack = this.updateFormAttack.bind(this);
     this.setFormAttack = this.setFormAttack.bind(this);
-  }
 
-  getInitialState(state) {
-    return Object.assign({
-      webSocketClient: null,
-      notifications: OrderedSet(),
-      header: new ModelHeader(),
-      sideMenu: new ModelSideMenu(),
-      importOption: new ModelImportOption(),
-      worker: new ModelWorker(),
-      metrics: new ModelMetrics(),
-      resultFiles: List(),
-      reports: Map(),
-      formAttack: new ModelFormAttack(),
-    }, state);
-  }
-
-  addNotify(message, type = 'info') {
-    const { notifications } = this.getState();
-    this.setState({
-      notifications: notifications.add({ key: Date.now(), message, type }),
+    const wrapListener = listener => (params) => {
+      const newState = listener(this.getState, params);
+      this.setState(newState);
+    };
+    const emitter = new EventEmitter();
+    Object.keys(actions).forEach((eventName) => {
+      emitter.on(eventName, wrapListener(actions[eventName]));
     });
+    this.emitter = emitter;
+    this.dispatch = this.dispatch.bind(this);
   }
 
-  removeNotify(notification) {
-    const { notifications } = this.getState();
-    this.setState({
-      notifications: notifications.delete(notification),
-    });
+  dispatch(eventName, params) {
+    this.emitter.emit(eventName, params);
   }
 
   toggleHeaderHamburger() {

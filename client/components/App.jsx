@@ -8,14 +8,21 @@ import Notifications from './Notifications';
 import PageAttack from './PageAttack';
 import PageResult from './PageResult';
 import WebSocketClient from '../lib/websocket-client';
-import Dispatcher from '../dispatcher';
 import { getResultFiles, getReport } from '../lib/api-client';
+import Dispatcher from '../state/dispatcher';
+import * as actions from '../state/actions';
+import { getInitialState } from '../state/models';
 
 const SideMenuWithRouter = withRouter(SideMenu);
 
 class App extends React.Component {
   constructor() {
     super();
+
+    const getState = () => this.state;
+    this.dispatcher = new Dispatcher(this.setState.bind(this), getState.bind(this), actions);
+    this.state = getInitialState();
+
     // create websocket connection
     const webSocketClient = new WebSocketClient(`ws://${document.location.host}/ws`);
     webSocketClient.onClose(this.handleCloseWebSocket.bind(this));
@@ -24,11 +31,9 @@ class App extends React.Component {
     webSocketClient.onAttackCancel(this.handleAttackCancel.bind(this));
     webSocketClient.onAttackFail(this.handleAttackFail.bind(this));
     webSocketClient.onAttackMetrics(this.handleAttackMetrics.bind(this));
+    this.webSocketClient = webSocketClient;
 
-    const getState = () => this.state;
-    this.dispatcher = new Dispatcher(this.setState.bind(this), getState.bind(this));
-    this.state = this.dispatcher.getInitialState({ webSocketClient });
-
+    this.dispatch = this.dispatch.bind(this);
     this.handleDissmissNotify = this.handleDissmissNotify.bind(this);
     this.handlePageResultMount = this.handlePageResultMount.bind(this);
   }
@@ -37,13 +42,17 @@ class App extends React.Component {
     this.fetchResultFile();
   }
 
+  dispatch(eventName, params) {
+    this.dispatcher.dispatch(eventName, params);
+  }
+
   fetchResultFile() {
     return getResultFiles()
       .then((files) => {
         this.dispatcher.setResultFiles(files);
       })
       .catch(() => {
-        this.dispatcher.addNotify('failed to fetch result files');
+        this.dispatch('addNotify', { message: 'failed to fetch result files' });
       });
   }
 
@@ -58,7 +67,7 @@ class App extends React.Component {
   }
 
   handleCloseWebSocket() {
-    this.dispatcher.addNotify('WebSocket connection closed');
+    this.dispatch('addNotify', { message: 'WebSocket connection closed' });
   }
 
   handleAttackStart(data) {
@@ -83,7 +92,7 @@ class App extends React.Component {
   }
 
   handleDissmissNotify(notification) {
-    this.dispatcher.removeNotify(notification);
+    this.dispatch('removeNotify', notification);
   }
 
   handlePageResultMount(filename) {
@@ -92,7 +101,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { dispatcher } = this;
+    const { dispatcher, dispatch } = this;
     const {
       header,
       sideMenu,
@@ -131,7 +140,7 @@ class App extends React.Component {
                         metrics={metrics}
                         formAttack={formAttack}
                         importOption={importOption}
-                        addNotify={dispatcher.addNotify}
+                        addNotify={(message, type) => dispatch('addNotify', { message, type })}
                         updateFormAttack={dispatcher.updateFormAttack}
                         setFormAttack={dispatcher.setFormAttack}
                         updateFormImport={(params) => {
