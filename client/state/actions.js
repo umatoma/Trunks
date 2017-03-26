@@ -9,91 +9,87 @@ import {
 /**
  * appState actions
  */
-export function addNotify(getState, { message, type = 'info' }) {
-  const { appState } = getState();
+export function addNotify({ appState }, { message, type = 'info' }) {
   return {
     appState: appState.addNotify(message, type),
   };
 }
 
-export function removeNotify(getState, notification) {
-  const { appState } = getState();
+export function removeNotify({ appState }, notification) {
   return {
     appState: appState.removeNotify(notification),
   };
 }
 
-export function toggleHeaderHamburger(getState) {
-  const { appState } = getState();
+export function toggleHeaderHamburger({ appState }) {
   return {
     appState: appState.toggleHeaderHamburger(),
   };
 }
 
-export function toggleSideMenuModal(getState) {
-  const { appState } = getState();
+export function toggleSideMenuModal({ appState }) {
   return {
     appState: appState.toggleSideMenuModal(),
   };
 }
 /* ------------------------------ */
 
-export function updateModalImportOption(getState, params) {
-  const { importOption } = getState();
+export function updateModalImportOption(state, params) {
+  const { importOption } = state;
   return {
     importOption: importOption.merge(params),
   };
 }
 
-export function setResultFiles(getState, files) {
+export function setResultFiles(state, files) {
   return { resultFiles: List(files) };
 }
 
-export function startAttack(getState, workerParams) {
+export function startAttack(state, workerParams) {
   return {
     worker: new ModelWorker(Object.assign({ status: 'active', filename: '' }, workerParams)),
     metrics: new ModelMetrics(),
   };
 }
 
-export function finishAttack(getState, filename) {
-  const { worker } = getState();
+export function finishAttack(state, filename) {
+  const { worker } = state;
   return {
     worker: worker.merge({ status: 'done', filename }),
   };
 }
 
-export function cancelAttack(getState) {
-  const { worker } = getState();
+export function cancelAttack(state) {
+  const { worker } = state;
   return {
     worker: worker.set('status', 'canceled'),
   };
 }
 
-export function failAttack(getState, error) {
-  const { worker } = getState();
+export function failAttack(state, error) {
+  const { worker } = state;
   return {
     worker: worker.merge({ status: 'error', error }),
   };
 }
 
-export function updateAttackMetrics(getState, metricsParams) {
-  const { worker } = getState();
+export function updateAttackMetrics(state, metricsParams) {
+  const { worker } = state;
   return {
     worker: worker.set('status', 'active'),
     metrics: new ModelMetrics(metricsParams),
   };
 }
 
-export function initReportData(getState, filename) {
-  const { reports } = getState();
+export function initReportData(state, filename) {
+  const { reports } = state;
   return {
     reports: reports.set(filename, new ModelReport()),
   };
 }
 
-export function setReportData(getState, { filename, metrics, results, histgram }) {
-  const { reports } = getState();
+export function setReportData(state, { filename, metrics, results, histgram }) {
+  const { reports } = state;
   return {
     reports: reports.update(filename, (d) => { // eslint-disable-line
       return d.merge({
@@ -106,8 +102,8 @@ export function setReportData(getState, { filename, metrics, results, histgram }
   };
 }
 
-export function setReportDataError(getState, { filename, error }) {
-  const { reports } = getState();
+export function setReportDataError(state, { filename, error }) {
+  const { reports } = state;
   return {
     reports: reports.update(filename, (d) => { // eslint-disable-line
       return d.merge({ isFetching: false, error });
@@ -115,8 +111,8 @@ export function setReportDataError(getState, { filename, error }) {
   };
 }
 
-export function showResultList(getState, filename) {
-  const { reports } = getState();
+export function showResultList(state, filename) {
+  const { reports } = state;
   return {
     reports: reports.update(filename, (d) => { // eslint-disable-line
       return d.set('showResultList', true);
@@ -124,14 +120,14 @@ export function showResultList(getState, filename) {
   };
 }
 
-export function updateFormAttack(getState, params) {
-  const { formAttack } = getState();
+export function updateFormAttack(state, params) {
+  const { formAttack } = state;
   return {
     formAttack: formAttack.merge(params),
   };
 }
 
-export function setFormAttack(getState, params) {
+export function setFormAttack(state, params) {
   return {
     formAttack: new ModelFormAttack(params),
   };

@@ -32,7 +32,8 @@ class Dispatcher {
    */
   wrapListener(listener) {
     return (params) => {
-      const newState = this.applyMiddlewares(listener(this.getState, params));
+      const prevState = this.getState();
+      const newState = this.applyMiddlewares(listener(prevState, params));
       this.setState(newState);
     };
   }
