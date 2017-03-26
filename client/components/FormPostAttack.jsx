@@ -1,5 +1,4 @@
 import React from 'react';
-import { startAttack, cancelAttack } from '../lib/api-client';
 
 class FormPostAttack extends React.Component {
   constructor(props) {
@@ -21,18 +20,14 @@ class FormPostAttack extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     const { form } = this.props;
-    const params = Object.assign({}, form.toJS(), {
+    const params = Object.assign(form.toJS(), {
       Rate: parseInt(form.Rate, 10) },
     );
-    startAttack(params)
-      .then(() => this.props.addNotify('succeeded to post attack'))
-      .catch(() => this.props.addNotify('failed to post attack', 'danger'));
+    this.props.onSubmit(params);
   }
 
   handleClickCancelButton() {
-    cancelAttack()
-      .then(() => this.props.addNotify('succeeded to cancel attack'))
-      .catch(() => this.props.addNotify('failed to cancel attack', 'danger'));
+    this.props.onCancel();
   }
 
   handleChangeTextField(key) {
@@ -150,8 +145,9 @@ class FormPostAttack extends React.Component {
 FormPostAttack.propTypes = {
   form: React.PropTypes.object.isRequired,
   isAttacking: React.PropTypes.bool.isRequired,
-  addNotify: React.PropTypes.func.isRequired,
   onUpdate: React.PropTypes.func.isRequired,
+  onSubmit: React.PropTypes.func.isRequired,
+  onCancel: React.PropTypes.func.isRequired,
 };
 
 export default FormPostAttack;

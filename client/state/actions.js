@@ -108,6 +108,21 @@ export function setFormAttack(getState, params) {
   };
 }
 
+/**
+ * async actions
+ */
+export function startAttackAsync(getState, params) {
+  return apiClient.startAttack(params)
+    .then(() => addNotify(getState, { message: 'succeeded to post attack' }))
+    .catch(() => addNotify(getState, { message: 'failed to post attack', type: 'danger' }));
+}
+
+export function cancelAttackAsync(getState) {
+  return apiClient.cancelAttack()
+    .then(() => addNotify(getState, { message: 'succeeded to cancel attack' }))
+    .catch(() => addNotify(getState, { message: 'failed to cancel attack', type: 'danger' }));
+}
+
 export function fetchResultFilesAsync(getState) {
   return apiClient.getResultFiles()
     .then(files => setResultFiles(getState, files))

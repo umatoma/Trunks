@@ -44,9 +44,10 @@ const Attack = ({
       </div>
       <FromPostAttack
         form={formAttack}
-        addNotify={(message, type) => dispatch('addNotify', { message, type })}
-        onUpdate={params => dispatch('updateFormAttack', params)}
         isAttacking={worker.status === 'active'}
+        onUpdate={params => dispatch('updateFormAttack', params)}
+        onSubmit={params => dispatch('startAttackAsync', params)}
+        onCancel={() => dispatch('cancelAttackAsync')}
       />
     </div>
     <div className="content">
