@@ -1,11 +1,5 @@
 import { Record, List, Map } from 'immutable';
 
-const ModelImportOption = new Record({
-  isModalActive: false,
-  error: null,
-  text: '',
-});
-
 const ModelWorker = new Record({
   status: 'ready',
   error: null,
@@ -46,23 +40,39 @@ const ModelFormAttack = Record({
   Targets: '',
 });
 
+const ModelFormImport = new Record({
+  isModalActive: false,
+  error: null,
+  text: '',
+});
+
 const AttackStateRecord = new Record({
-  importOption: new ModelImportOption(),
+  isImportModalActive: false,
   worker: new ModelWorker(),
   metrics: new ModelMetrics(),
   resultFiles: List(),
   reports: Map(),
   formAttack: new ModelFormAttack(),
+  formImport: new ModelFormImport(),
 });
 
 export default class AttackState extends AttackStateRecord {
+  /**
+   * set import modal active status
+   * @param {Boolean} isActive
+   * @return {AttackState}
+   */
+  setImportModalActive(isActive) {
+    return this.set('isImportModalActive', isActive);
+  }
+
   /**
    * update importOption
    * @param {Object} params
    * @return {AttackState}
    */
-  updateModalImportOption(params) {
-    return this.set('importOption', this.importOption.merge(params));
+  updateFormImport(params) {
+    return this.set('formImport', this.formImport.merge(params));
   }
 
   /**

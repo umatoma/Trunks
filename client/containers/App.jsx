@@ -99,7 +99,15 @@ class App extends React.Component {
     const { dispatch } = this;
     const { appState, attackState } = this.state;
     const { notifications, header, sideMenu } = appState;
-    const { worker, metrics, resultFiles, reports, formAttack, importOption } = attackState;
+    const {
+      isImportModalActive,
+      worker,
+      metrics,
+      resultFiles,
+      reports,
+      formAttack,
+      formImport,
+    } = attackState;
 
     return (
       <Router>
@@ -124,10 +132,11 @@ class App extends React.Component {
                   <Route
                     exact path="/" render={() => (
                       <PageAttack
+                        isImportModalActive={isImportModalActive}
                         worker={worker}
                         metrics={metrics}
                         formAttack={formAttack}
-                        importOption={importOption}
+                        formImport={formImport}
                         dispatch={this.dispatch}
                       />
                     )}

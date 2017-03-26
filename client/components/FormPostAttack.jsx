@@ -42,7 +42,7 @@ class FormPostAttack extends React.Component {
     };
   }
 
-  submitOrCancelButton() {
+  renderSubmitOrCancelButton() {
     if (this.props.isAttacking) {
       return (
         <button
@@ -134,7 +134,7 @@ class FormPostAttack extends React.Component {
             {/* end of column */}
           </div>
           <p className="control">
-            {this.submitOrCancelButton()}
+            {this.renderSubmitOrCancelButton()}
           </p>
         </form>
       </div>

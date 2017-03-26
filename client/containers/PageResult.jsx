@@ -30,7 +30,7 @@ class PageResult extends React.Component {
     this.props.dispatch('showResultList', this.props.filename);
   }
 
-  sectionResults() {
+  renderResults() {
     const { report } = this.props;
     if (report.showResultList) {
       return <Results results={report.results} />;
@@ -48,7 +48,7 @@ class PageResult extends React.Component {
     );
   }
 
-  sectionBody() {
+  renderBody() {
     const { report } = this.props;
 
     if (!report || report.isFetching !== false) {
@@ -90,7 +90,7 @@ class PageResult extends React.Component {
           <Metrics metrics={report.metrics} />
         </div>
         <div className="content">
-          {this.sectionResults()}
+          {this.renderResults()}
         </div>
       </div>
     );
@@ -103,7 +103,7 @@ class PageResult extends React.Component {
         <div className="content">
           <h1 className="title">{filename}</h1>
         </div>
-        {this.sectionBody()}
+        {this.renderBody()}
       </div>
     );
   }

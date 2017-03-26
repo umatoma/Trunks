@@ -11,10 +11,11 @@ const isDone = worker => worker.status === 'done';
 const isNotReady = worker => worker.status !== 'ready';
 
 const Attack = ({
+  isImportModalActive,
   worker,
   metrics,
   formAttack,
-  importOption,
+  formImport,
   dispatch,
 }) => (
   <div>
@@ -33,7 +34,7 @@ const Attack = ({
         <p className="control">
           <button
             className="button is-small"
-            onClick={() => dispatch('updateModalImportOption', { isModalActive: true })}
+            onClick={() => dispatch('openImportModal')}
           >
             <span className="icon is-small">
               <i className="fa fa-upload" />
@@ -60,17 +61,17 @@ const Attack = ({
       ) : null}
     </div>
     <ModalImportOption
-      isActive={importOption.isModalActive}
-      form={{ text: importOption.text, error: importOption.error }}
-      onChange={params => dispatch('updateModalImportOption', params)}
-      onClose={() => dispatch('updateModalImportOption', { isModalActive: false })}
+      isActive={isImportModalActive}
+      form={formImport}
+      onChange={params => dispatch('updateFormImport', params)}
+      onClose={() => dispatch('closeImportModal')}
       onSubmit={({ text }) => {
         try {
           dispatch('setFormAttack', convertToObject(text));
-          dispatch('updateModalImportOption', { isModalActive: false });
+          dispatch('closeImportModal');
           dispatch('addNotify', { message: 'Importing option was successful.' });
         } catch (e) {
-          dispatch('updateModalImportOption', { error: e });
+          dispatch('updateFormImport', { error: e });
         }
       }}
     />
@@ -78,10 +79,11 @@ const Attack = ({
 );
 
 Attack.propTypes = {
+  isImportModalActive: React.PropTypes.bool.isRequired,
   worker: React.PropTypes.object.isRequired,
   metrics: React.PropTypes.object.isRequired,
   formAttack: React.PropTypes.object.isRequired,
-  importOption: React.PropTypes.object.isRequired,
+  formImport: React.PropTypes.object.isRequired,
   dispatch: React.PropTypes.func.isRequired,
 };
 

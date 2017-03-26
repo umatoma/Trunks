@@ -30,9 +30,21 @@ export function toggleSideMenuModal(getState) {
 /**
  * actions for attackState
  */
-export function updateModalImportOption(getState, params) {
+export function openImportModal(getState) {
   return {
-    attackState: getState().attackState.updateModalImportOption(params),
+    attackState: getState().attackState.setImportModalActive(true),
+  };
+}
+
+export function closeImportModal(getState) {
+  return {
+    attackState: getState().attackState.setImportModalActive(false),
+  };
+}
+
+export function updateFormImport(getState, params) {
+  return {
+    attackState: getState().attackState.updateFormImport(params),
   };
 }
 
