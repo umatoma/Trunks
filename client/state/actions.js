@@ -1,13 +1,5 @@
-import { List } from 'immutable';
-import {
-  ModelWorker,
-  ModelMetrics,
-  ModelReport,
-  ModelFormAttack,
-} from './models';
-
 /**
- * appState actions
+ * actions for appState
  */
 export function addNotify({ appState }, { message, type = 'info' }) {
   return {
@@ -32,103 +24,84 @@ export function toggleSideMenuModal({ appState }) {
     appState: appState.toggleSideMenuModal(),
   };
 }
-/* ------------------------------ */
 
-export function updateModalImportOption(state, params) {
-  const { importOption } = state;
+/**
+ * actions for attackState
+ */
+export function updateModalImportOption({ attackState }, params) {
   return {
-    importOption: importOption.merge(params),
+    attackState: attackState.updateModalImportOption(params),
   };
 }
 
-export function setResultFiles(state, files) {
-  return { resultFiles: List(files) };
-}
-
-export function startAttack(state, workerParams) {
+export function setResultFiles({ attackState }, files) {
   return {
-    worker: new ModelWorker(Object.assign({ status: 'active', filename: '' }, workerParams)),
-    metrics: new ModelMetrics(),
+    attackState: attackState.setResultFiles(files),
   };
 }
 
-export function finishAttack(state, filename) {
-  const { worker } = state;
+export function startAttack({ attackState }, workerParams) {
   return {
-    worker: worker.merge({ status: 'done', filename }),
+    attackState: attackState.startAttack(workerParams),
   };
 }
 
-export function cancelAttack(state) {
-  const { worker } = state;
+export function finishAttack({ attackState }, filename) {
   return {
-    worker: worker.set('status', 'canceled'),
+    attackState: attackState.finishAttack(filename),
   };
 }
 
-export function failAttack(state, error) {
-  const { worker } = state;
+export function cancelAttack({ attackState }) {
   return {
-    worker: worker.merge({ status: 'error', error }),
+    attackState: attackState.cancelAttack(),
   };
 }
 
-export function updateAttackMetrics(state, metricsParams) {
-  const { worker } = state;
+export function failAttack({ attackState }, error) {
   return {
-    worker: worker.set('status', 'active'),
-    metrics: new ModelMetrics(metricsParams),
+    attackState: attackState.failAttack(error),
   };
 }
 
-export function initReportData(state, filename) {
-  const { reports } = state;
+export function updateAttackMetrics({ attackState }, metricsParams) {
   return {
-    reports: reports.set(filename, new ModelReport()),
+    attackState: attackState.updateAttackMetrics(metricsParams),
   };
 }
 
-export function setReportData(state, { filename, metrics, results, histgram }) {
-  const { reports } = state;
+export function initReportData({ attackState }, filename) {
   return {
-    reports: reports.update(filename, (d) => { // eslint-disable-line
-      return d.merge({
-        isFetching: false,
-        metrics: new ModelMetrics(metrics),
-        histgram: List(histgram),
-        results: List(results),
-      });
-    }),
+    attackState: attackState.initReportData(filename),
   };
 }
 
-export function setReportDataError(state, { filename, error }) {
-  const { reports } = state;
+export function setReportData({ attackState }, { filename, metrics, results, histgram }) {
   return {
-    reports: reports.update(filename, (d) => { // eslint-disable-line
-      return d.merge({ isFetching: false, error });
-    }),
+    attackState: attackState.setReportData(filename, metrics, results, histgram),
   };
 }
 
-export function showResultList(state, filename) {
-  const { reports } = state;
+export function setReportDataError({ attackState }, { filename, error }) {
   return {
-    reports: reports.update(filename, (d) => { // eslint-disable-line
-      return d.set('showResultList', true);
-    }),
+    attackState: attackState.setReportDataError(filename, error),
   };
 }
 
-export function updateFormAttack(state, params) {
-  const { formAttack } = state;
+export function showResultList({ attackState }, filename) {
   return {
-    formAttack: formAttack.merge(params),
+    attackState: attackState.showResultList(filename),
   };
 }
 
-export function setFormAttack(state, params) {
+export function updateFormAttack({ attackState }, params) {
   return {
-    formAttack: new ModelFormAttack(params),
+    attackState: attackState.updateFormAttack(params),
+  };
+}
+
+export function setFormAttack({ attackState }, params) {
+  return {
+    attackState: attackState.setFormAttack(params),
   };
 }
