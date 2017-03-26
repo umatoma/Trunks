@@ -62,7 +62,7 @@ const Attack = ({
       isActive={importOption.isModalActive}
       form={{ text: importOption.text, error: importOption.error }}
       onChange={params => dispatch('updateModalImportOption', params)}
-      onClose={() => dispatch('updateModalImportOption', { isModalActive: true })}
+      onClose={() => dispatch('updateModalImportOption', { isModalActive: false })}
       onSubmit={({ text }) => {
         try {
           dispatch('setFormAttack', convertToObject(text));
