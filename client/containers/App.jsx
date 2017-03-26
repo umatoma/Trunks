@@ -8,7 +8,6 @@ import Notifications from '../components/Notifications';
 import PageAttack from '../containers/PageAttack';
 import PageResult from '../containers/PageResult';
 import WebSocketClient from '../lib/websocket-client';
-import { getResultFiles, getReport } from '../lib/api-client';
 import Dispatcher from '../state/dispatcher';
 import * as actions from '../state/actions';
 import { getMiddlewares } from '../state/middlewares';
@@ -47,7 +46,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchResultFile();
+    this.dispatch('fetchResultFilesAsync');
   }
 
   /**
@@ -67,26 +66,6 @@ class App extends React.Component {
     this.dispatcher.dispatch(eventName, params);
   }
 
-  fetchResultFile() {
-    return getResultFiles()
-      .then((files) => {
-        this.dispatch('setResultFiles', files);
-      })
-      .catch(() => {
-        this.dispatch('addNotify', { message: 'failed to fetch result files' });
-      });
-  }
-
-  fetchReport(filename) {
-    return getReport(filename)
-      .then((report) => {
-        this.dispatch('setReportData', Object.assign({ filename }, report));
-      })
-      .catch((error) => {
-        this.dispatch('setReportDataError', { filename, error });
-      });
-  }
-
   handleCloseWebSocket() {
     this.dispatch('addNotify', { message: 'WebSocket connection closed' });
   }
@@ -97,7 +76,7 @@ class App extends React.Component {
 
   handleAttackFinish(data) {
     this.dispatch('finishAttack', data.filename);
-    this.fetchResultFile();
+    this.dispatch('fetchResultFilesAsync');
   }
 
   handleAttackCancel() {
@@ -158,7 +137,7 @@ class App extends React.Component {
                       <PageResult
                         filename={match.params.filename}
                         report={reports.get(match.params.filename)}
-                        fetchReport={this.fetchReport}
+                        fetchReport={filename => dispatch('fetchReportAsync', filename)}
                         dispatch={this.dispatch}
                       />
                     )}

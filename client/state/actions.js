@@ -1,107 +1,121 @@
+import * as apiClient from '../lib/api-client';
+
 /**
  * actions for appState
  */
-export function addNotify({ appState }, { message, type = 'info' }) {
+export function addNotify(getState, { message, type = 'info' }) {
   return {
-    appState: appState.addNotify(message, type),
+    appState: getState().appState.addNotify(message, type),
   };
 }
 
-export function removeNotify({ appState }, notification) {
+export function removeNotify(getState, notification) {
   return {
-    appState: appState.removeNotify(notification),
+    appState: getState().appState.removeNotify(notification),
   };
 }
 
-export function toggleHeaderHamburger({ appState }) {
+export function toggleHeaderHamburger(getState) {
   return {
-    appState: appState.toggleHeaderHamburger(),
+    appState: getState().appState.toggleHeaderHamburger(),
   };
 }
 
-export function toggleSideMenuModal({ appState }) {
+export function toggleSideMenuModal(getState) {
   return {
-    appState: appState.toggleSideMenuModal(),
+    appState: getState().appState.toggleSideMenuModal(),
   };
 }
 
 /**
  * actions for attackState
  */
-export function updateModalImportOption({ attackState }, params) {
+export function updateModalImportOption(getState, params) {
   return {
-    attackState: attackState.updateModalImportOption(params),
+    attackState: getState().attackState.updateModalImportOption(params),
   };
 }
 
-export function setResultFiles({ attackState }, files) {
+export function setResultFiles(getState, files) {
   return {
-    attackState: attackState.setResultFiles(files),
+    attackState: getState().attackState.setResultFiles(files),
   };
 }
 
-export function startAttack({ attackState }, workerParams) {
+export function startAttack(getState, workerParams) {
   return {
-    attackState: attackState.startAttack(workerParams),
+    attackState: getState().attackState.startAttack(workerParams),
   };
 }
 
-export function finishAttack({ attackState }, filename) {
+export function finishAttack(getState, filename) {
   return {
-    attackState: attackState.finishAttack(filename),
+    attackState: getState().attackState.finishAttack(filename),
   };
 }
 
-export function cancelAttack({ attackState }) {
+export function cancelAttack(getState) {
   return {
-    attackState: attackState.cancelAttack(),
+    attackState: getState().attackState.cancelAttack(),
   };
 }
 
-export function failAttack({ attackState }, error) {
+export function failAttack(getState, error) {
   return {
-    attackState: attackState.failAttack(error),
+    attackState: getState().attackState.failAttack(error),
   };
 }
 
-export function updateAttackMetrics({ attackState }, metricsParams) {
+export function updateAttackMetrics(getState, metricsParams) {
   return {
-    attackState: attackState.updateAttackMetrics(metricsParams),
+    attackState: getState().attackState.updateAttackMetrics(metricsParams),
   };
 }
 
-export function initReportData({ attackState }, filename) {
+export function initReportData(getState, filename) {
   return {
-    attackState: attackState.initReportData(filename),
+    attackState: getState().attackState.initReportData(filename),
   };
 }
 
-export function setReportData({ attackState }, { filename, metrics, results, histgram }) {
+export function setReportData(getState, { filename, metrics, results, histgram }) {
   return {
-    attackState: attackState.setReportData(filename, metrics, results, histgram),
+    attackState: getState().attackState.setReportData(filename, metrics, results, histgram),
   };
 }
 
-export function setReportDataError({ attackState }, { filename, error }) {
+export function setReportDataError(getState, { filename, error }) {
   return {
-    attackState: attackState.setReportDataError(filename, error),
+    attackState: getState().attackState.setReportDataError(filename, error),
   };
 }
 
-export function showResultList({ attackState }, filename) {
+export function showResultList(getState, filename) {
   return {
-    attackState: attackState.showResultList(filename),
+    attackState: getState().attackState.showResultList(filename),
   };
 }
 
-export function updateFormAttack({ attackState }, params) {
+export function updateFormAttack(getState, params) {
   return {
-    attackState: attackState.updateFormAttack(params),
+    attackState: getState().attackState.updateFormAttack(params),
   };
 }
 
-export function setFormAttack({ attackState }, params) {
+export function setFormAttack(getState, params) {
   return {
-    attackState: attackState.setFormAttack(params),
+    attackState: getState().attackState.setFormAttack(params),
   };
+}
+
+export function fetchResultFilesAsync(getState) {
+  return apiClient.getResultFiles()
+    .then(files => setResultFiles(getState, files))
+    .catch(() => addNotify(getState, { message: 'failed to fetch result files', type: 'danger' }));
+}
+
+export function fetchReportAsync(getState, filename) {
+  return apiClient.getReport(filename)
+    .then(report => setReportData(getState, Object.assign({ filename }, report)))
+    .catch(error => setReportDataError(getState, { filename, error }));
 }

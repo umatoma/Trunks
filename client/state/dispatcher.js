@@ -1,5 +1,9 @@
 import EventEmitter from 'eventemitter3';
 
+function isPromise(obj) {
+  return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
+}
+
 /**
  * @class
  * @classdesc Dispatcher dispatch parameters to action and update state.
@@ -15,7 +19,7 @@ class Dispatcher {
   constructor(setState, getState, actions, middlewares = []) {
     const emitter = new EventEmitter();
     Object.keys(actions).forEach((eventName) => {
-      emitter.on(eventName, this.wrapListener(actions[eventName]));
+      emitter.on(eventName, this.wrapListener(actions[eventName], eventName));
     });
 
     this.setState = setState;
@@ -28,24 +32,30 @@ class Dispatcher {
   /**
    * wrap the listener so that it update state according to the return value.
    * @param {Function} listener
+   * @param {String} eventName
    * @return {Function}
    */
-  wrapListener(listener) {
+  wrapListener(listener, eventName) {
     return (params) => {
-      const prevState = this.getState();
-      const newState = this.applyMiddlewares(listener(prevState, params));
-      this.setState(newState);
+      const ret = listener(this.getState, params);
+      (isPromise(ret) ? ret : Promise.resolve(ret)).then((state) => {
+        const newState = this.applyMiddlewares(state, eventName);
+        this.setState(newState);
+      }).catch((err) => {
+        console.error(eventName, err); // eslint-disable-line no-console
+      });
     };
   }
 
   /**
    * apply middlewares to state
    * @param {Object} newState
+   * @param {String} eventName
    * @param {Object}
    */
-  applyMiddlewares(newState) {
+  applyMiddlewares(newState, eventName) {
     return this.middlewares.reduce(
-      (state, middleware) => middleware(state),
+      (state, middleware) => middleware(state, eventName),
       newState,
     );
   }
