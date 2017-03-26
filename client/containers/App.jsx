@@ -119,8 +119,7 @@ class App extends React.Component {
   render() {
     const { dispatch } = this;
     const {
-      header,
-      sideMenu,
+      appState,
       worker,
       metrics,
       resultFiles,
@@ -133,7 +132,7 @@ class App extends React.Component {
       <Router>
         <div>
           <Header
-            isHamburgerActive={header.isHamburgerActive}
+            isHamburgerActive={appState.header.isHamburgerActive}
             onToggleHamburger={() => dispatch('toggleHeaderHamburger')}
           />
           <TitleBanner />
@@ -143,7 +142,7 @@ class App extends React.Component {
                 <div className="column is-3">
                   <SideMenuWithRouter
                     resultFiles={resultFiles}
-                    isModalActive={sideMenu.isModalActive}
+                    isModalActive={appState.sideMenu.isModalActive}
                     onToggleModal={() => dispatch('toggleSideMenuModal')}
                   />
                 </div>
@@ -178,7 +177,7 @@ class App extends React.Component {
             {/* End of container */}
           </section>
           <Notifications
-            notifications={this.state.notifications.toArray()}
+            notifications={appState.notifications.toArray()}
             onDissmiss={this.handleDissmissNotify}
           />
           <Footer />

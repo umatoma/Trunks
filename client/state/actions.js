@@ -6,33 +6,37 @@ import {
   ModelFormAttack,
 } from './models';
 
+/**
+ * appState actions
+ */
 export function addNotify(getState, { message, type = 'info' }) {
-  const { notifications } = getState();
+  const { appState } = getState();
   return {
-    notifications: notifications.add({ key: Date.now(), message, type }),
+    appState: appState.addNotify(message, type),
   };
 }
 
 export function removeNotify(getState, notification) {
-  const { notifications } = getState();
+  const { appState } = getState();
   return {
-    notifications: notifications.delete(notification),
+    appState: appState.removeNotify(notification),
   };
 }
 
 export function toggleHeaderHamburger(getState) {
-  const { header } = getState();
+  const { appState } = getState();
   return {
-    header: header.set('isHamburgerActive', !header.isHamburgerActive),
+    appState: appState.toggleHeaderHamburger(),
   };
 }
 
 export function toggleSideMenuModal(getState) {
-  const { sideMenu } = getState();
+  const { appState } = getState();
   return {
-    sideMenu: sideMenu.set('isModalActive', !sideMenu.isModalActive),
+    appState: appState.toggleSideMenuModal(),
   };
 }
+/* ------------------------------ */
 
 export function updateModalImportOption(getState, params) {
   const { importOption } = getState();
