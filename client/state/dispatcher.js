@@ -21,7 +21,13 @@ class Dispatcher {
     Object.keys(actions).forEach((eventName) => {
       emitter.on(eventName, this.wrapListener(actions[eventName], eventName));
     });
+    emitter.on('_enqueue', (eventName, params) => {
+      this.updateQueue.push({ eventName, params });
+      this.update();
+    });
 
+    this.isUpdating = false;
+    this.updateQueue = [];
     this.setState = setState;
     this.getState = getState;
     this.emitter = emitter;
@@ -39,10 +45,16 @@ class Dispatcher {
     return (params) => {
       const ret = listener(this.getState, params);
       (isPromise(ret) ? ret : Promise.resolve(ret)).then((state) => {
+        // set new state
         const newState = this.applyMiddlewares(state, eventName);
         this.setState(newState);
       }).catch((err) => {
+        // error logging
         console.error(eventName, err); // eslint-disable-line no-console
+      }).then(() => {
+        // set updating status to inactive and call next event
+        this.isUpdating = false;
+        this.update();
       });
     };
   }
@@ -66,7 +78,20 @@ class Dispatcher {
    * @param {Any} params
    */
   dispatch(eventName, params) {
-    this.emitter.emit(eventName, params);
+    this.emitter.emit('_enqueue', eventName, params);
+  }
+
+  /**
+   * update state if queue is stacked
+   */
+  update() {
+    if (this.isUpdating || this.updateQueue.length === 0) {
+      return;
+    }
+
+    const nextEvent = this.updateQueue.shift();
+    this.isUpdating = true;
+    this.emitter.emit(nextEvent.eventName, nextEvent.params);
   }
 }
 
