@@ -124,25 +124,25 @@ export function setFormAttack(getState, params) {
  * async actions
  */
 export function startAttackAsync(getState, params) {
-  return apiClient.startAttack(params)
-    .then(() => addNotify(getState, { message: 'succeeded to post attack' }))
-    .catch(() => addNotify(getState, { message: 'failed to post attack', type: 'danger' }));
+  return dispatch => apiClient.startAttack(params)
+    .then(() => dispatch('addNotify', { message: 'succeeded to post attack' }))
+    .catch(() => dispatch('addNotify', { message: 'failed to post attack', type: 'danger' }));
 }
 
-export function cancelAttackAsync(getState) {
-  return apiClient.cancelAttack()
-    .then(() => addNotify(getState, { message: 'succeeded to cancel attack' }))
-    .catch(() => addNotify(getState, { message: 'failed to cancel attack', type: 'danger' }));
+export function cancelAttackAsync() {
+  return dispatch => apiClient.cancelAttack()
+    .then(() => dispatch('addNotify', { message: 'succeeded to cancel attack' }))
+    .catch(() => dispatch('addNotify', { message: 'failed to cancel attack', type: 'danger' }));
 }
 
-export function fetchResultFilesAsync(getState) {
-  return apiClient.getResultFiles()
-    .then(files => setResultFiles(getState, files))
-    .catch(() => addNotify(getState, { message: 'failed to fetch result files', type: 'danger' }));
+export function fetchResultFilesAsync() {
+  return dispatch => apiClient.getResultFiles()
+    .then(files => dispatch('setResultFiles', files))
+    .catch(() => dispatch('addNotify', { message: 'failed to fetch result files', type: 'danger' }));
 }
 
 export function fetchReportAsync(getState, filename) {
-  return apiClient.getReport(filename)
-    .then(report => setReportData(getState, Object.assign({ filename }, report)))
-    .catch(error => setReportDataError(getState, { filename, error }));
+  return dispatch => apiClient.getReport(filename)
+    .then(report => dispatch('setReportData', Object.assign({ filename }, report)))
+    .catch(error => dispatch('setReportDataError', { filename, error }));
 }
