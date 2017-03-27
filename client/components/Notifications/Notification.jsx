@@ -5,7 +5,7 @@ const NOTIFY_TIMEOUT = 3000;
 const style = i => ({
   float: 'right',
   position: 'fixed',
-  top: 16 + (64 * i),
+  top: 24 + (72 * i),
   right: 16,
   zIndex: 99999,
 });
