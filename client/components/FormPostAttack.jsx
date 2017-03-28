@@ -46,6 +46,7 @@ class FormPostAttack extends React.Component {
     if (this.props.isAttacking) {
       return (
         <button
+          name="Cancel"
           className="button is-danger is-fullwidth"
           type="button"
           onClick={this.handleClickCancelButton}

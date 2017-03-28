@@ -3,6 +3,7 @@ module.exports = {
     documentRef: true,
     describe: true,
     it: true,
+    afterEach: true,
   },
   rules: {
     'import/no-extraneous-dependencies': 'off',
