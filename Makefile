@@ -28,6 +28,7 @@ bindata:
 
 test:
 	go test -v -cover ./server
+	npm run test
 
 lint:
 	golint ./server/...
