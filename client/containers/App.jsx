@@ -117,7 +117,7 @@ class App extends React.Component {
             onToggleHamburger={() => dispatch('toggleHeaderHamburger')}
           />
           <TitleBanner />
-          <section className="section">
+          <section className="section tk-section-main">
             <div className="container">
               <div className="columns">
                 <div className="column is-3">
@@ -158,11 +158,11 @@ class App extends React.Component {
             </div>
             {/* End of container */}
           </section>
+          <Footer />
           <Notifications
             notifications={notifications.toArray()}
             onDissmiss={this.handleDissmissNotify}
           />
-          <Footer />
         </div>
       </Router>
     );

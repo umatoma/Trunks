@@ -8,6 +8,14 @@ $primary: hsl(271, 100%, 71%) !default;
 @import "~c3/src/scss/main";
 
 // custom styles
+html {
+  font-size: 14px;
+}
+
+.tk-section-main {
+  padding-bottom: 8rem;
+}
+
 .card {
   .tk-card-item {
     align-items: center;
