@@ -7,7 +7,7 @@ class Dispatcher {
    * @constructor
    * @param {Function} setState - Component.setState
    * @param {Function} getState - Component.getState
-   * @param {{ [eventName]: {Function} }} actions - pairs of eventName and listener
+   * @param {{ [actionName]: {Function} }} actions - pairs of actionName and listener
    * @param {Array.<{Function}>} middlewares - middleware functions [optional]
    */
   constructor(setState, getState, actions, middlewares = []) {
@@ -23,23 +23,23 @@ class Dispatcher {
   /**
    * apply middlewares to state
    * @param {Object} newState
-   * @param {String} eventName
+   * @param {String} actionName
    * @param {Object}
    */
-  applyMiddlewares(newState, eventName) {
+  applyMiddlewares(newState, actionName) {
     return this.middlewares.reduce(
-      (state, middleware) => middleware(state, eventName),
+      (state, middleware) => middleware(state, actionName),
       newState,
     );
   }
 
   /**
    * dispatch parameters to action and update state
-   * @param {String} eventName
+   * @param {String} actionName
    * @param {Any} params
    */
-  dispatch(eventName, params) {
-    this.updateQueue.push({ fn: this.actions[eventName], eventName, params });
+  dispatch(actionName, params) {
+    this.updateQueue.push({ fn: this.actions[actionName], actionName, params });
     this.update();
   }
 
@@ -52,7 +52,7 @@ class Dispatcher {
     }
 
     this.isUpdating = true;
-    const { fn, eventName, params } = this.updateQueue.shift();
+    const { fn, actionName, params } = this.updateQueue.shift();
     const stateOrFunc = fn(this.getState, params);
 
     if (typeof stateOrFunc === 'function') {
@@ -61,7 +61,7 @@ class Dispatcher {
       return;
     }
 
-    const newState = this.applyMiddlewares(stateOrFunc, eventName);
+    const newState = this.applyMiddlewares(stateOrFunc, actionName);
     this.setState(newState, () => {
       this.isUpdating = false;
       this.update();

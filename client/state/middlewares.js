@@ -5,8 +5,8 @@ const debugState = debug('trunks:state');
 /**
  * logging middleware
  */
-const loggerMiddleware = (state, eventName) => {
-  debugState('%s %O', eventName, state);
+const loggerMiddleware = (state, actionName) => {
+  debugState('%s %O', actionName, state);
   return state;
 };
 
