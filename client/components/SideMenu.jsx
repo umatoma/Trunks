@@ -93,20 +93,18 @@ class SideMenu extends React.Component {
               <div className="card-header">
                 <p className="card-header-title">Results</p>
               </div>
-              <div className="card-content">
-                <div className="content">
-                  {isModalActive ? resultFiles.map(file => (
-                    <p key={file}>
-                      <a onClick={() => this.handleClickModalResultLink(file)}>
-                        <span className="icon is-small">
-                          <i className="fa fa-file" />
-                        </span>&nbsp;
-                        <span>{file}</span>
-                      </a>
-                    </p>
-                  )) : null}
-                </div>
-              </div>
+              {isModalActive ? resultFiles.map(file => (
+                <a
+                  key={file}
+                  className="tk-card-item"
+                  onClick={() => this.handleClickModalResultLink(file)}
+                >
+                  <span className="icon is-small">
+                    <i className="fa fa-file" />
+                  </span>&nbsp;
+                  <span>{file}</span>
+                </a>
+              )) : null}
             </div>
           </div>
           <button className="modal-close" onClick={onToggleModal} />

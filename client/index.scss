@@ -8,6 +8,17 @@ $primary: hsl(271, 100%, 71%) !default;
 @import "~c3/src/scss/main";
 
 // custom styles
+.card {
+  .tk-card-item {
+    align-items: center;
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+    padding: 0.75rem;
+    border-top: 1px solid $border;
+  }
+}
+
 .tk-modal-import {
   pre {
     border: 1px solid #dbdbdb;
