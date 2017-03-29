@@ -2,10 +2,10 @@ package server
 
 import (
 	"context"
-	"log"
-	"time"
 	"net/http"
+	"time"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/websocket"
 )
 
@@ -25,10 +25,10 @@ const (
 )
 
 var (
-	newline = []byte{'\n'}
-	space   = []byte{' '}
+	newline  = []byte{'\n'}
+	space    = []byte{' '}
 	upgrador = websocket.Upgrader{
-		ReadBufferSize: 1024,
+		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
 	}
 )
@@ -38,7 +38,7 @@ type Broadcaster interface {
 }
 
 type message struct {
-	Event string `json:"event"`
+	Event string      `json:"event"`
 	Data  interface{} `json:"data"`
 }
 
@@ -128,7 +128,7 @@ func serveWebSocket(hub *WebSocketHub, w http.ResponseWriter, r *http.Request) {
 	}
 
 	client := &WebSocketClient{
-		hub: hub,
+		hub:  hub,
 		conn: conn,
 		send: make(chan *message, sendChannelSize),
 	}
@@ -153,8 +153,14 @@ func (h *WebSocketHub) Run(ctx context.Context) {
 			break
 		case client := <-h.register:
 			h.clients[client] = true
+			log.WithFields(log.Fields{
+				"remote_addr": client.conn.RemoteAddr().String(),
+			}).Info("register websocket client")
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
+				log.WithFields(log.Fields{
+					"remote_addr": client.conn.RemoteAddr().String(),
+				}).Info("unregister websocket client")
 				delete(h.clients, client)
 				close(client.send)
 			}
@@ -166,7 +172,7 @@ func (h *WebSocketHub) Run(ctx context.Context) {
 
 // Broadcast sends message to then all clients
 func (h *WebSocketHub) Broadcast(event string, data interface{}) error {
-	message := &message{ Event: event, Data: data }
+	message := &message{Event: event, Data: data}
 	for client := range h.clients {
 		select {
 		case client.send <- message:

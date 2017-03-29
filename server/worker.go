@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
 	vegeta "github.com/tsenart/vegeta/lib"
+	log "github.com/Sirupsen/logrus"
 )
 
 var errNowExecuting = errors.New("attacker is executing now")
@@ -43,24 +43,24 @@ func NewAttackWorker(atk *vegeta.Attacker, tr vegeta.Targeter, rate uint64, dura
 // Run register vegeta attack job
 func (worker *AttackWorker) Run(resultsBasePath string) error {
 	// do attack!!
-	log.Println("attack start")
+	log.WithField("resultsBasePath", resultsBasePath).Info("start attack worker")
 	worker.broadcastAttackStart()
 	resultFilePath, err := worker.attack(resultsBasePath)
 
 	// failed attack
 	if err != nil {
-		log.Println("attack failed", err)
+		log.WithField("error", err.Error()).Info("failed attack worker")
 		worker.broadcastAttackFail(err)
 		return err
 	}
 
 	if resultFilePath == "" {
 		// canceled attack
-		log.Println("attack canceled")
+		log.Info("canceled attack worker")
 		worker.broadcastAttackCancel()
 	} else {
 		// success attack
-		log.Println("attack succeeded")
+		log.WithField("resultFilePath", resultFilePath).Info("succeeded attack worker")
 		paths := strings.Split(resultFilePath, "/")
 		worker.broadcastAttackFinish(paths[len(paths) - 1])
 	}
@@ -105,7 +105,6 @@ attack:
 			// add result to report
 			metrics.Add(r)
 			metrics.Close()
-			log.Println(r)
 		}
 	}
 
@@ -152,6 +151,12 @@ func (worker *AttackWorker) broadcastAttackFail(err error) {
 	})
 }
 
-func (worker *AttackWorker) broadcastAttackMetrics(metrics *vegeta.Metrics) {
-	worker.broadcaster.Broadcast("attackMetrics", metrics)
+func (worker *AttackWorker) broadcastAttackMetrics(m *vegeta.Metrics) {
+	worker.broadcaster.Broadcast("attackMetrics", m)
+	log.WithFields(log.Fields{
+		"requests": m.Requests,
+		"duration": m.Duration,
+		"mean_latency": m.Latencies.Mean,
+		"success": m.Success,
+	}).Info("broadcast attack metrics")
 }

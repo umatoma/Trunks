@@ -1,5 +1,5 @@
-hash: 6478f8dae2d3a32b79b73991c951d5948785196c8933efeccf6c12ab4d9e53f8
-updated: 2017-03-21T22:26:44.205787675+09:00
+hash: 0f960284e1f359299bb5507aa9faadc7fa42ed2118cb7911a32483503f00b278
+updated: 2017-03-29T21:52:40.543638879+09:00
 imports:
 - name: github.com/dgrijalva/jwt-go
   version: 2268707a8f0843315e2004ee4f1d021dc08baedf
@@ -22,6 +22,8 @@ imports:
   version: acb9493f2794fd0f820de7a27a217dafbb1b65ea
 - name: github.com/mattn/go-isatty
   version: 9622e0cc9d8f9be434ca605520ff9a16808fee47
+- name: github.com/Sirupsen/logrus
+  version: ba1b36c82c5e05c4f912a88eab0dcd91a171688f
 - name: github.com/streadway/quantile
   version: b0c588724d25ae13f5afb3d90efec0edc636432b
 - name: github.com/stretchr/testify

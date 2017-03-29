@@ -4,10 +4,10 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/umatoma/trunks/server"
+	log "github.com/Sirupsen/logrus"
 )
 
 type options struct {
@@ -45,7 +45,14 @@ func main() {
 	fs.StringVar(&opts.addr, "addr", "0.0.0.0:3000", "Addr")
 	fs.Parse(os.Args[1:])
 
-	log.Println(opts)
+	// logger settings
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.InfoLevel)
+
+	log.WithFields(log.Fields{
+		"results": opts.resultsDir,
+		"addr": opts.addr,
+	}).Info("options")
 
 	// check if options is valid
 	if err := opts.validate(); err != nil {
@@ -59,9 +66,9 @@ func main() {
 	// start websocket server
 	webSocketHub := server.NewWebSocketHub()
 	go func() {
-		log.Println("start WebSocketHub...")
+		log.Println("start WebSocketHub")
 		webSocketHub.Run(ctx)
-		log.Println("close WebSocketHub...")
+		log.Println("close WebSocketHub")
 	}()
 
 	// initialize handler
@@ -75,5 +82,5 @@ func main() {
 	e := server.NewEchoServer(h)
 
 	// start server
-	e.Logger.Fatal(e.Start(opts.addr))
+	log.Fatal(e.Start(opts.addr))
 }

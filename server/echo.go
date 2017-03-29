@@ -2,10 +2,11 @@ package server
 
 import (
 	"net/http"
+	"time"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/elazarl/go-bindata-assetfs"
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 )
 
 // NewEchoServer start echo http server
@@ -14,7 +15,7 @@ func NewEchoServer(h *Handler) *echo.Echo {
 	e := echo.New()
 
 	// middlewares
-	e.Use(middleware.Logger())
+	e.Use(newLoggerMiddleware())
 
 	// routes
 	e.GET("/", h.IndexHTML)
@@ -42,4 +43,27 @@ func NewEchoServer(h *Handler) *echo.Echo {
 	})
 
 	return e
+}
+
+func newLoggerMiddleware() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) (err error) {
+			start := time.Now()
+			if err := next(c); err != nil {
+				c.Error(err)
+			}
+
+			latency := time.Since(start)
+			log.WithFields(log.Fields{
+				"method":      c.Request().Method,
+				"request":     c.Request().RequestURI,
+				"status":      c.Response().Status,
+				"text_status": http.StatusText(c.Response().Status),
+				"took":        latency,
+				"latency":     latency.Nanoseconds(),
+			}).Info("completed handling request")
+
+			return nil
+		}
+	}
 }
