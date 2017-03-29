@@ -32,13 +32,20 @@ func (opt *options) validate() error {
 	return nil
 }
 
+func (opt *options) String() string {
+	return fmt.Sprintf("resultsDir=%s addr=%s", opt.resultsDir, opt.addr)
+}
+
 func main() {
 	opts := &options{}
 
 	// command options
 	fs := flag.NewFlagSet("trunks", flag.ExitOnError)
-	fs.StringVar(&opts.resultsDir, "r", "results", "Results file dir")
-	fs.StringVar(&opts.addr, "a", "0.0.0.0:3000", "Addr")
+	fs.StringVar(&opts.resultsDir, "results", "results", "Results file dir")
+	fs.StringVar(&opts.addr, "addr", "0.0.0.0:3000", "Addr")
+	fs.Parse(os.Args[1:])
+
+	log.Println(opts)
 
 	// check if options is valid
 	if err := opts.validate(); err != nil {

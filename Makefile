@@ -37,4 +37,7 @@ lint:
 run:
 	go run main.go
 
+build:
+	go build -v -work
+
 .PHONY: all glide deps watch webpack bindata lint run
