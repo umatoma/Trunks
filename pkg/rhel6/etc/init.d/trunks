@@ -1,0 +1,57 @@
+#!/bin/bash
+#
+# trunks		Start up the Trunks daemon
+#
+# chkconfig: 2345 90 20
+# description: Trunks is a simple HTTP load testing tool with UI
+#
+# processname: trunks
+# pidfile: /var/run/trunks.pid
+
+prog="trunks"
+lockfile=/var/lock/subsys/$prog
+pidfile=/var/run/trunks.pid
+exe="/usr/bin/trunks -addr :3000 -results /var/www/trunks/results"
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+start() {
+  if [ -s $pidfile ]; then
+    RETVAL=1
+    echo -n "Already running !" && warning
+    echo
+  else
+    echo -n $"Starting $prog: "
+    nohup $exe >/dev/null 2>&1 &
+    RETVAL=$?
+    PID=$!
+    [ $RETVAL -eq 0 ] && touch $lockfile && success || failure
+    echo
+    echo $PID > $pidfile
+  fi
+  return $RETVAL
+}
+
+stop() {
+  echo -n $"Stopping $prog: "
+  killproc -p $pidfile $prog
+  RETVAL=$?
+  [ $RETVAL -eq 0 ] && rm -f $lockfile
+  echo
+  return $RETVAL
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop}"
+    RETVAL=2
+    ;;
+esac
+exit $RETVAL
