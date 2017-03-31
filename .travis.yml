@@ -1,23 +1,36 @@
 language: go
 
 go:
-  - 1.8.x
+- 1.8.x
 
 before_install:
-  - echo "***** Install glide *****"
-  - curl -L https://github.com/Masterminds/glide/releases/download/v0.12.3/glide-v0.12.3-linux-amd64.tar.gz -o glide.tar.gz
-  - mkdir -p $HOME/bin
-  - tar -vxz -C $HOME/bin --strip=1 -f glide.tar.gz
-  - export PATH="$HOME/bin:$PATH"
-  - echo "***** Install Node.js *****"
-  - rm -rf ~/.nvm
-  - git clone https://github.com/creationix/nvm.git ~/.nvm
-  - (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`)
-  - source ~/.nvm/nvm.sh
-  - nvm install 6
+- echo "***** Install glide *****"
+- curl -L https://github.com/Masterminds/glide/releases/download/v0.12.3/glide-v0.12.3-linux-amd64.tar.gz -o glide.tar.gz
+- mkdir -p $HOME/bin
+- tar -vxz -C $HOME/bin --strip=1 -f glide.tar.gz
+- export PATH="$HOME/bin:$PATH"
+- echo "***** Install Node.js *****"
+- rm -rf ~/.nvm
+- git clone https://github.com/creationix/nvm.git ~/.nvm
+- "(cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`)"
+- source ~/.nvm/nvm.sh
+- nvm install 6
 
 install:
-  - make deps webpack bindata
+- make deps webpack bindata
 
 script:
-  - make test
+- make test
+
+before_deploy:
+- make build
+
+deploy:
+  provider: releases
+  api_key:
+    secure: $API_KEY_ENCRYPTED
+  file: dist/*
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: umatoma/trunks

@@ -38,6 +38,15 @@ run:
 	go run main.go
 
 build:
-	go build -v -work
+	if [ ! -e dist ]; then mkdir dist; fi
+	@echo "build darwin-amd64"
+	GOOS=darwin CGO_ENABLED=0 GOARCH=amd64 go build -o dist/trunks
+	tar -C dist -czf dist/trunks-${VERSION}-darwin-amd64.tar.gz trunks
+	@echo "build linux-amd64"
+	GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -o dist/trunks
+	tar -C dist -czf dist/trunks-${VERSION}-linux-amd64.tar.gz trunks
+	@echo "finish build"
+	rm dist/trunks
+	ls -al dist
 
 .PHONY: all glide deps watch webpack bindata lint run
