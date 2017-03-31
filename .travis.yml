@@ -17,10 +17,7 @@ before_install:
   - nvm install 6
 
 install:
-  - go get -u github.com/jteeuwen/go-bindata/...
-  - go get -u github.com/elazarl/go-bindata-assetfs/...
-  - go get -u github.com/golang/lint/golint
-  - glide install
+  - make deps webpack bindata
 
 script:
-  - go test -v -cover ./server
+  - make test
