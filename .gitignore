@@ -30,3 +30,4 @@ _testmain.go
 /assets
 /server/bindata_assetfs.go
 /server/_results
+/.nyc_output

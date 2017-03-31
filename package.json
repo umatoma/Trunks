@@ -5,7 +5,7 @@
   "main": "client/index.js",
   "scripts": {
     "build:dev": "webpack -d --progress",
-    "test": "mocha --recursive client/test/setup.js client/test"
+    "test": "nyc mocha --recursive client/test/setup.js client/test"
   },
   "repository": {
     "type": "git",
@@ -36,6 +36,7 @@
     "jsdom": "^9.12.0",
     "mocha": "^3.2.0",
     "node-sass": "^4.5.0",
+    "nyc": "^10.2.0",
     "path": "^0.12.7",
     "react-addons-test-utils": "^15.4.2",
     "sass-loader": "^6.0.3",
