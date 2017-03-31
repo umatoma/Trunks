@@ -4,9 +4,9 @@ go:
   - 1.8.x
 
 before_install:
-  - curl -O "https://github.com/Masterminds/glide/releases/download/0.12.3/glide-0.12.3-linux-amd64.tar.gz"
+  - curl -L https://github.com/Masterminds/glide/releases/download/0.12.3/glide-0.12.3-linux-amd64.tar.gz -O glide.tar.gz
   - mkdir -p $HOME/bin
-  - tar -vxz -C $HOME/bin --strip=1 -f glide-0.12.3-linux-amd64.tar.gz
+  - tar -vxz -C $HOME/bin --strip=1 -f glide.tar.gz
   - export PATH="$HOME/bin:$PATH"
 
 install:
