@@ -17,6 +17,11 @@
     "url": "https://github.com/umatoma/trunks/issues"
   },
   "homepage": "https://github.com/umatoma/trunks#readme",
+  "nyc": {
+    "extension": [
+      ".jsx"
+    ]
+  },
   "devDependencies": {
     "babel-core": "^6.23.1",
     "babel-loader": "^6.4.0",
