@@ -11,7 +11,7 @@
 prog="trunks"
 lockfile=/var/lock/subsys/$prog
 pidfile=/var/run/trunks.pid
-exe="/usr/bin/trunks -addr :3000 -results /var/www/trunks/results"
+exe="/usr/local/bin/trunks -addr :3000 -results /var/www/trunks/results"
 
 # source function library
 . /etc/rc.d/init.d/functions
