@@ -1,4 +1,4 @@
-VERSION := $(shell git rev-parse HEAD)
+VERSION := $(shell cat VERSION)
 
 all: glide deps webpack bindata test lint run
 
