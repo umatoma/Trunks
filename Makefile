@@ -10,7 +10,7 @@ else
 	@echo "glide is already installed"
 endif
 
-deps: glide
+deps:
 	glide install
 	go get -u github.com/jteeuwen/go-bindata/...
 	go get -u github.com/elazarl/go-bindata-assetfs/...
