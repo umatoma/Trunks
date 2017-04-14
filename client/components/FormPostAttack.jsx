@@ -20,9 +20,16 @@ class FormPostAttack extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     const { form } = this.props;
-    const params = Object.assign(form.toJS(), {
-      Rate: parseInt(form.Rate, 10) },
-    );
+    const params = {};
+    const obj = form.toJS();
+    Object.keys(obj).forEach((k) => {
+      const v = obj[k];
+      if (v === '' || v === null || v === undefined) return;
+      if (['Rate', 'Workers', 'Connections', 'Redirects'].includes(k)) {
+        return params[k] = parseInt(v, 10);
+      }
+      return params[k] = v;
+    });
     this.props.onSubmit(params);
   }
 
