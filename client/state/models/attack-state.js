@@ -34,6 +34,7 @@ const ModelReport = Record({
 });
 
 const ModelFormAttack = Record({
+  error: null,
   Targets: '',
   Body: '',
   Cert: '',

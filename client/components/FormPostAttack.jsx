@@ -142,9 +142,14 @@ class FormPostAttack extends React.Component {
             </div>
             {/* end of column */}
           </div>
-          <p className="control">
+          <div className="control">
+            {form.error && (
+              <article className="message is-danger">
+                <div className="message-body">{form.error.message}</div>
+              </article>
+            )}
             {this.renderSubmitOrCancelButton()}
-          </p>
+          </div>
         </form>
       </div>
     );
