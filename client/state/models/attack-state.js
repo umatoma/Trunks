@@ -50,7 +50,7 @@ const ModelFormAttack = Record({
   Redirects: 10,
   Headers: '',
   Laddr: '',
-  Keepalive: true
+  Keepalive: true,
 });
 
 const ModelFormImport = new Record({
