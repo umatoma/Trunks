@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import TitleBanner from '../components/TitleBanner';
 import SideMenu from '../components/SideMenu';
+import SideMenuForMobile from '../components/SideMenuForMobile';
 import Notifications from '../components/Notifications';
 import PageAttack from '../containers/PageAttack';
 import PageResult from '../containers/PageResult';
@@ -14,6 +15,7 @@ import { getMiddlewares } from '../state/middlewares';
 import { getInitialState } from '../state/models';
 
 const SideMenuWithRouter = withRouter(SideMenu);
+const SideMenuForMobileWithRouter = withRouter(SideMenuForMobile);
 
 class App extends React.Component {
   constructor() {
@@ -112,52 +114,51 @@ class App extends React.Component {
     return (
       <Router>
         <div>
-          <Header
-            isHamburgerActive={header.isHamburgerActive}
-            onToggleHamburger={() => dispatch('toggleHeaderHamburger')}
-          />
-          <TitleBanner />
-          <section className="section tk-section-main">
-            <div className="container">
-              <div className="columns">
-                <div className="column is-3">
-                  <SideMenuWithRouter
-                    resultFiles={resultFiles}
-                    isModalActive={sideMenu.isModalActive}
-                    onToggleModal={() => dispatch('toggleSideMenuModal')}
-                  />
-                </div>
-                {/* End of column */}
-                <div className="column is-9">
-                  <Route
-                    exact path="/" render={() => (
-                      <PageAttack
-                        isImportModalActive={isImportModalActive}
-                        worker={worker}
-                        metrics={metrics}
-                        formAttack={formAttack}
-                        formImport={formImport}
-                        dispatch={this.dispatch}
-                      />
-                    )}
-                  />
-                  <Route
-                    path="/results/:filename" render={({ match }) => (
-                      <PageResult
-                        filename={match.params.filename}
-                        report={reports.get(match.params.filename)}
-                        fetchReport={filename => dispatch('fetchReportAsync', filename)}
-                        dispatch={this.dispatch}
-                      />
-                    )}
-                  />
-                </div>
-                {/* End of column */}
-              </div>
-              {/* End of columns */}
+          <div className="columns tk-main-columns">
+            <div className="column is-2 is-hidden-mobile tk-side-menu-wrapper">
+              <SideMenuWithRouter
+                resultFiles={resultFiles}
+                isModalActive={sideMenu.isModalActive}
+                onToggleModal={() => dispatch('toggleSideMenuModal')}
+              />
             </div>
-            {/* End of container */}
-          </section>
+            <div className="column is-10 tk-main-column">
+              <Header
+                isHamburgerActive={header.isHamburgerActive}
+                onToggleHamburger={() => dispatch('toggleHeaderHamburger')}
+              />
+              <TitleBanner />
+              <section className="section tk-section-main">
+                <SideMenuForMobileWithRouter
+                  resultFiles={resultFiles}
+                  isModalActive={sideMenu.isModalActive}
+                  onToggleModal={() => dispatch('toggleSideMenuModal')}
+                />
+                <Route
+                  exact path="/" render={() => (
+                    <PageAttack
+                      isImportModalActive={isImportModalActive}
+                      worker={worker}
+                      metrics={metrics}
+                      formAttack={formAttack}
+                      formImport={formImport}
+                      dispatch={this.dispatch}
+                    />
+                  )}
+                />
+                <Route
+                  path="/results/:filename" render={({ match }) => (
+                    <PageResult
+                      filename={match.params.filename}
+                      report={reports.get(match.params.filename)}
+                      fetchReport={filename => dispatch('fetchReportAsync', filename)}
+                      dispatch={this.dispatch}
+                    />
+                  )}
+                />
+              </section>
+            </div>
+          </div>
           <Footer />
           <Notifications
             notifications={notifications.toArray()}

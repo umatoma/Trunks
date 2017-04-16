@@ -26,9 +26,10 @@ class FormPostAttack extends React.Component {
       const v = obj[k];
       if (v === '' || v === null || v === undefined) return;
       if (['Rate', 'Workers', 'Connections', 'Redirects'].includes(k)) {
-        return params[k] = parseInt(v, 10);
+        params[k] = parseInt(v, 10);
+        return;
       }
-      return params[k] = v;
+      params[k] = v;
     });
     this.props.onSubmit(params);
   }
