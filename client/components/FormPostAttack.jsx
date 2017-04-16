@@ -50,6 +50,12 @@ class FormPostAttack extends React.Component {
     };
   }
 
+  handleChangeCheckbox(key) {
+    return (e) => {
+      this.props.onUpdate({ [key]: e.target.checked });
+    };
+  }
+
   renderSubmitOrCancelButton() {
     if (this.props.isAttacking) {
       return (
@@ -78,67 +84,76 @@ class FormPostAttack extends React.Component {
 
   render() {
     const { form } = this.props;
+    const checkboxs = [
+      'HTTP2',
+      'Insecure',
+      'Lazy',
+      'Keepalive',
+    ];
+    const textFields = [
+      ['Duration', '10s'],
+      ['Rate', '5'],
+      ['Timeout', '30s'],
+    ];
+    const textareas = [
+      ['Targets', 'GET https://127.0.0.1:8000/path/to/api?q=trunks'],
+      ['Body', '{"key": "value"}'],
+    ];
     return (
       <div className="form-post-attack">
         <form onSubmit={this.handleSubmit}>
           <div className="columns">
             <div className="column is-2">
-              <div className="field">
-                <label className="label" htmlFor="Duration">Duration</label>
-                <p className="control">
-                  <input
-                    className="input"
-                    type="text"
-                    name="Duration"
-                    placeholder="10s"
-                    value={form.Duration}
-                    onChange={this.handleChangeTextField('Duration')}
-                  />
-                </p>
-              </div>
+              {checkboxs.map(key => (
+                <div className="field" key={key}>
+                  <p className="control">
+                    <label className="label" htmlFor={key}>
+                      <input
+                        type="checkbox"
+                        name={key}
+                        checked={form[key]}
+                        onChange={this.handleChangeCheckbox(key)}
+                      />
+                      &nbsp;{key}
+                    </label>
+                  </p>
+                </div>
+              ))}
             </div>
             {/* end of column */}
             <div className="column is-2">
-              <div className="field">
-                <label className="label" htmlFor="Rate">Rate</label>
-                <p className="control">
-                  <input
-                    className="input"
-                    type="text"
-                    name="Rate"
-                    placeholder="1"
-                    value={form.Rate}
-                    onChange={this.handleChangeTextField('Rate')}
-                  />
-                </p>
-              </div>
+              {textFields.map(([key, placeholder]) => (
+                <div className="field" key={key}>
+                  <label className="label" htmlFor={key}>{key}</label>
+                  <p className="control">
+                    <input
+                      className="input"
+                      type="text"
+                      name={key}
+                      placeholder={placeholder}
+                      value={form[key]}
+                      onChange={this.handleChangeTextField(key)}
+                    />
+                  </p>
+                </div>
+              ))}
             </div>
             {/* end of column */}
             <div className="column is-8">
-              <div className="field">
-                <label className="label" htmlFor="Targets">Targets</label>
-                <p className="control">
-                  <textarea
-                    className="textarea"
-                    name="Targets"
-                    placeholder="GET https://127.0.0.1:8000/path/to/api?q=trunks"
-                    value={form.Targets}
-                    onChange={this.handleChangeTextArea('Targets')}
-                  />
-                </p>
-              </div>
-              <div className="field">
-                <label className="label" htmlFor="Body">Body</label>
-                <p className="control">
-                  <textarea
-                    className="textarea"
-                    name="Body"
-                    placeholder="Requests body file"
-                    value={form.Body}
-                    onChange={this.handleChangeTextArea('Body')}
-                  />
-                </p>
-              </div>
+              {textareas.map(([key, placeholder]) => (
+                <div className="field" key={key}>
+                  <label className="label" htmlFor={key}>{key}</label>
+                  <p className="control">
+                    <textarea
+                      className="textarea"
+                      name={key}
+                      placeholder={placeholder}
+                      value={form[key]}
+                      onChange={this.handleChangeTextArea(key)}
+                    />
+                  </p>
+                </div>
+              ))}
             </div>
             {/* end of column */}
           </div>
