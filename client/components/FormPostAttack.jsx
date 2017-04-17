@@ -50,9 +50,9 @@ class FormPostAttack extends React.Component {
     };
   }
 
-  handleChangeCheckbox(key) {
-    return (e) => {
-      this.props.onUpdate({ [key]: e.target.checked });
+  handleChangeCheckButton(key) {
+    return () => {
+      this.props.onUpdate({ [key]: !this.props.form[key] });
     };
   }
 
@@ -94,35 +94,26 @@ class FormPostAttack extends React.Component {
       ['Duration', '10s'],
       ['Rate', '5'],
       ['Timeout', '30s'],
+      ['Workers', '10'],
+      ['Connections', '10000'],
+      ['Redirects', '10'],
     ];
     const textareas = [
       ['Targets', 'GET https://127.0.0.1:8000/path/to/api?q=trunks'],
       ['Body', '{"key": "value"}'],
     ];
+    const certTextFields = [
+      ['Headers', 'Content-Type: application/json'],
+      ['Cert', 'TLS client PEM encoded certificate file'],
+      ['Key', 'TLS client PEM encoded private key file'],
+      ['RootCerts', 'TLS root certificate files (comma separated list)'],
+    ];
     return (
       <div className="form-post-attack">
         <form onSubmit={this.handleSubmit}>
           <div className="columns">
-            <div className="column is-2">
-              {checkboxs.map(key => (
-                <div className="field" key={key}>
-                  <p className="control">
-                    <label className="label" htmlFor={key}>
-                      <input
-                        type="checkbox"
-                        name={key}
-                        checked={form[key]}
-                        onChange={this.handleChangeCheckbox(key)}
-                      />
-                      &nbsp;{key}
-                    </label>
-                  </p>
-                </div>
-              ))}
-            </div>
-            {/* end of column */}
-            <div className="column is-2">
-              {textFields.map(([key, placeholder]) => (
+            {textFields.map(([key, placeholder]) => (
+              <div className="column">
                 <div className="field" key={key}>
                   <label className="label" htmlFor={key}>{key}</label>
                   <p className="control">
@@ -136,10 +127,34 @@ class FormPostAttack extends React.Component {
                     />
                   </p>
                 </div>
-              ))}
-            </div>
-            {/* end of column */}
-            <div className="column is-8">
+              </div>
+            ))}
+            {checkboxs.map(key => (
+              <div className="column">
+                <div className="field" key={key}>
+                  <p className="control">
+                    <label className="label" htmlFor={key}>{key}</label>
+                    <p className="control">
+                      <div
+                        className={form[key] ?
+                          'button is-primary is-outlined is-fullwidth is-active' :
+                          'button is-primary is-outlined is-fullwidth'
+                        }
+                        onClick={this.handleChangeCheckButton(key)}
+                      >
+                        <span className="icon">
+                          <i className={form[key] ? 'fa fa-check' : 'fa fa-times'} />
+                        </span>
+                        <span>{form[key] ? 'ON' : 'OFF'}</span>
+                      </div>
+                    </p>
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="columns">
+            <div className="column is-7">
               {textareas.map(([key, placeholder]) => (
                 <div className="field" key={key}>
                   <label className="label" htmlFor={key}>{key}</label>
@@ -150,6 +165,23 @@ class FormPostAttack extends React.Component {
                       placeholder={placeholder}
                       value={form[key]}
                       onChange={this.handleChangeTextArea(key)}
+                    />
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div className="column is-5">
+              {certTextFields.map(([key, placeholder]) => (
+                <div className="field" key={key}>
+                  <label className="label" htmlFor={key}>{key}</label>
+                  <p className="control">
+                    <input
+                      className="input"
+                      type="text"
+                      name={key}
+                      placeholder={placeholder}
+                      value={form[key]}
+                      onChange={this.handleChangeTextField(key)}
                     />
                   </p>
                 </div>
