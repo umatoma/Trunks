@@ -1,4 +1,4 @@
-VERSION := $(shell cat VERSION)
+VERSION := $(shell git describe --abbrev=0 --tags)
 
 all: glide deps webpack bindata test lint run
 
