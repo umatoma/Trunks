@@ -3,7 +3,9 @@ package server
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -21,9 +23,52 @@ var (
 
 type csl []string
 
+func (l *csl) UnmarshalJSON(data []byte) (err error) {
+	var value string
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+
+	*l = strings.Split(value, ",")
+	return nil
+}
+
 type headers struct{ http.Header }
 
+func (h headers) UnmarshalJSON(data []byte) (err error) {
+	var value string
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+
+	parts := strings.SplitN(value, ":", 2)
+	if len(parts) != 2 {
+		return fmt.Errorf("header '%s' has a wrong format", value)
+	}
+
+	key, val := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
+	if key == "" || val == "" {
+		return fmt.Errorf("header '%s' has a wrong format", value)
+	}
+	// Add key/value directly to the http.Header (map[string][]string).
+	// http.Header.Add() canonicalizes keys but vegeta is used
+	// to test systems that require case-sensitive headers.
+	h.Header[key] = append(h.Header[key], val)
+
+	return nil
+}
+
 type localAddr struct{ *net.IPAddr }
+
+func (ip *localAddr) UnmarshalJSON(data []byte) (err error) {
+	var value string
+	if e := json.Unmarshal(data, &value); e != nil {
+		return e
+	}
+
+	ip.IPAddr, err = net.ResolveIPAddr("ip", value)
+	return err
+}
 
 // AttackOptions aggregates the vegeta attack options
 type AttackOptions struct {

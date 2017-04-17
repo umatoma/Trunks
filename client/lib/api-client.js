@@ -1,12 +1,13 @@
 import 'whatwg-fetch';
 
 const responseHandler = (response) => {
-  if (!response.ok) {
-    const err = new Error(response.statusText);
-    err.response = response;
-    throw err;
+  if (response.ok) {
+    return response.json();
   }
-  return response.json();
+
+  return response.json()
+    .catch(() => Promise.reject(new Error(response.statusText)))
+    .then(body => Promise.reject(new Error(body.message || response.statusText)));
 };
 
 const doGet = url => fetch(url, {

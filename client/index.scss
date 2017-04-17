@@ -12,6 +12,50 @@ html {
   font-size: 14px;
 }
 
+.tk-main-columns:not(:last-child) {
+  margin-bottom: 0;
+}
+
+.tk-main-column {
+  @include tablet {
+    padding-left: 0;
+  }
+  @include desktop {
+    padding-left: 0;
+  }
+}
+
+.tk-side-menu-wrapper {
+  background-color: #354052;
+  padding: 48px 32px;
+  min-height: 100vh;
+
+  .menu {
+    .menu-label {
+      color: $text-light;
+    }
+
+    .menu-list li {
+      a {
+        color: $grey-light;
+
+        &:hover {
+          color: $grey-dark;
+        }
+
+        &.is-active {
+          color: $white;
+          font-weight: $weight-bold;
+          background-color: transparent;
+        }
+      }
+      .icon {
+        margin-right: .5rem;
+      }
+    }
+  }
+}
+
 .tk-section-main {
   padding-bottom: 8rem;
 }
@@ -59,12 +103,6 @@ html {
     border-radius: 290486px;
     border-right-color: transparent;
     border-top-color: transparent;
-  }
-}
-
-.tk-side-menu {
-  .menu-list li .icon {
-    margin-right: .5rem;
   }
 }
 

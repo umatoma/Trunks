@@ -125,8 +125,11 @@ export function setFormAttack(getState, params) {
  */
 export function startAttackAsync(getState, params) {
   return dispatch => apiClient.startAttack(params)
-    .then(() => dispatch('addNotify', { message: 'succeeded to post attack' }))
-    .catch(() => dispatch('addNotify', { message: 'failed to post attack', type: 'danger' }));
+    .then(() => {
+      dispatch('updateFormAttack', { error: null });
+      dispatch('addNotify', { message: 'succeeded to post attack' });
+    })
+    .catch(error => dispatch('updateFormAttack', { error }));
 }
 
 export function cancelAttackAsync() {

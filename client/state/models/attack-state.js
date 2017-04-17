@@ -34,10 +34,24 @@ const ModelReport = Record({
 });
 
 const ModelFormAttack = Record({
-  Body: '',
-  Duration: '10s',
-  Rate: 1,
+  error: null,
   Targets: '',
+  Body: '',
+  Cert: '',
+  Key: '',
+  RootCerts: '',
+  HTTP2: true,
+  Insecure: false,
+  Lazy: false,
+  Duration: '10s',
+  Timeout: '',
+  Rate: 10,
+  Workers: 10,
+  Connections: 10000,
+  Redirects: 10,
+  Headers: '',
+  Laddr: '',
+  Keepalive: true,
 });
 
 const ModelFormImport = new Record({
