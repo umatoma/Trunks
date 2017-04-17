@@ -32,3 +32,6 @@ _testmain.go
 /server/_results
 /.nyc_output
 /dist
+/rpmbuild/BUILD
+/rpmbuild/RPMS
+/rpmbuild/SOURCES/trunks

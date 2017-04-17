@@ -1,4 +1,5 @@
 VERSION := $(shell git describe --abbrev=0 --tags)
+PWD := $(shell pwd)
 
 all: glide deps webpack bindata test lint run
 
@@ -45,6 +46,8 @@ build:
 	@echo "build linux-amd64"
 	GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -o dist/trunks
 	tar -C dist -czf dist/trunks-${VERSION}-linux-amd64.tar.gz trunks
+	cp dist/trunks rpmbuild/SOURCES/trunks
+	rpmbuild -bb --define "_rpmdir ${PWD}/rpmbuild/RPMS" --define "_topdir ${PWD}/rpmbuild" --target=noarch ./rpmbuild/SPECS/trunks.spec
 	@echo "finish build"
 	rm dist/trunks
 	ls -al dist
