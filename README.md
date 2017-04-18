@@ -1,13 +1,38 @@
 # Trunks
 Trunks is a simple HTTP load testing tool with UI
 
-**This is under development.**
-
 # Install
-TBD
+**Currently, build only rpm for CentOS 6s.**
 
-# Usage
-TBD
+CentOS 6
+```bash
+$ curl -O -L https://github.com/umatoma/trunks/releases/download/v0.1.0/trunks-v0.1.0-1.x86_64.rpm
+$ sudo rpm -Uvh trunks-v0.1.0-1.x86_64.rpm
+$ sudo service trunks start
+Starting trunks:                                           [  OK  ]
+$ sudo service trunks stop
+Stopping trunks:                                           [  OK  ]
+```
+
+Mac
+```bash
+$ curl -O -L https://github.com/umatoma/trunks/releases/download/v0.1.0/trunks-v0.1.0-darwin-amd64.tar.gz
+$ tar -C /usr/local/bin -xzf ./trunks-v0.1.0-darwin-amd64.tar.gz
+$ trunks
+INFO[0000] options                                       addr="0.0.0.0:3000" results=results
+INFO[0000] start WebSocketHub
+⇛ http server started on [::]:3000
+```
+
+Linux
+```bash
+$ curl -O -L https://github.com/umatoma/trunks/releases/download/v0.1.0/trunks-v0.1.0-linux-amd64.tar.gz
+$ tar -C /usr/local/bin -xzf ./trunks-v0.1.0-darwin-amd64.tar.gz
+$ trunks
+INFO[0000] options                                       addr="0.0.0.0:3000" results=results
+INFO[0000] start WebSocketHub
+⇛ http server started on [::]:3000
+```
 
 # Browsers support
 - Chrome
