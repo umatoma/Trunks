@@ -15,16 +15,14 @@ before_install:
 - "(cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`)"
 - source ~/.nvm/nvm.sh
 - nvm install 6
+- echo "***** Install deb *****"
+- sudo apt-get install -y rpm
 
 install:
 - make deps webpack bindata
 
 script:
 - make test
-- make build
-
-before_deploy:
-- sudo apt-get install -y rpm
 - make build
 
 deploy:
