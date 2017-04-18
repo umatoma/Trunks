@@ -2,7 +2,7 @@
 Trunks is a simple HTTP load testing tool with UI
 
 # Install
-**Currently, build only rpm for CentOS 6s.**
+**Currently, build only rpm for CentOS 6.**
 
 CentOS 6
 ```bash
